@@ -5,16 +5,15 @@
 (function () {
     'use strict';
 
-    angular.module('BlurAdmin.pages.admin', ['BlurAdmin.pages.admin.AddReleases', 'BlurAdmin.pages.admin.AddReleases'])
+    angular.module('BlurAdmin.pages.admin', ['BlurAdmin.pages.admin.addreleases'])//, 'BlurAdmin.pages.admin.AddStages'])
             .config(routeConfig);
-
-   /** @ngInject */
+    
+     /** @ngInject */
     function routeConfig($stateProvider) {
         $stateProvider
                 .state('admin', {
                     url: '/admin',
-                    template: '<ui-view></ui-view>',
-                    abstract: true,
+                    templateUrl: 'app/pages/admin/admin.html',
                     title: 'Admin',
                     sidebarMeta: {
                         icon: 'ion-settings',
@@ -22,5 +21,20 @@
                     }
                 });
     }
+    
+   /** @ngInject */
+//    function routeConfig($stateProvider) {
+//        $stateProvider
+//                .state('admin', {
+//                    url: '/admin',
+//                    template: '<ui-view></ui-view>',
+//                    abstract: true,
+//                    title: 'Admin',
+//                    sidebarMeta: {
+//                        icon: 'ion-settings',
+//                        order: 3
+//                    }
+//                });
+//    }
 
 })();
