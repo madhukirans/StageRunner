@@ -5,7 +5,7 @@
 (function () {
   'use strict';
 
-  angular.module('BlurAdmin.pages.admin.AddReleases', [])
+  angular.module('BlurAdmin.pages.admin.addreleases', [])
     .config(routeConfig);
 
   /** @ngInject */
@@ -13,7 +13,7 @@
     $stateProvider
       .state('admin.AddReleases', {
         url: '/AddReleases',
-        templateUrl: 'app/pages/admin/AddReleases/AddReleases.html',
+        templateUrl: 'app/pages/admin/addReleases/addReleases.html',
           title: 'AddReleases',
           sidebarMeta: {
             icon: 'ion-ios-pulse',

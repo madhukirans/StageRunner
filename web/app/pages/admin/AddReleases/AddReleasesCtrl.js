@@ -5,7 +5,7 @@
 (function () {
     'use strict';
 
-    angular.module('BlurAdmin.pages.admin.AddReleases').controller('AddReleasesCtrl', AddReleasesCtrl);
+    angular.module('BlurAdmin.pages.admin.addreleases').controller('AddReleasesCtrl', AddReleasesCtrl);
     
 
     /** @ngInject */

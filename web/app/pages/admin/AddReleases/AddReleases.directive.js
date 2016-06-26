@@ -5,16 +5,16 @@
 (function () {
   'use strict';
 
-  angular.module('BlurAdmin.pages.admin.AddReleases')
-      .directive('AddReleases', Admin);
+  angular.module('BlurAdmin.pages.admin.addreleases')
+      .directive('addReleases', addReleases);
 
 
   /** @ngInject */
-  function Admin() {
+  function addReleases() {
     return {
       restrict: 'E',
       controller: 'AddReleasesCtrl',
-      templateUrl: 'app/pages/admin/AddReleases.html'
+      templateUrl: 'app/pages/admin/addReleases/addReleases.html'
     };
   }
 })();
