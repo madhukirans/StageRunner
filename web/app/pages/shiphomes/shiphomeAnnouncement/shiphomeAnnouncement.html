@@ -1,0 +1,108 @@
+<div ba-panel      
+     ba-panel-title="Select Stage."
+     ba-panel-class="with-scroll">
+    <div class="form-horizontal" ng-controller="ShiphomeAnnouncementCtrl as releases">
+        <div class="form-group">
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-1 control-label">Releases</label>
+                <div class="col-sm-2">
+                    <select id="inputEmail3" ng-model="selectedRelease" class="form-control selectpicker" data-live-search="true" ng-change="selectStage()">    
+                        <option value="">---Please select---</option>
+                        <option ng-repeat="r in releases" ng-value="r.releaseName">{{r.releaseName}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail4" class="col-sm-1 control-label">Stage</label>                
+                <div class="col-sm-2">
+                    <select id="inputEmail4" ng-model="selectedStage" class="form-control selectpicker" data-live-search="true" ng-change="displayShiphomes()" >  
+                        <option value="">---Please select---</option>
+                        <option ng-repeat="stage in stages" ng-value="stage.id">{{stage.stageName}}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!--        <table class="table-bordered">
+                    <tr ng-repeat="shiphome in shiphomes"> 
+                        <td>{{shiphome.product}}:</td>
+                        <td>
+                            {{shiphome.shiphomeloc}}
+                        </td>
+                    </tr>
+                </table>-->
+
+        <div class="form-group">
+            <div class="add-row-editable-table">
+                <button class="btn btn-primary" ng-click="addShiphome()">Add New Shiphome</button>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="shiphomeDetails">Shiphome Details</label>
+            <hr>
+            <table id="shiphomeDetails" class="table table-bordered table-hover table-condensed">
+                <tr class="tableheader ">
+                    <td>Index</td>
+                    <td>Product</td>
+                    <td>Platform</td>
+                    <td>Shiphome</td>
+                    <td>ShiphomeLoc</td>
+                    <td>Manifest</td>
+                    <td>Actions</td>
+                </tr>
+                <tr ng-repeat="shiphome in shiphomes" class="editable-row">
+                    <td>
+                        {{$index}}
+                    </td>
+                    <td>
+                        <span editable-select="shiphome.product.productName" e-name="productName" e-form="rowform" e-selectpicker
+                              e-ng-options="s.productName as s.productName for s in products">
+                            {{selectProduct(shiphome.product)}}
+                        </span>
+                    </td>
+                    <td class="select-td">
+                        <span editable-select="shiphome.platform.name" e-name="name" e-form="rowform" e-selectpicker
+                              e-ng-options="s.name as s.name for s in platforms">
+                            {{selectPlatform(shiphome.platform)}}
+                        </span>
+                    </td>
+                    <td>
+                        <span editable-text="shiphome.shiphomenames" e-name="shiphomenames" e-form="rowform" e-required>
+                            {{shiphome.shiphomenames}}
+                        </span>
+                    </td>
+                    <td class="select-td">
+                        <span editable-text="shiphome.shiphomeloc" e-name="shiphomeloc" e-form="rowform" e-required>
+                            {{shiphome.shiphomeloc}}
+                        </span>
+                    </td>
+                    <td class="select-td">
+                        <span editable-text="shiphome.manifest" e-name="manifest" onshow="loadGroups()" e-form="rowform">
+                            {{shiphome.manifest}}
+                        </span>
+                    </td>
+                    <td>
+                        <form editable-form name="rowform" ng-show="rowform.$visible" class="form-buttons form-inline"  shown="inserted == shiphome" onaftersave="persistShiphome($index, rowform)">
+                            <button type="submit" ng-disabled="rowform.$waiting" class="btn btn-primary editable-table-button btn-xs" >
+                                Save
+                            </button>
+                            <button type="button" ng-disabled="rowform.$waiting" ng-click="rowform.$cancel()" class="btn btn-default editable-table-button btn-xs">
+                                Cancel
+                            </button>
+                        </form>
+                        <div class="buttons" ng-show="!rowform.$visible">
+                            <button class="btn btn-primary editable-table-button btn-xs" ng-click="rowform.$show()">Edit</button>
+                            <button class="btn btn-danger editable-table-button btn-xs" ng-click="removeUser($index)">Delete</button>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <br>
+        <br>Releases:  {{selectedRelease}}
+        <br>Stages: {{selectedStage}}
+        <br>rowform: <pre>{{tempshiphomedisplay| json}} </pre>
+    </div>
+</div>                        

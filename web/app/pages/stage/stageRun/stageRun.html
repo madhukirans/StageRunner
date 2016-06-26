@@ -1,0 +1,19 @@
+<div ng-controller="StageRunCtrl as products" ba-panel-class="with-scroll">    
+    Products:    
+
+    <select ng-model="selectedProduct" class="form-control selectpicker" data-live-search="true" ng-init="'Blank'" class="list-inline" ng-change="selectProducts()">
+        <option value="">---Please select---</option>
+        <option ng-repeat="product in products" ng-value="product.productName">{{product.productName}}</option>
+    </select>
+
+    TestUnits:
+
+    <select ng-model="selectedTestUnit" class="form-control selectpicker" data-live-search="true" ng-init="'Blank'" ng-change="selectTestUnits()">
+        <option ng-repeat="testunit in testUnits" ng-value="testunit.id">{{testunit.testUnitName}}</option>
+    </select>        
+    <br>
+    <h1> <font color="red">This page is not yet ready. Click on Shiphomes on left panel.</font></h1>
+    <br>
+    <br>Product:  {{selectedProduct}}
+    <br>TestUnit: {{selectedTestUnit}}
+</div>  

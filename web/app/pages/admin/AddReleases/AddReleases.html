@@ -1,0 +1,17 @@
+<div
+    ba-panel
+    ba-panel-title="Select Stages"
+    ba-panel-class="with-scroll">
+
+    <div class="form-horizontal" ng-controller="AddReleasesCtrl">
+        <div class="form-group">
+            <label for="inputid3" class="col-sm-1 control-label">Releases</label>
+            <div class="col-sm-2">
+                <select id="inputid3" ng-model="selectedRelease" class="form-control selectpicker" data-live-search="true" ng-change="selectStage()">    
+                    <option value="">---Please select---</option>
+                    <option ng-repeat="release in releases" ng-value="release.releaseName">{{release.releaseName}}</option>
+                </select>
+            </div>
+        </div>        
+    </div>
+</div>
