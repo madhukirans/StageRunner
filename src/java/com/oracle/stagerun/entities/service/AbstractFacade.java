@@ -6,7 +6,9 @@
 package com.oracle.stagerun.entities.service;
 
 import java.util.List;
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
+import javax.ws.rs.core.Response;
 
 /**
  *
@@ -22,8 +24,12 @@ public abstract class AbstractFacade<T> {
 
     protected abstract EntityManager getEntityManager();
 
-    public void create(T entity) {
-        getEntityManager().persist(entity);
+    public Response create(T entity) {
+        
+            getEntityManager().persist(entity);
+            Response r =  Response.ok(entity).build();
+            System.out.println("Add Successful - x" + r.toString() );
+            return r;        
     }
 
     public void edit(T entity) {
@@ -60,5 +66,5 @@ public abstract class AbstractFacade<T> {
         javax.persistence.Query q = getEntityManager().createQuery(cq);
         return ((Long) q.getSingleResult()).intValue();
     }
-    
+
 }

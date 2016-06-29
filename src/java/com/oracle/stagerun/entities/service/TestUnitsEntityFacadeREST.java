@@ -20,6 +20,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  *
@@ -39,8 +40,8 @@ public class TestUnitsEntityFacadeREST extends AbstractFacade<TestUnitsEntity> {
     @POST
     @Override
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public void create(TestUnitsEntity entity) {
-        super.create(entity);
+    public Response create(TestUnitsEntity entity) {
+        return super.create(entity);
     }
 
     @PUT

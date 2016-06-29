@@ -19,6 +19,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  *
@@ -38,8 +39,8 @@ public class PlatformEntityFacadeREST extends AbstractFacade<PlatformEntity> {
     @POST
     @Override
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public void create(PlatformEntity entity) {
-        super.create(entity);
+    public Response create(PlatformEntity entity) {
+        return super.create(entity);
     }
 
     @PUT

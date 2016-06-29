@@ -20,6 +20,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  *
@@ -39,8 +40,19 @@ public class ReleasesEntityFacadeREST extends AbstractFacade<ReleasesEntity> {
     @POST
     @Override
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public void create(ReleasesEntity entity) {
-        super.create(entity);
+    public Response create(ReleasesEntity entity) {
+        ReleasesEntity e = em.find(ReleasesEntity.class, entity.getReleaseName());
+        System.out.println("Find e:" + e);
+
+        if (e == null) {
+            return super.create(entity);             
+        } else {
+            System.out.println("Find e -1:" + e);
+            //ErrorReporting report = new ErrorReporting(Response.Status.CONFLICT);
+            //report.setResponse();
+            Response r = Response.status(Response.Status.CONFLICT).tag("Madhutag").entity("Exception: Record already exists [" + e + "]").build();
+            return r;
+        }
     }
 
     @PUT
@@ -91,5 +103,5 @@ public class ReleasesEntityFacadeREST extends AbstractFacade<ReleasesEntity> {
     protected EntityManager getEntityManager() {
         return em;
     }
-    
+
 }

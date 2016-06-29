@@ -1,4 +1,4 @@
- /*
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -21,6 +21,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  *
@@ -40,8 +41,13 @@ public class StageEntityFacadeREST extends AbstractFacade<StageEntity> {
     @POST
     @Override
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public void create(StageEntity entity) {
-        super.create(entity);
+    public Response create(StageEntity entity) {
+        System.out.println("StageEntiry:" + entity);
+        em.persist(entity);
+        Response r = Response.ok(entity).build();
+        System.out.println(" StageEntiry Add Successful -" + r.toString());
+        return r;
+        //return super.create(entity);
     }
 
     @PUT
@@ -70,11 +76,11 @@ public class StageEntityFacadeREST extends AbstractFacade<StageEntity> {
     public List<StageEntity> findAll() {
         return super.findAll();
     }
-    
+
     @GET
     @Path("release/{release}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public List<StageEntity> findByRelease(@PathParam ("release") String release) {
+    public List<StageEntity> findByRelease(@PathParam("release") String release) {
         TypedQuery<StageEntity> query = em.createNamedQuery("StageEntity.findByRelease", StageEntity.class);
         query.setParameter("srelease", release);
         return query.getResultList();
@@ -98,5 +104,5 @@ public class StageEntityFacadeREST extends AbstractFacade<StageEntity> {
     protected EntityManager getEntityManager() {
         return em;
     }
-    
+
 }

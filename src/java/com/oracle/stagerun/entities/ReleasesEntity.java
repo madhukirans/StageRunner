@@ -104,9 +104,9 @@ public class ReleasesEntity implements Serializable {
 //        return true;
 //    }
 //
-//    @Override
-//    public String toString() {
-//        return "com.oracle.stagerun.entities.ReleasesEntity[ releaseName=" + releaseName + " ]";
-//    }
-//    
+    @Override
+    public String toString() {
+        return "com.oracle.stagerun.entities.ReleasesEntity[ releaseName=" + releaseName + " ]";
+    }
+    
 }

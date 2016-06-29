@@ -135,7 +135,7 @@ public class StageEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "com.oracle.stagerun.entities.StageEntity[ id=" + id + " ]";
+        return "com.oracle.stagerun.entities.StageEntity[ id=" + id + ", stageName:" + stageName + ", releaseEntity:" + releaseEntity +"]";
     }
     
 }

@@ -6,86 +6,72 @@
     'use strict';
 
     angular.module('BlurAdmin.pages.admin.addreleases').controller('AddReleasesCtrl', AddReleasesCtrl);
-    
+
 
     /** @ngInject */
-    function AddReleasesCtrl($scope, $http) {
+    function AddReleasesCtrl($scope, $filter, $http, $q, editableOptions, editableThemes) {
 
-        $scope.shiphomes = {};
-        $scope.tempShiphomes = {};
-        $scope.jsonurl = "";
+
 
         $scope.releases = [];
         $http.get("web/releases").success(function (data) {
-            $scope.releases = data;
+            //$scope.releases = data;
+            for (var key in data)
+                $scope.releases.push(data[key]);
         });
+        $scope.smartTablePageSize = 10;
+        // $scope.editableTableData = $scope.releases.sslice(0, 9);
 
-        $scope.stages = [];
-        $scope.selectStage = function () {
-            $http.get("web/stages/release/" + $scope.selectedRelease).success(function (data) {
-                $scope.stages = data;
+        $scope.addRelease = function () {
+            $scope.inserted = {
+                "releaseName": "",
+                "desc1": ""
+            };
+            $scope.releases.push($scope.inserted);
+        };
+
+        $scope.persistRelease = function (index, rowform) {
+            $scope.tempReleases = $scope.releases[index];
+            var d = $q.defer();
+//            $http({
+//                method: "POST",
+//                url: "web/releases",
+//                data: $scope.releases[index],
+//                transformResponse: function (data, header) {
+//                        console.log("transformResponse, header:", header());
+//                        console.log("transformResponse, data:", data);                        
+//                        return { data: angular.fromJson(data) };
+//                    }
+//            }).then(function (res) {     //first function "success"
+//                console.log(res.data);
+//            }, function (err) {          //second function "error"
+//                console.log("err:" + err + ":" +  err.msg + ":" + err.status);
+//                console.log("data:" + err.data +":" + err.msg +":" + err.status);
+//               // for (var key in angular)
+//                //    console.log("angular:" + key + "---" + angular[key]);
+//            });
+
+            $http.post("web/releases", $scope.releases[index]).success(function (data, status, headers, config)
+            {
+                //console.log("madhu:" + "data:" + data + " Status:" + status + " headers:" + headers + " config:" + config);
+                if (status === 200) {
+                    rowform.$setError(rowform.saveButton, "Success: Record added successfully");
+                } else {
+                    rowform.$setError(rowform.saveButton, "Error occurred while saving record: staus : " + status);
+                    return $q.reject("Error");
+                }
+            }).error(function (data, status, header, config) {
+                //console.log("in Error:" + " Status:" + status + " headers:" + header + " config:" + config + "data:" + data);
+                rowform.$setError(rowform.saveButton, "Error: Problem while adding record");
+                return $q.reject('Server error!');
             });
+
+            return d.promice;
         };
 
 
-        $scope.selectProducts = function () {
-            $http.get("web/shiphomes/stage/" + $scope.selectedStage).success(function (data) {
-                $scope.shiphomes = data;
-                $scope.tempShiphomes = data;
-
-                $scope.jsonurl = window.location.protocol + "//" + window.location.host + "/sr/web/shiphomes/stage/" + $scope.selectedStage;
-                $scope.products = {};
-                $scope.platforms = {};
-                for (var key in $scope.shiphomes) {
-                    if ($scope.shiphomes.hasOwnProperty(key)) {
-                        console.log($scope.shiphomes[key].id);
-                        $scope.products [$scope.shiphomes[key].product.productName] = $scope.shiphomes[key].product;
-                        $scope.platforms [$scope.shiphomes[key].platform.name] = $scope.shiphomes[key].platform;
-                    }
-                }
-
-                console.log("Products:" + $scope.products);
-                console.log("Platforms:" + $scope.platforms);
-            });
-        };
-
-
-        $scope.displayShiphomes = function () {
-            $scope.tempShiphomes = {};
-
-            console.log(" selected product:" + $scope.selectedProduct +
-                    " selected platform:" + $scope.selectedPlatform + "Boolean:" + ($scope.selectedProduct) + ($scope.selectedPlatform));
-
-            if (!$scope.selectedProduct && !$scope.selectedPlatform) {
-                $scope.tempShiphomes = $scope.shiphomes;
-            } 
-            else if ($scope.selectedProduct && !$scope.selectedPlatform) {
-                for (var key in $scope.shiphomes) {
-                    if ($scope.shiphomes.hasOwnProperty(key)) {
-                        if ($scope.shiphomes[key].product.productName === $scope.selectedProduct)
-                            $scope.tempShiphomes[key] = $scope.shiphomes[key];
-                    }
-                }
-            }
-            else if (!$scope.selectedProduct && $scope.selectedPlatform) {
-                for (var key in $scope.shiphomes) {
-                    if ($scope.shiphomes.hasOwnProperty(key)) {
-                        if ($scope.shiphomes[key].platform.name  === $scope.selectedPlatform)
-                            $scope.tempShiphomes[key] = $scope.shiphomes[key];
-                    }
-                }
-            }
-            else  {
-                for (var key in $scope.shiphomes) {
-                    if ($scope.shiphomes.hasOwnProperty(key)) {
-                        if ($scope.shiphomes[key].product.productName === $scope.selectedProduct && $scope.shiphomes[key].platform.name  === $scope.selectedPlatform)
-                            $scope.tempShiphomes[key] = $scope.shiphomes[key];
-                    }
-                }
-            }          
-            
-            
-        };
+        // editableOptions.theme = 'bs3';
+        // editableThemes['bs3'].submitTpl = '<button type="submit" class="btn btn-primary btn-with-icon"><i class="ion-checkmark-round"></i></button>';
+        // editableThemes['bs3'].cancelTpl = '<button type="button" ng-click="$form.$cancel()" class="btn btn-default btn-with-icon"><i class="ion-close-round"></i></button>';
     }
-    
 })();

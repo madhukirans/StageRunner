@@ -65,7 +65,7 @@
             return selected.length ? selected[0].name : 'Not set';
         };
 
-        $scope.removeUser = function (index) {
+        $scope.removeShiphome = function (index) {
             $http.delete("web/shiphomes/" + $scope.shiphomes[index].id)
                     .success(function (data, status, headers, config) {
                         //$scope.PutDataResponse = data;
