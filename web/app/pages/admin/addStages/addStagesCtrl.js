@@ -31,7 +31,7 @@
             $scope.inserted = {
                 "stageName": "",
                 "comments": "",
-                "releaseEntity":{"releaseName":$scope.selectedRelease}
+                "releaseEntity": {"releaseName": $scope.selectedRelease}
             };
             $scope.stages.push($scope.inserted);
         };
@@ -39,29 +39,48 @@
 
         $scope.persistStage = function (index, rowform) {
             $scope.tempStages = $scope.stages[index];
-            
+
             //$scope.stages[index].releaseEntity = $scope.selectedRelease;
             //var d = $q.defer();
+            if ($scope.tempStages.id >= 0) {
+                $http.put("web/stages/" + $scope.stages[index].id, $scope.stages[index])
+                        .success(function (data, status, headers, config) {
+                            //$scope.PutDataResponse = data;
+                            //alert($scope.PostDataResponse);
+                        }).error(function (data, status, header, config) {
+                    //console.log("in Error:" + " Status:" + status + " headers:" + header + " config:" + config + "data:" + data);
+                    rowform.$setError(rowform.saveButton, "Error: Problem while editing record");
+                    return $q.reject('Server error!');
+                });
+            } else {
+                $http.post("web/stages", $scope.stages[index]).success(function (data, status, headers, config)
+                {
+                    //console.log("madhu:" + "data:" + data + " Status:" + status + " headers:" + headers + " config:" + config);
+                    if (status === 200) {
+                        rowform.$setError(rowform.saveButton, "Success: Record added successfully");
+                    } else {
+                        rowform.$setError(rowform.saveButton, "Error occurred while saving record: staus : " + status);
+                        return $q.reject("Error");
+                    }
+                }).error(function (data, status, header, config) {
+                    //console.log("in Error:" + " Status:" + status + " headers:" + header + " config:" + config + "data:" + data);
+                    rowform.$setError(rowform.saveButton, "Error: Problem while adding record");
+                    return $q.reject('Server error!');
+                });
+            }
 
-            $http.post("web/stages", $scope.stages[index]).success(function (data, status, headers, config)
-            {
-                //console.log("madhu:" + "data:" + data + " Status:" + status + " headers:" + headers + " config:" + config);
-                if (status === 200) {
-                    rowform.$setError(rowform.saveButton, "Success: Record added successfully");
-                } else {
-                    rowform.$setError(rowform.saveButton, "Error occurred while saving record: staus : " + status);
-                    return $q.reject("Error");
-                }
-            }).error(function (data, status, header, config) {
-                //console.log("in Error:" + " Status:" + status + " headers:" + header + " config:" + config + "data:" + data);
-                rowform.$setError(rowform.saveButton, "Error: Problem while adding record");
-                return $q.reject('Server error!');
-            });
-
-           // return d.promice;
+            // return d.promice;
         };
 
-
+        $scope.removeStage = function (index) {
+            $http.delete("web/stages/" + $scope.stages[index].id)
+                    .success(function (data, status, headers, config) {
+                        //$scope.PutDataResponse = data;
+                        //alert($scope.PostDataResponse);
+                        console.log("record deleted");
+                    });
+            $scope.stages.splice(index, 1);
+        };
         // editableOptions.theme = 'bs3';
         // editableThemes['bs3'].submitTpl = '<button type="submit" class="btn btn-primary btn-with-icon"><i class="ion-checkmark-round"></i></button>';
         // editableThemes['bs3'].cancelTpl = '<button type="button" ng-click="$form.$cancel()" class="btn btn-default btn-with-icon"><i class="ion-close-round"></i></button>';

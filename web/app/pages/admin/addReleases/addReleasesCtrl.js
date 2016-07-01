@@ -33,41 +33,49 @@
         $scope.persistRelease = function (index, rowform) {
             $scope.tempReleases = $scope.releases[index];
             var d = $q.defer();
-//            $http({
-//                method: "POST",
-//                url: "web/releases",
-//                data: $scope.releases[index],
-//                transformResponse: function (data, header) {
-//                        console.log("transformResponse, header:", header());
-//                        console.log("transformResponse, data:", data);                        
-//                        return { data: angular.fromJson(data) };
-//                    }
-//            }).then(function (res) {     //first function "success"
-//                console.log(res.data);
-//            }, function (err) {          //second function "error"
-//                console.log("err:" + err + ":" +  err.msg + ":" + err.status);
-//                console.log("data:" + err.data +":" + err.msg +":" + err.status);
-//               // for (var key in angular)
-//                //    console.log("angular:" + key + "---" + angular[key]);
-//            });
 
-            $http.post("web/releases", $scope.releases[index]).success(function (data, status, headers, config)
-            {
-                //console.log("madhu:" + "data:" + data + " Status:" + status + " headers:" + headers + " config:" + config);
-                if (status === 200) {
-                    rowform.$setError(rowform.saveButton, "Success: Record added successfully");
-                } else {
-                    rowform.$setError(rowform.saveButton, "Error occurred while saving record: staus : " + status);
-                    return $q.reject("Error");
-                }
-            }).error(function (data, status, header, config) {
-                //console.log("in Error:" + " Status:" + status + " headers:" + header + " config:" + config + "data:" + data);
-                rowform.$setError(rowform.saveButton, "Error: Problem while adding record");
-                return $q.reject('Server error!');
-            });
+            if ($scope.tempReleases.releaseName !== "") {
+                $http.put("web/releases/" + $scope.releases[index].releaseName, $scope.releases[index])
+                        .success(function (data, status, headers, config) {
+                            //$scope.PutDataResponse = data;
+                            //alert($scope.PostDataResponse);
+                        }).error(function (data, status, header, config) {
+                    //console.log("in Error:" + " Status:" + status + " headers:" + header + " config:" + config + "data:" + data);
+                    rowform.$setError(rowform.saveButton, "Error: Problem while editing record");
+                    return $q.reject('Server error!');
+                });
+            } else {
+
+                $http.post("web/releases", $scope.releases[index]).success(function (data, status, headers, config)
+                {
+                    //console.log("madhu:" + "data:" + data + " Status:" + status + " headers:" + headers + " config:" + config);
+                    if (status === 200) {
+                        rowform.$setError(rowform.saveButton, "Success: Record added successfully");
+                    } else {
+                        rowform.$setError(rowform.saveButton, "Error occurred while saving record: staus : " + status);
+                        return $q.reject("Error");
+                    }
+                }).error(function (data, status, header, config) {
+                    //console.log("in Error:" + " Status:" + status + " headers:" + header + " config:" + config + "data:" + data);
+                    rowform.$setError(rowform.saveButton, "Error: Problem while adding record");
+                    return $q.reject('Server error!');
+                });
+            }
 
             return d.promice;
         };
+
+        $scope.removeRelease = function (index) {
+            $http.delete("web/releases/" + $scope.releases[index].releaseName)
+                    .success(function (data, status, headers, config) {
+                        //$scope.PutDataResponse = data;
+                        //alert($scope.PostDataResponse);
+                        console.log("record deleted");
+                    });
+            $scope.releases.splice(index, 1);
+        };
+
+
 
 
         // editableOptions.theme = 'bs3';

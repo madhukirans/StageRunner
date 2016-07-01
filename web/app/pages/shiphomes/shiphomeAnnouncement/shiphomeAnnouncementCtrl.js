@@ -70,7 +70,7 @@
                     .success(function (data, status, headers, config) {
                         //$scope.PutDataResponse = data;
                         //alert($scope.PostDataResponse);
-                        console.delete("record deleted");
+                        console.log("record deleted");
                     });
             $scope.shiphomes.splice(index, 1);
 
