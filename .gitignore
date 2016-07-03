@@ -4,3 +4,6 @@
 /web/bower_components/
 /node_modules/
 /bower_components/
+/web1/
+/web1-dev-release/
+/target/

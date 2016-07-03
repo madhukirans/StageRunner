@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-var app = angular.module('myApp',['smart-table']);
+var app = angular.module('myApp',['smart-table', 'angular-progress-button-styles']);
 app.controller('paginationCtrl', ['$scope', '$http', function (scope, http) {
    var ctrl = this;
 
@@ -25,5 +25,9 @@ app.controller('paginationCtrl', ['$scope', '$http', function (scope, http) {
             ctrl.isLoading = false;
         });
     };
+    
+    scope.progressFunction = function() {
+            return $timeout(function() {}, 3000);
+        };
 }]);
 

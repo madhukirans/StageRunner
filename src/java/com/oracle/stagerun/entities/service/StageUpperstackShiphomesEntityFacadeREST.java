@@ -5,12 +5,14 @@
  */
 package com.oracle.stagerun.entities.service;
 
+import com.oracle.stagerun.entities.ProductsEntity;
 import com.oracle.stagerun.entities.StageEntity;
 import com.oracle.stagerun.entities.StageUpperstackShiphomesEntity;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -41,34 +43,45 @@ public class StageUpperstackShiphomesEntityFacadeREST extends AbstractFacade<Sta
     @POST
     @Override
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public Response create(StageUpperstackShiphomesEntity entity) {        
-        return super.create(entity);        
+    public Response create(StageUpperstackShiphomesEntity entity) {
+        return super.create(entity);
     }
-    
+
     @GET
     @Path("stage/{stageid}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public List<StageUpperstackShiphomesEntity> findByStageId(@PathParam ("stageid") Integer stageid) {
+    public List<StageUpperstackShiphomesEntity> findByStageId(@PathParam("stageid") Integer stageid) {
         TypedQuery<StageUpperstackShiphomesEntity> query = em.createNamedQuery("StageUpperstackShiphomesEntity.findByStageId", StageUpperstackShiphomesEntity.class);
-        query.setParameter("stageid", stageid);       
+        query.setParameter("stageid", stageid);
         return query.getResultList();
     }
-    
+
     @GET
     @Path("stage/{stageid}/product/{productName}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public List<StageUpperstackShiphomesEntity> findByStageIdAndProduct(@PathParam ("stageid") Integer stageid, @PathParam ("productName") String productName) {
+    public List<StageUpperstackShiphomesEntity> findByStageIdAndProduct(@PathParam("stageid") Integer stageid, @PathParam("productName") String productName) {
         TypedQuery<StageUpperstackShiphomesEntity> query = em.createNamedQuery("StageUpperstackShiphomesEntity.findByStageAndProduct", StageUpperstackShiphomesEntity.class);
         query.setParameter("stageid", stageid);
         query.setParameter("productname", productName);
         return query.getResultList();
     }
 
+    @GET
+    @Path("products/{stageId}")
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public List<ProductsEntity> findProductsByStage(@PathParam("stageId") Integer stageId) {
+        TypedQuery query = em.createNamedQuery("StageUpperstackShiphomesEntity.findProductsStageId", ProductsEntity.class);
+        StageEntity sEntity = new StageEntity();
+        sEntity.setId(stageId);
+        query.setParameter("stageid", sEntity);
+        return query.getResultList();        
+    }
+
     @PUT
     @Path("{id}")
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public void edit(@PathParam("id") Integer id, StageUpperstackShiphomesEntity entity) {
-        
+
         super.edit(entity);
         System.out.println("Edit Successful" + id + entity.toString());
     }
@@ -111,5 +124,5 @@ public class StageUpperstackShiphomesEntityFacadeREST extends AbstractFacade<Sta
     protected EntityManager getEntityManager() {
         return em;
     }
-    
+
 }

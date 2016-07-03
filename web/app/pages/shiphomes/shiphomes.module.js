@@ -17,12 +17,10 @@
                     abstract: true,
                     title: 'Shiphomes',
                     sidebarMeta: {
-                        icon: 'ion-gear-a',
+                        icon: 'ion-briefcase',
                         order: 2
                     }
                 });
     }
-    
-    
 
 })();

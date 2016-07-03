@@ -5,7 +5,7 @@
 (function () {
     'use strict';
 
-    angular.module('BlurAdmin.pages.stage', [])
+    angular.module('BlurAdmin.pages.stage', ['BlurAdmin.pages.stage.stagerun'])
             .config(routeConfig);
 
     /** @ngInject */
@@ -13,10 +13,11 @@
         $stateProvider
                 .state('stage', {
                     url: '/stage',
-                    templateUrl: 'app/pages/stage/stage.html',
-                    title: 'Stage',
+                    template: '<ui-view></ui-view>',
+                    abstract: true,
+                    title: 'StageRun',
                     sidebarMeta: {
-                        icon: 'ion-android-home',
+                        icon: 'ion-android-bicycle',
                         order: 1
                     }
                 });

@@ -5,16 +5,16 @@
 (function () {
   'use strict';
 
-  angular.module('BlurAdmin.pages.shiphomes.announcement', [])
+  angular.module('BlurAdmin.pages.stage.stagerun', [])
     .config(routeConfig);
 
   /** @ngInject */
   function routeConfig($stateProvider) {
     $stateProvider
-      .state('shiphomes.announcement', {
-        url: '/shiphomeAnnouncement',
-        templateUrl: 'app/pages/shiphomes/shiphomeAnnouncement/shiphomeAnnouncement.html',
-          title: 'Announcement',
+      .state('stage.stageRun', {
+        url: '/stageRun',
+        templateUrl: 'app/pages/stage/stageRun/stageRun.html',
+          title: 'TriggerStage',
           sidebarMeta: {
             icon: 'ion-edit',
             order: 1

@@ -4,21 +4,28 @@
  */
 (function () {
     'use strict';
-
     angular.module('BlurAdmin.pages.admin.addreleases').controller('AddReleasesCtrl', AddReleasesCtrl);
 
 
     /** @ngInject */
-    function AddReleasesCtrl($scope, $filter, $http, $q, editableOptions, editableThemes) {
+    function AddReleasesCtrl($scope, $filter, $http, $q, $timeout, editableOptions, editableThemes) {
 
 
-
-        $scope.releases = [];
-        $http.get("web/releases").success(function (data) {
+        
+        
+        $scope.reloadTable = function() {
+            $scope.releases = [];
+            $http.get("web/releases").success(function (data) {
             //$scope.releases = data;
             for (var key in data)
                 $scope.releases.push(data[key]);
-        });
+            });
+            //return $timeout(function() {}, 3000);
+        };
+        
+        $scope.reloadTable();
+        
+        
         $scope.smartTablePageSize = 10;
         // $scope.editableTableData = $scope.releases.sslice(0, 9);
 
@@ -75,7 +82,7 @@
             $scope.releases.splice(index, 1);
         };
 
-
+        
 
 
         // editableOptions.theme = 'bs3';
