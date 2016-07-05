@@ -5,16 +5,16 @@
 (function () {
   'use strict';
 
-  angular.module('BlurAdmin.pages.admin.addStages', [])
+  angular.module('BlurAdmin.pages.admin.addTestUnits', [])
     .config(routeConfig);
 
   /** @ngInject */
   function routeConfig($stateProvider) {
     $stateProvider
-      .state('admin.AddStages', {
-        url: '/AddStages',
-        templateUrl: 'app/pages/admin/addStages/addStages.html',
-          title: 'AddStages',
+      .state('admin.addTestUnits', {
+        url: '/addTestUnits',
+        templateUrl: 'app/pages/admin/addTestUnits/addTestUnits.html',
+          title: 'AddTestUnits',
           sidebarMeta: {
             icon: 'ion-ios-pulse',
             order: 2

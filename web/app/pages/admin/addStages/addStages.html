@@ -3,27 +3,25 @@
      ba-panel-class="with-scroll">
     <div class="form-horizontal" ng-controller="AddStagesCtrl">
         <div class="form-group">
-            
-            <label for="inputEmail3" class="col-sm-1 control-label">Releases</label>
             <div class="col-sm-2">
-                <select id="inputEmail3" ng-model="selectedRelease" class="form-control selectpicker" data-live-search="true" ng-change="selectStage()">    
-                    <option value="">---Please select---</option>
+                <select ng-model="selectedRelease" class="form-control selectpicker" ng-change="selectStage()">    
+                    <option value="">---Select Release---</option>
                     <option ng-repeat="r in releases" ng-value="r.releaseName">{{r.releaseName}}</option>
                 </select>
             </div>
             
             <button  for="table1" class="btn btn-primary" ng-click="addStage()">Add New Stage</button>
-            <table name="table1" st-table="stages" class="table table-striped table-bordered table-hover" >
+            <table name="table1" st-table="stages" class="table table-bordered table-hover">
                 <thead>
-                    <tr class="sortable ">
-                        <th>Index</td>
-                        <th>Stage Name</td>
-                        <th>Description</td>
-                        <th>Actions</td>
+                    <tr class="sortable header-row black-muted-bg">
+                        <th class="table-id">Index</th>
+                        <th>Stage Name</th>
+                        <th>Description</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="stage in stages" class="editable-tr-wrap">
+                    <tr ng-repeat="stage in stages" class="editable-row">
                         <td class="table-id">
                             {{$index}}
                         </td>                    

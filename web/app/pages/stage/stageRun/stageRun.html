@@ -1,40 +1,81 @@
 <div ba-panel      
      ba-panel-title="Trigger Stage."
      ba-panel-class="with-scroll">
-    <div class="form-horizontal" ng-controller="StageRunCtrl as products" >    
-        <div class="form-group">
-            <div class="form-group">
-            <label for="inputEmail3" class="col-sm-2 control-label">Releases</label>
-            <div class="col-sm-2">
-                <select id="inputEmail3" ng-model="selectedRelease" class="form-control selectpicker" data-live-search="true" ng-change="getStages()">    
-                    <option value="">---Please select---</option>
-                    <option ng-repeat="r in releases" ng-value="r.releaseName">{{r.releaseName}}</option>
-                </select>
-            </div>
-            </div>
-            
-            <div class="form-group">
-            <label for="inputEmail4" class="col-sm-2 control-label">Stages</label>
-            <div class="col-sm-2">
-                <select id="inputEmail4" ng-model="selectedStage" class="form-control selectpicker" data-live-search="true" ng-change="getProducts()">    
-                    <option value="">---Please select---</option>
-                    <option ng-repeat="r in stages" ng-value="r.id">{{r.stageName}}</option>
-                </select>
-            </div>
-            </div>
-            
-            <div class="form-group">
-            <label for="inputEmail5" class="col-sm-2 control-label">Products</label>
-            <div class="col-sm-2">
-                <select id="inputEmail5" ng-model="selectedProduct" class="form-control selectpicker" data-live-search="true" ng-change="getProducts()">    
-                    <option value="">---Please select---</option>
-                    <option ng-repeat="r in products" ng-value="r.id">{{r.productName}}</option>
-                </select>
-            </div>
-            </div>
-            
-            <button  for="table1" class="btn btn-primary" ng-click="addRelease()">TriggerRegress</button>  
+    <div class="row form-inline" ng-controller="StageRunCtrl as products" >
+        <select ng-model="selectedRelease" class="form-control selectpicker" title="Standard Select" ng-change="getStages()" selectpicker>    
+            <option value="">---Select Release---</option>
+            <option ng-repeat="r in releases" ng-value="r.releaseName">{{r.releaseName}}</option>
+        </select>            
+        <select ng-model="selectedStage" class="form-control selectpicker" title="Standard Select" ng-change="getProducts()" selectpicker>    
+            <option value="">---Select Stage---</option>
+            <option ng-repeat="r in stages" ng-value="r.id">{{r.stageName}}</option>
+        </select>
+        <select ng-model="selectedProduct" class="form-control selectpicker" title="Standard Select" ng-change="getTestUnits()" selectpicker>    
+            <option value="">---Select Products---</option>
+            <option ng-repeat="r in products" ng-value="r.id">{{r.productName}}</option>
+        </select>
+        <select ng-model="selectedTestUnit" class="form-control selectpicker" title="Standard Select" ng-change="getRegressDetails()" selectpicker>    
+            <option value="">---Select TestUnit---</option>
+            <option ng-repeat="r in testunits" ng-value="r.id">{{r.testUnitName}}</option>
+        </select>           
+        <button  for="table1" class="btn btn-primary" ng-click="addRelease()">TriggerRegress</button> 
+
+        <hr> 
+        <div class="farm-group">
+            <table  class="table table-bordered table-hover" >
+                <thead>
+                    <tr class="sortable header-row black-muted-bg">
+                        <th class="table-id">#</th>
+                        <th>TestUnitName</th>
+                        <th>Status</th>
+                        <th>FarmrunId</th>
+                        <th>StartTime</th>
+                        <th>EndTime</th>
+                        <th>WorkLoc</th>
+                        <th>SucCount</th>
+                        <th>DifCount</th>
+                        <th>UploadStatus</th>
+                        <th>GtlfLoc</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="r in regressdetails" class="editable-row">
+                        <td class="table-id">
+                            {{$index}}
+                        </td>                    
+                        <td>                   
+                            {{r.testunitId.testUnitName}}                        
+                        </td>
+                        <td>                   
+                            {{r.status}}                        
+                        </td>
+                        <td>                   
+                            {{r.farmrunId}}                        
+                        </td>
+                        <td>                   
+                            {{r.starttime}}                        
+                        </td>
+                        <td>                   
+                            {{r.endtime}}                        
+                        </td>
+                        <td>                   
+                            {{r.workLoc}}                        
+                        </td>
+                        <td>                   
+                            {{r.sucCount}}                        
+                        </td>
+                        <td>                   
+                            {{r.difCount}}                        
+                        </td>
+                        <td>                   
+                            {{r.sapphireUploadStatus}}                        
+                        </td>
+                        <td>                   
+                            {{r.gtlfFileLoc}}                        
+                        </td>                    
+                    </tr>
+                </tbody>              
+            </table>
         </div>
-        
-    </div>  
-</div>
+    </div>
+

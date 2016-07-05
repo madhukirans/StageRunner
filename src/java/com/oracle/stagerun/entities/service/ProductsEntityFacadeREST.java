@@ -87,6 +87,7 @@ public class ProductsEntityFacadeREST extends AbstractFacade<ProductsEntity> {
     @Override
     protected EntityManager getEntityManager() {
         return em;
-    }
+    }   
+   
     
 }

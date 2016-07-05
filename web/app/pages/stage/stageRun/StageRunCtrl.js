@@ -7,7 +7,7 @@
 
     angular.module('BlurAdmin.pages.stage.stagerun').controller('StageRunCtrl', StageRunCtrl);
 
-    function StageRunCtrl($scope, $http) {
+    function StageRunCtrl($scope, $http, myUtilService, UtilFactory) {
         //$scope.selectedProduct = "";
         //$scope.selectedTestUnit = "";
 
@@ -24,19 +24,36 @@
         };
 
         $scope.getProducts = function () {
-            $http.get("web/shiphomes/products/" + $scope.selectedStage).success(function (data) {
-                $scope.products = data;
-            });
-        };
+            $scope.products = [];
+            $http.get("web/shiphomes/stage/" + $scope.selectedStage + "/products" ).success(function (data) {
+                $scope.products = data;                
+            }); 
+            
+            $scope.getRegressDetails();
+        }; 
 
-        //$http.get('web/products').success(function (data) {
-        //    $scope.products = data;
-        //});
+        $scope.getTestUnits = function () {
+            $http.get("web/testunits/product/" + $scope.selectedProduct).success(function (data) {
+                $scope.testunits = data;
+            }); 
+ 
+            $scope.getRegressDetails(); 
+        }; 
+        
+        $scope.getRegressDetails = function () {
+            $scope.regressdetails = [];
+            var URL = 'web/regressdetails/stage/' + $scope.selectedStage;
 
-        $scope.selectProducts = function () {
-            $scope.testUnits = [];
-            $http.get('web/testunits/product/' + $scope.selectedProduct).success(function (data) {
-                $scope.testUnits = data;
+            if ($scope.selectedProduct) {
+                URL = URL + "/product/" + $scope.selectedProduct;
+            }
+
+            if ($scope.selectedTestUnit) {
+                URL = URL + "/testunit/" + $scope.selectedTestUnit;
+            }
+
+            $http.get(URL).success(function (data) {
+                $scope.regressdetails = data;
             });
         };
 

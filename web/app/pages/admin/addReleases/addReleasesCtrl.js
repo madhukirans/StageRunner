@@ -8,7 +8,7 @@
 
 
     /** @ngInject */
-    function AddReleasesCtrl($scope, $filter, $http, $q, $timeout, editableOptions, editableThemes) {
+    function AddReleasesCtrl($scope, $filter, $http, myUtilService, UtilFactory, $q, $timeout, editableOptions, editableThemes) {
 
 
         
@@ -44,8 +44,7 @@
             if ($scope.tempReleases.releaseName !== "") {
                 $http.put("web/releases/" + $scope.releases[index].releaseName, $scope.releases[index])
                         .success(function (data, status, headers, config) {
-                            //$scope.PutDataResponse = data;
-                            //alert($scope.PostDataResponse);
+                            $scope.showSuccessMsg("Success: Record edited successfully");
                         }).error(function (data, status, header, config) {
                     //console.log("in Error:" + " Status:" + status + " headers:" + header + " config:" + config + "data:" + data);
                     rowform.$setError(rowform.saveButton, "Error: Problem while editing record");
@@ -57,14 +56,16 @@
                 {
                     //console.log("madhu:" + "data:" + data + " Status:" + status + " headers:" + headers + " config:" + config);
                     if (status === 200) {
-                        rowform.$setError(rowform.saveButton, "Success: Record added successfully");
+                        $scope.showSuccessMsg("Success: Record added successfully");
                     } else {
                         rowform.$setError(rowform.saveButton, "Error occurred while saving record: staus : " + status);
+                        myUtilService.showErrorMsg("Error while saving Record");
                         return $q.reject("Error");
                     }
                 }).error(function (data, status, header, config) {
                     //console.log("in Error:" + " Status:" + status + " headers:" + header + " config:" + config + "data:" + data);
                     rowform.$setError(rowform.saveButton, "Error: Problem while adding record");
+                    myUtilService.showErrorMsg("Error while saving Record");
                     return $q.reject('Server error!');
                 });
             }
@@ -75,8 +76,7 @@
         $scope.removeRelease = function (index) {
             $http.delete("web/releases/" + $scope.releases[index].releaseName)
                     .success(function (data, status, headers, config) {
-                        //$scope.PutDataResponse = data;
-                        //alert($scope.PostDataResponse);
+                        myUtilService.showWarningMsg("Record Deleted.");
                         console.log("record deleted");
                     });
             $scope.releases.splice(index, 1);

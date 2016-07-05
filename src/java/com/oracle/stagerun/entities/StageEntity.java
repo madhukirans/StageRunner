@@ -41,7 +41,11 @@ import javax.xml.bind.annotation.XmlTransient;
     })
 public class StageEntity implements Serializable {
 
+    @OneToMany(mappedBy = "stageId")
+    private List<RegressDetails> regressDetailsList;
+
     private static final long serialVersionUID = 1L;
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
@@ -136,6 +140,15 @@ public class StageEntity implements Serializable {
     @Override
     public String toString() {
         return "com.oracle.stagerun.entities.StageEntity[ id=" + id + ", stageName:" + stageName + ", releaseEntity:" + releaseEntity +"]";
+    }
+
+    @XmlTransient
+    public List<RegressDetails> getRegressDetailsList() {
+        return regressDetailsList;
+    }
+
+    public void setRegressDetailsList(List<RegressDetails> regressDetailsList) {
+        this.regressDetailsList = regressDetailsList;
     }
     
 }

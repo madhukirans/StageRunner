@@ -67,13 +67,14 @@ public class StageUpperstackShiphomesEntityFacadeREST extends AbstractFacade<Sta
     }
 
     @GET
-    @Path("products/{stageId}")
+    @Path("stage/{stageId}/products")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public List<ProductsEntity> findProductsByStage(@PathParam("stageId") Integer stageId) {
         TypedQuery query = em.createNamedQuery("StageUpperstackShiphomesEntity.findProductsStageId", ProductsEntity.class);
         StageEntity sEntity = new StageEntity();
         sEntity.setId(stageId);
         query.setParameter("stageid", sEntity);
+        System.out.println(sEntity);
         return query.getResultList();        
     }
 

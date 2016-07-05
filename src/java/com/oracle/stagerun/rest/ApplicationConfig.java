@@ -31,6 +31,7 @@ public class ApplicationConfig extends Application {
     private void addRestResourceClasses(Set<Class<?>> resources) {
         resources.add(com.oracle.stagerun.entities.service.PlatformEntityFacadeREST.class);
         resources.add(com.oracle.stagerun.entities.service.ProductsEntityFacadeREST.class);
+        resources.add(com.oracle.stagerun.entities.service.RegressDetailsFacadeREST.class);
         resources.add(com.oracle.stagerun.entities.service.ReleasesEntityFacadeREST.class);
         resources.add(com.oracle.stagerun.entities.service.StageEntityFacadeREST.class);
         resources.add(com.oracle.stagerun.entities.service.StageInfraDetailsEntityFacadeREST.class);

@@ -7,7 +7,7 @@
 
     angular.module('BlurAdmin.pages.shiphomes.announcement').controller('ShiphomeAnnouncementCtrl', ShiphomeAnnouncementCtrl);
 
-    function ShiphomeAnnouncementCtrl($scope, $http, $filter, editableOptions, editableThemes) {
+    function ShiphomeAnnouncementCtrl($scope, $http, $filter, myUtilService, UtilFactory, editableOptions, editableThemes) {
         $scope.smartTablePageSize = 10;
 
 
@@ -68,8 +68,7 @@
         $scope.removeShiphome = function (index) {
             $http.delete("web/shiphomes/" + $scope.shiphomes[index].id)
                     .success(function (data, status, headers, config) {
-                        //$scope.PutDataResponse = data;
-                        //alert($scope.PostDataResponse);
+                        myUtilService.showWarningMsg("Record Deleted.");
                         console.log("record deleted");
                     });
             $scope.shiphomes.splice(index, 1);
@@ -96,12 +95,12 @@
             if ($scope.tempshiphomedisplay.id >= 0) {
                 $http.put("web/shiphomes/" + $scope.shiphomes[index].id, $scope.shiphomes[index])
                         .success(function (data, status, headers, config) {
-                            //$scope.PutDataResponse = data;
-                            //alert($scope.PostDataResponse);
+                            myUtilService.showSuccessMsg("Success: Record edited successfully"); 
                         });
             } else {
                 $http.post("web/shiphomes", $scope.shiphomes[index]).success(function (data, status, headers, config) {
                     $scope.PostDataResponse = data;
+                    myUtilService.showSuccessMsg("Success: Record added successfully");
                     console.log("Record added");
                 });
             }
@@ -111,8 +110,7 @@
         editableThemes['bs3'].submitTpl = '<button type="submit" class="btn btn-primary btn-with-icon"><i class="ion-checkmark-round"></i></button>';
         editableThemes['bs3'].cancelTpl = '<button type="button" ng-click="$form.$cancel()" class="btn btn-default btn-with-icon"><i class="ion-close-round"></i></button>';
 
-    }
-    ;
+    };
 
 
 })();

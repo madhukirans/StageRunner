@@ -5,6 +5,7 @@
  */
 package com.oracle.stagerun.entities.service;
 
+import com.oracle.stagerun.entities.ProductsEntity;
 import com.oracle.stagerun.entities.TestUnitsEntity;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -41,13 +42,24 @@ public class TestUnitsEntityFacadeREST extends AbstractFacade<TestUnitsEntity> {
     @Override
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response create(TestUnitsEntity entity) {
-        return super.create(entity);
+       // entity.setId(100);
+       // entity.setJobreqAgentCommand("commad");
+       // entity.setTestUnitName("JRF_1");
+       // entity.setProductName(new ProductsEntity("JRF"));
+        System.out.println("test unit entity:" + entity);
+        
+        em.persist(entity);
+        Response r = Response.ok(entity).build();
+        System.out.println(" StageEntiry Add Successful -" + r.toString());
+        return r;
+        //return super.create(entity);
     }
 
     @PUT
     @Path("{id}")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
     public void edit(@PathParam("id") Integer id, TestUnitsEntity entity) {
+        System.out.println("test unit entity:" + entity);
         super.edit(entity);
     }
 
@@ -59,7 +71,7 @@ public class TestUnitsEntityFacadeREST extends AbstractFacade<TestUnitsEntity> {
 
     @GET
     @Path("{id}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
     public TestUnitsEntity find(@PathParam("id") Integer id) {
         return super.find(id);
     }
@@ -73,16 +85,18 @@ public class TestUnitsEntityFacadeREST extends AbstractFacade<TestUnitsEntity> {
     
     @GET
     @Path("/product/{product}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
     public List<TestUnitsEntity> findByProduct(@PathParam ("product") String product) {
         TypedQuery<TestUnitsEntity> query = em.createNamedQuery("TestUnitsEntity.findByProducts", TestUnitsEntity.class);
-        query.setParameter("pname", product);
+        ProductsEntity productObj = new ProductsEntity();
+        productObj.setProductName(product);
+        query.setParameter("pname", productObj);
         return query.getResultList();
     }
 
     @GET
     @Path("{from}/{to}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
     public List<TestUnitsEntity> findRange(@PathParam("from") Integer from, @PathParam("to") Integer to) {
         return super.findRange(new int[]{from, to});
     }

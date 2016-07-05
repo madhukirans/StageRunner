@@ -1,44 +1,56 @@
 <div ba-panel      
-     ba-panel-title="Add Stage."
+     ba-panel-title="Add TestUnits."
      ba-panel-class="with-scroll">
-    <div class="form-horizontal" ng-controller="AddStagesCtrl">
+    
+    <div class="form-horizontal" ng-controller="AddTestUnitsCtrl">
         <div class="form-group">
-            
-            <label for="inputEmail3" class="col-sm-1 control-label">Releases</label>
             <div class="col-sm-2">
-                <select id="inputEmail3" ng-model="selectedRelease" class="form-control selectpicker" data-live-search="true" ng-change="selectStage()">    
+                <select ng-model="selectedProduct" class="form-control selectpicker" ng-change="getTestUnits()">    
                     <option value="">---Please select---</option>
-                    <option ng-repeat="r in releases" ng-value="r.releaseName">{{r.releaseName}}</option>
+                    <option ng-repeat="r in products" ng-value="r.releaseName">{{r.productName}}</option>
                 </select>
             </div>
             
-            <button  for="table1" class="btn btn-primary" ng-click="addStage()">Add New Stage</button>
-            <table name="table1" st-table="stages" class="table table-striped table-bordered table-hover" >
+            <button  for="table1" class="btn btn-primary" ng-click="addTestUnit()">Add New TestUnit</button>
+            <table name="table1" st-table="testUnits" class="table table-bordered table-hover" >
                 <thead>
-                    <tr class="sortable ">
-                        <th>Index</td>
-                        <th>Stage Name</td>
-                        <th>Description</td>
-                        <th>Actions</td>
+                    <tr class="sortable header-row black-muted-bg">
+                        <th class="table-id">Index</th>
+                        <th>TestUnits Name</th>
+                        <th>Topoid</th>
+                        <th>JobReqCommand</th>
+                        <th>Description</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="stage in stages" class="editable-tr-wrap">
+                    <tr ng-repeat="testUnit in testUnits" class="editable-row">
                         <td class="table-id">
                             {{$index}}
                         </td>                    
                         <td>                        
-                            <span editable-text="stage.stageName" id="stagenames" name="stagenames" e-name="stagenames" e-form="rowform" e-required>
-                                {{stage.stageName}}
+                            <span editable-text="testUnit.testUnitName" id="testUnitNames" name="testUnitNames" e-name="testUnitNames" e-form="rowform" e-required>
+                                {{testUnit.testUnitName}}
                             </span>                       
                         </td>
-                        <td class="select-td">
-                            <span editable-text="stage.comments" e-name="stagecomments" e-form="rowform">
-                                {{stage.comments}}
+                        <td>
+                            <span editable-text="testUnit.topoid" e-name="testunittopoid" e-form="rowform">
+                                {{testUnit.topoid}}
+                            </span>
+                        </td>
+                        
+                        <td>
+                            <span  editable-textarea="testUnit.jobreqAgentCommand" e-name="jobreqAgentCommand" e-form="rowform">
+                                 <textarea placeholder="Default Input" class="form-control">{{testUnit.jobreqAgentCommand}}</textarea>
+                            </span>
+                        </td>
+                        <td>
+                            <span editable-text="testUnit.description" e-name="testunitDescription" e-form="rowform">
+                                {{testUnit.description}}
                             </span>
                         </td>                    
                         <td>
-                            <form editable-form name="rowform" ng-show="rowform.$visible" class="form-buttons form-inline"  shown="inserted == stage" onaftersave="persistStage($index,rowform)">
+                            <form editable-form name="rowform" ng-show="rowform.$visible" class="form-buttons form-inline"  shown="inserted == testUnit" onaftersave="persistTestUnit($index,rowform)">
                                 <button type="submit" id="saveButton"  name="saveButton" e-name="saveButton" ng-disabled="rowform.$waiting" class="btn btn-primary editable-table-button btn-xs" >
                                     Save
                                 </button>
@@ -48,7 +60,7 @@
                             </form>
                             <div class="buttons" ng-show="!rowform.$visible">
                                 <button class="btn btn-primary editable-table-button btn-xs" ng-click="rowform.$show()">Edit</button>
-                                <button class="btn btn-danger editable-table-button btn-xs" ng-click="removeStage($index)">Delete</button>
+                                <button class="btn btn-danger editable-table-button btn-xs" ng-click="removeTestUnit($index)">Delete</button>
                             </div>                        
                         </td>
                     </tr>
