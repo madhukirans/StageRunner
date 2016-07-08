@@ -33,7 +33,7 @@
         };
 
         $scope.getTestUnits = function () {
-            $http.get("web/testunits/product/" + $scope.selectedProduct).success(function (data) {
+            $http.get("web/testunits/release/" + $scope.selectedRelease + "/product/" + $scope.selectedProduct).success(function (data) {
                 $scope.testunits = data;
             });
 
