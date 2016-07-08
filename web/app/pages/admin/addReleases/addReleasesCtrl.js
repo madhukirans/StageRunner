@@ -13,7 +13,7 @@
 
         
         
-        $scope.reloadTable = function() {
+        $scope.loadTable = function() {
             $scope.releases = [];
             $http.get("web/releases").success(function (data) {
             //$scope.releases = data;
@@ -23,7 +23,7 @@
             //return $timeout(function() {}, 3000);
         };
         
-        $scope.reloadTable();
+        $scope.loadTable();
         
         
         $scope.smartTablePageSize = 10;

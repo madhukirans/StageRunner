@@ -6,10 +6,17 @@
 package com.oracle.stagerun.entities;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.Calendar;
 import java.util.Date;
+import javax.annotation.Generated;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
@@ -48,8 +55,9 @@ public class RegressDetails implements Serializable {
     
     @Id
     @Basic(optional = false)
-    @NotNull
+    //@NotNull
     @Column(name = "id")
+    @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Integer id;
     
     @Column(name = "farmrun_id")
@@ -73,14 +81,15 @@ public class RegressDetails implements Serializable {
     
     @Column(name = "starttime")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date starttime;
+    private Calendar starttime;
     
     @Column(name = "endtime")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date endtime;
+    private Calendar endtime;
     
     @Size(max = 11)
     @Column(name = "status")
+    //@Enumerated (EnumType.STRING) 
     private String status;
     
     @Lob
@@ -155,19 +164,19 @@ public class RegressDetails implements Serializable {
         this.sapphireUploadStatus = sapphireUploadStatus;
     }
 
-    public Date getStarttime() {
+    public Calendar getStarttime() {
         return starttime;
     }
 
-    public void setStarttime(Date starttime) {
+    public void setStarttime(Calendar starttime) {
         this.starttime = starttime;
     }
 
-    public Date getEndtime() {
+    public Calendar getEndtime() {
         return endtime;
     }
 
-    public void setEndtime(Date endtime) {
+    public void setEndtime(Calendar endtime) {
         this.endtime = endtime;
     }
 
@@ -233,7 +242,8 @@ public class RegressDetails implements Serializable {
 
     @Override
     public String toString() {
-        return "com.oracle.stagerun.entities.RegressDetails[ id=" + id + " ]";
-    }
-    
+        return "RegressDetails[ id=" + id + " ] farmrunId: " + farmrunId + " StartTime:" + starttime + 
+                " EndTime:" + endtime + " status:" + status + "\nProduct: " + product + "\nstageId: " + stageId + 
+                "\nTestUnitId:" + testunitId;
+    }    
 }

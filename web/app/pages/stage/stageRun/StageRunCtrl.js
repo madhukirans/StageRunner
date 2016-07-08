@@ -7,7 +7,7 @@
 
     angular.module('BlurAdmin.pages.stage.stagerun').controller('StageRunCtrl', StageRunCtrl);
 
-    function StageRunCtrl($scope, $http, myUtilService, UtilFactory) {
+    function StageRunCtrl($scope, $http, $filter, myUtilService, UtilFactory) {
         //$scope.selectedProduct = "";
         //$scope.selectedTestUnit = "";
 
@@ -25,22 +25,22 @@
 
         $scope.getProducts = function () {
             $scope.products = [];
-            $http.get("web/shiphomes/stage/" + $scope.selectedStage + "/products" ).success(function (data) {
-                $scope.products = data;                
-            }); 
-            
-            $scope.getRegressDetails();
-        }; 
+            $http.get("web/shiphomes/stage/" + $scope.selectedStage + "/products").success(function (data) {
+                $scope.products = data;
+            });
+
+            $scope.loadTable();
+        };
 
         $scope.getTestUnits = function () {
             $http.get("web/testunits/product/" + $scope.selectedProduct).success(function (data) {
                 $scope.testunits = data;
-            }); 
- 
-            $scope.getRegressDetails(); 
-        }; 
-        
-        $scope.getRegressDetails = function () {
+            });
+
+            $scope.loadTable();
+        };
+
+        $scope.loadTable = function () {
             $scope.regressdetails = [];
             var URL = 'web/regressdetails/stage/' + $scope.selectedStage;
 
@@ -55,6 +55,27 @@
             $http.get(URL).success(function (data) {
                 $scope.regressdetails = data;
             });
+        };
+
+        $scope.runStage = function () {
+            var URL = 'web/runregress';///stage/' + $scope.selectedStage;
+
+            if ($scope.selectedProduct) {
+                URL = URL + "/product/" + $scope.selectedProduct;
+            }
+
+            if ($scope.selectedTestUnit) {
+                URL = URL + "/testunit/" + $scope.selectedTestUnit;
+            }
+
+            $scope.tempStage = $filter('filter')($scope.stages, {id: $scope.selectedStage});
+            console.log($scope.selectedStage);
+            console.log($scope.tempStage);
+            $http.post(URL, $scope.tempStage).success(function (data, status, headers, config)
+            {
+
+            });
+
         };
 
         $scope.selectTestUnits = function () {

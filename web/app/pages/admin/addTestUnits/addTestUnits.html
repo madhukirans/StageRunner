@@ -1,21 +1,34 @@
 <div ba-panel      
      ba-panel-title="Add TestUnits."
      ba-panel-class="with-scroll">
-    
-    <div class="form-horizontal" ng-controller="AddTestUnitsCtrl">
-        <div class="form-group">
-            <div class="col-sm-2">
-                <select ng-model="selectedProduct" class="form-control selectpicker" ng-change="getTestUnits()">    
-                    <option value="">---Please select---</option>
-                    <option ng-repeat="r in products" ng-value="r.releaseName">{{r.productName}}</option>
-                </select>
-            </div>
-            
-            <button  for="table1" class="btn btn-primary" ng-click="addTestUnit()">Add New TestUnit</button>
-            <table name="table1" st-table="testUnits" class="table table-bordered table-hover" >
+
+    <div class="row form-inline" ng-controller="AddTestUnitsCtrl">
+        <div class="form-horizontal">
+            <table class="table"> 
+                <tr>
+                    <td style="text-align: left">
+                        <select ng-model="selectedRelease" class="form-control selectpicker" ng-change="getProducts()">    
+                            <option value="">Select Release</option>
+                            <option ng-repeat="r in releases" ng-value="r.releaseName">{{r.releaseName}}</option>
+                        </select>
+
+                        <select ng-model="selectedProduct" class="form-control selectpicker" ng-change="loadTable()">    
+                            <option value="">SelectProduct</option>
+                            <option ng-repeat="r in products" ng-value="r.productName">{{r.productName}}</option>
+                        </select>
+                        <button  for="table1" class="btn btn-primary" ng-click="addTestUnit()">Add New TestUnit</button>
+                    </td>
+                    <td style="text-align: right">        
+                        <button for="table1" progress-button="loadTable()" pb-direction="horizontal" class="btn btn-primary"><i class="ion-refresh"></i></button>
+                    </td>
+                </tr>
+            </table>
+
+            <table name="table1" st-table="testunits" class="table table-bordered table-hover" >
                 <thead>
                     <tr class="sortable header-row black-muted-bg">
-                        <th class="table-id">Index</th>
+                        <th class="table-id">Index</th>                        
+                        <th>Platform</th>
                         <th>TestUnits Name</th>
                         <th>Topoid</th>
                         <th>JobReqCommand</th>
@@ -24,33 +37,39 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="testUnit in testUnits" class="editable-row">
+                    <tr ng-repeat="testunit in testunits" class="editable-row">
                         <td class="table-id">
                             {{$index}}
-                        </td>                    
+                        </td>
+                        <td>
+                            <span editable-select="testunit.platform.name" e-name="name" e-form="rowform" e-selectpicker
+                                  e-ng-options="s.name as s.name for s in platforms">
+                                {{getPlatforms(testunit.platform)}}
+                            </span>
+                        </td>
                         <td>                        
-                            <span editable-text="testUnit.testUnitName" id="testUnitNames" name="testUnitNames" e-name="testUnitNames" e-form="rowform" e-required>
-                                {{testUnit.testUnitName}}
-                            </span>                       
-                        </td>
-                        <td>
-                            <span editable-text="testUnit.topoid" e-name="testunittopoid" e-form="rowform">
-                                {{testUnit.topoid}}
-                            </span>
-                        </td>
-                        
-                        <td>
-                            <span  editable-textarea="testUnit.jobreqAgentCommand" e-name="jobreqAgentCommand" e-form="rowform">
-                                 <textarea placeholder="Default Input" class="form-control">{{testUnit.jobreqAgentCommand}}</textarea>
+                            <span editable-text="testunit.testUnitName" id="testUnitNames" name="testUnitNames" e-name="testUnitNames" e-form="rowform" e-required>
+                                {{testunit.testUnitName}}
                             </span>
                         </td>
                         <td>
-                            <span editable-text="testUnit.description" e-name="testunitDescription" e-form="rowform">
-                                {{testUnit.description}}
+                            <span editable-text="testunit.topoid" e-name="testunittopoid" e-form="rowform">
+                                {{testunit.topoid}}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span  editable-textarea="testunit.jobreqAgentCommand" e-name="jobreqAgentCommand" e-form="rowform">
+                                <textarea placeholder="Default Input" disabled="true" class="form-control">{{testunit.jobreqAgentCommand}}</textarea>
+                            </span>
+                        </td>
+                        <td>
+                            <span editable-text="testunit.description" e-name="testunitDescription" e-form="rowform">
+                                {{testunit.description}}
                             </span>
                         </td>                    
                         <td>
-                            <form editable-form name="rowform" ng-show="rowform.$visible" class="form-buttons form-inline"  shown="inserted == testUnit" onaftersave="persistTestUnit($index,rowform)">
+                            <form editable-form name="rowform" ng-show="rowform.$visible" class="form-buttons form-inline"  shown="inserted == testunit" onaftersave="persistTestUnit($index,rowform)">
                                 <button type="submit" id="saveButton"  name="saveButton" e-name="saveButton" ng-disabled="rowform.$waiting" class="btn btn-primary editable-table-button btn-xs" >
                                     Save
                                 </button>

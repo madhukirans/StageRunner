@@ -29,7 +29,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "StageUpperstackShiphomesEntity.findAll", query = "SELECT s FROM StageUpperstackShiphomesEntity s"),
-    @NamedQuery(name = "StageUpperstackShiphomesEntity.findByStageId", query = "SELECT s FROM StageUpperstackShiphomesEntity s WHERE s.stageid.id = :stageid"),
+    @NamedQuery(name = "StageUpperstackShiphomesEntity.findByStageId", 
+            query = "SELECT s FROM StageUpperstackShiphomesEntity s WHERE s.stageid.id = :stageid"),
     @NamedQuery(name = "StageUpperstackShiphomesEntity.findByStageAndProduct", 
                     query = "SELECT s FROM StageUpperstackShiphomesEntity s WHERE s.stageid = :stageid AND s.product.productName = :productname"),
     @NamedQuery(name = "StageUpperstackShiphomesEntity.findProductsStageId", 

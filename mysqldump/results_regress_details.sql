@@ -30,13 +30,13 @@ CREATE TABLE `regress_details` (
   `product` varchar(45) DEFAULT NULL,
   `testunit_id` int(11) DEFAULT NULL,
   `farmrun_id` int(11) DEFAULT NULL,
+  `status` enum('notstarted','running','completed','aborted') DEFAULT NULL,
+  `starttime` datetime DEFAULT NULL,
+  `endtime` datetime DEFAULT NULL,
   `work_loc` mediumtext,
   `suc_count` int(11) DEFAULT NULL,
   `dif_count` int(11) DEFAULT NULL,
   `sapphire_upload_status` varchar(10) DEFAULT NULL,
-  `starttime` datetime DEFAULT NULL,
-  `endtime` datetime DEFAULT NULL,
-  `status` enum('notstarted','running','completed','aborted') DEFAULT NULL,
   `gtlf_file_loc` mediumtext,
   PRIMARY KEY (`id`),
   KEY `results_details_stageid_fk_idx` (`stage_id`),
@@ -45,7 +45,7 @@ CREATE TABLE `regress_details` (
   CONSTRAINT `results_details_products_fk` FOREIGN KEY (`product`) REFERENCES `products` (`product_name`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `results_details_stageid_fk` FOREIGN KEY (`stage_id`) REFERENCES `stage` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `results_details_testunits_fk` FOREIGN KEY (`testunit_id`) REFERENCES `test_units` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -54,7 +54,7 @@ CREATE TABLE `regress_details` (
 
 LOCK TABLES `regress_details` WRITE;
 /*!40000 ALTER TABLE `regress_details` DISABLE KEYS */;
-INSERT INTO `regress_details` VALUES (2,8,'OTD',2,123,'/A/WOK',2,3,'YES',NULL,NULL,'completed','/AS/AS/S/');
+INSERT INTO `regress_details` VALUES (2,8,'OTD',2,123,'completed',NULL,NULL,'/A/WOK',2,3,'YES','/AS/AS/S/'),(20,8,'OTD',6,NULL,'notstarted','2016-07-08 15:53:47',NULL,NULL,NULL,NULL,NULL,NULL),(21,8,'OTD',1,NULL,'notstarted','2016-07-08 15:53:47',NULL,NULL,NULL,NULL,NULL,NULL),(22,8,'OTD',2,NULL,'notstarted','2016-07-08 15:53:47',NULL,NULL,NULL,NULL,NULL,NULL),(23,8,'WLS',9,NULL,'notstarted','2016-07-08 15:53:47',NULL,NULL,NULL,NULL,NULL,NULL),(24,8,'OTD',6,NULL,'notstarted','2016-07-08 15:54:10',NULL,NULL,NULL,NULL,NULL,NULL),(25,8,'OTD',2,NULL,'notstarted','2016-07-08 15:54:10',NULL,NULL,NULL,NULL,NULL,NULL),(26,8,'OTD',1,NULL,'notstarted','2016-07-08 15:54:10',NULL,NULL,NULL,NULL,NULL,NULL),(27,8,'WLS',9,NULL,'notstarted','2016-07-08 15:54:11',NULL,NULL,NULL,NULL,NULL,NULL),(28,8,'OTD',6,NULL,'notstarted','2016-07-08 16:00:38',NULL,NULL,NULL,NULL,NULL,NULL),(29,8,'OTD',2,NULL,'notstarted','2016-07-08 16:00:38',NULL,NULL,NULL,NULL,NULL,NULL),(30,8,'OTD',1,NULL,'notstarted','2016-07-08 16:00:38',NULL,NULL,NULL,NULL,NULL,NULL),(31,8,'WLS',9,NULL,'notstarted','2016-07-08 16:00:38',NULL,NULL,NULL,NULL,NULL,NULL),(32,8,'OTD',6,NULL,'notstarted','2016-07-08 16:02:26',NULL,NULL,NULL,NULL,NULL,NULL),(33,8,'OTD',1,NULL,'notstarted','2016-07-08 16:02:26',NULL,NULL,NULL,NULL,NULL,NULL),(34,8,'OTD',2,NULL,'notstarted','2016-07-08 16:02:26',NULL,NULL,NULL,NULL,NULL,NULL),(35,8,'WLS',9,NULL,'notstarted','2016-07-08 16:02:26',NULL,NULL,NULL,NULL,NULL,NULL),(36,9,'OTD',1,NULL,'notstarted','2016-07-08 17:49:17',NULL,NULL,NULL,NULL,NULL,NULL),(37,9,'OTD',2,NULL,'notstarted','2016-07-08 17:49:17',NULL,NULL,NULL,NULL,NULL,NULL),(38,9,'JRF',5,NULL,'notstarted','2016-07-08 17:49:17',NULL,NULL,NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `regress_details` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -67,4 +67,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-07-05 20:21:44
+-- Dump completed on 2016-07-08 17:58:55

@@ -32,12 +32,6 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "ProductsEntity.findByProductName", query = "SELECT p FROM ProductsEntity p WHERE p.productName = :productName"),
     @NamedQuery(name = "ProductsEntity.findByProductDesc", query = "SELECT p FROM ProductsEntity p WHERE p.productDesc = :productDesc")})
 public class ProductsEntity implements Serializable {
-
-    @OneToMany(mappedBy = "productName")
-    private List<TestUnitsEntity> testUnitsEntityList;
-    @OneToMany(mappedBy = "product")
-    private List<RegressDetails> regressDetailsList;
-
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -49,9 +43,12 @@ public class ProductsEntity implements Serializable {
     @Column(name = "product_desc")
     private String productDesc;
    
+    @OneToMany(mappedBy = "productName")
+    private List<TestUnitsEntity> testUnitsEntityList;
+
+    @OneToMany(mappedBy = "product")
+    private List<RegressDetails> regressDetailsList;
     
-//    @OneToMany(mappedBy = "productName")
-//    private List<TestUnitsEntity> testUnitsEntityList;
 
     @OneToMany(mappedBy = "product")
     private List<StageUpperstackShiphomesEntity> stageUpperstackShiphomesEntityList;
@@ -78,24 +75,24 @@ public class ProductsEntity implements Serializable {
     public void setProductDesc(String productDesc) {
         this.productDesc = productDesc;
     }
+    
+    @XmlTransient
+    public List<TestUnitsEntity> getTestUnitsEntityList() {
+        return testUnitsEntityList;
+    }
 
-//    @XmlTransient
-//    public List<TestUnitsEntity> getTestUnitsEntityList() {
-//        return testUnitsEntityList;
-//    }
-//
-//    public void setTestUnitsEntityList(List<TestUnitsEntity> testUnitsEntityList) {
-//        this.testUnitsEntityList = testUnitsEntityList;
-//    }
-//
-//    @XmlTransient
-//    public List<StageUpperstackShiphomesEntity> getStageUpperstackShiphomesEntityList() {
-//        return stageUpperstackShiphomesEntityList;
-//    }
-//
-//    public void setStageUpperstackShiphomesEntityList(List<StageUpperstackShiphomesEntity> stageUpperstackShiphomesEntityList) {
-//        this.stageUpperstackShiphomesEntityList = stageUpperstackShiphomesEntityList;
-//    }
+    public void setTestUnitsEntityList(List<TestUnitsEntity> testUnitsEntityList) {
+        this.testUnitsEntityList = testUnitsEntityList;
+    }
+
+    @XmlTransient
+    public List<RegressDetails> getRegressDetailsList() {
+        return regressDetailsList;
+    }
+
+    public void setRegressDetailsList(List<RegressDetails> regressDetailsList) {
+        this.regressDetailsList = regressDetailsList;
+    }
 
     @Override
     public int hashCode() {
@@ -121,23 +118,4 @@ public class ProductsEntity implements Serializable {
     public String toString() {
         return "com.oracle.stagerun.entities.ProductsEntity[ productName=" + productName + " ]";
     }
-
-    @XmlTransient
-    public List<TestUnitsEntity> getTestUnitsEntityList() {
-        return testUnitsEntityList;
-    }
-
-    public void setTestUnitsEntityList(List<TestUnitsEntity> testUnitsEntityList) {
-        this.testUnitsEntityList = testUnitsEntityList;
-    }
-
-    @XmlTransient
-    public List<RegressDetails> getRegressDetailsList() {
-        return regressDetailsList;
-    }
-
-    public void setRegressDetailsList(List<RegressDetails> regressDetailsList) {
-        this.regressDetailsList = regressDetailsList;
-    }
-    
 }

@@ -50,6 +50,9 @@ public class ReleasesEntity implements Serializable {
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "releaseEntity")
     private List<StageEntity> stageEntityList;
+    
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "releaseEntity")
+    private List<TestUnitsEntity> testUnitEntityList;
 
     public ReleasesEntity() {
     }
@@ -57,7 +60,18 @@ public class ReleasesEntity implements Serializable {
     public ReleasesEntity(String releaseName) {
         this.releaseName = releaseName;
     }
+    
+    @XmlTransient
+    public List<TestUnitsEntity> getTestUnitEntityList() {
+        return testUnitEntityList;
+    }
 
+    public void setTestUnitEntityList(List<TestUnitsEntity> testUnitEntityList) {
+        this.testUnitEntityList = testUnitEntityList;
+    }
+    
+    
+    
     public String getReleaseName() {
         return releaseName;
     }

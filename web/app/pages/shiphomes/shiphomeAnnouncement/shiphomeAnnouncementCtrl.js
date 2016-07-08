@@ -17,36 +17,30 @@
         });
 
         $scope.stages = [];
-        $scope.selectStage = function () {
+        $scope.getStages = function () {
             $http.get("web/stages/release/" + $scope.selectedRelease).success(function (data) {
                 $scope.stages = data;
             });
         };
+        
+        $http.get("web/products").success(function (data) {
+                $scope.products = data;
+            });
 
+        $http.get("web/platforms").success(function (data) {
+            $scope.platforms = data;
+        });
+            
         $scope.shiphomes = [];
         $scope.products = [];
         $scope.platforms = [];
         $scope.stage = [];
-        $scope.displayShiphomes = function (data) {
-
-            $http.get("web/stages/" + $scope.selectedStage).success(function (data) {
-                $scope.stage = data;
-            });
-
+        $scope.loadTable = function (data) {
 
             $http.get("web/shiphomes/stage/" + $scope.selectedStage).success(function (data) {
                 $scope.shiphomes = data;
             });
-
             $scope.editableTableData = $scope.shiphomes.slice(0, 36);
-
-            $http.get("web/products").success(function (data) {
-                $scope.products = data;
-            });
-
-            $http.get("web/platforms").success(function (data) {
-                $scope.platforms = data;
-            });
         };
 
         $scope.selectProduct = function (product) {

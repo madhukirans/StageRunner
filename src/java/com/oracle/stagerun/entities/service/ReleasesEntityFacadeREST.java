@@ -76,18 +76,17 @@ public class ReleasesEntityFacadeREST extends AbstractFacade<ReleasesEntity> {
     }
 
     @GET
-    //@Override
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public List<ReleasesEntity> findAll1() {
+    @Override
+    @Produces({MediaType.APPLICATION_JSON})
+    public List<ReleasesEntity> findAll() {
         TypedQuery<ReleasesEntity> query = em.createNamedQuery("ReleasesEntity.findAll", ReleasesEntity.class);
-//        query.setParameter("srelease", release);
+        System.out.println("query.getResultList() " + query.getResultList());                
         return query.getResultList();
-//        return super.findAll();
     }
 
     @GET
     @Path("{from}/{to}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
     public List<ReleasesEntity> findRange(@PathParam("from") Integer from, @PathParam("to") Integer to) {
         return super.findRange(new int[]{from, to});
     }

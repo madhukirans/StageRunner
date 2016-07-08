@@ -34,47 +34,59 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "TestUnitsEntity.findAll", query = "SELECT t FROM TestUnitsEntity t"),
-   // @NamedQuery(name = "TestUnitsEntity.findById", query = "SELECT t FROM TestUnitsEntity t WHERE t.id = :id"),
-    @NamedQuery(name = "TestUnitsEntity.findByProducts", query = "SELECT t FROM TestUnitsEntity t WHERE t.productName = :pname"),
-   // @NamedQuery(name = "TestUnitsEntity.findByTestUnitName", query = "SELECT t FROM TestUnitsEntity t WHERE t.testUnitName = :testUnitName"),
-   // @NamedQuery(name = "TestUnitsEntity.findByDescription", query = "SELECT t FROM TestUnitsEntity t WHERE t.description = :description")
+    // @NamedQuery(name = "TestUnitsEntity.findById", query = "SELECT t FROM TestUnitsEntity t WHERE t.id = :id"),
+    @NamedQuery(name = "TestUnitsEntity.findByProducts",
+            query = "SELECT t FROM TestUnitsEntity t WHERE t.productName = :pname"),
+
+    @NamedQuery(name = "TestUnitsEntity.findByReleaseAndProducts",
+            query = "SELECT t FROM TestUnitsEntity t WHERE t.releaseEntity.releaseName=:release AND t.productName.productName=:pname"), 
+    @NamedQuery(name = "TestUnitsEntity.findByReleaseAndProductsAndPlatform",
+            query = "SELECT t FROM TestUnitsEntity t WHERE t.releaseEntity.releaseName=:release AND t.productName.productName=:pname AND t.platform.name=:platform" ), 
+// @NamedQuery(name = "TestUnitsEntity.findByTestUnitName", query = "SELECT t FROM TestUnitsEntity t WHERE t.testUnitName = :testUnitName"),
+// @NamedQuery(name = "TestUnitsEntity.findByDescription", query = "SELECT t FROM TestUnitsEntity t WHERE t.description = :description")
 })
 public class TestUnitsEntity implements Serializable {
 
-    
-
     private static final long serialVersionUID = 1L;
-    
+
     @Id
-    @Basic(optional = false)    
+    @Basic(optional = false)
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    
+
     @Size(max = 40)
     @NotNull
     @Column(name = "test_unit_name")
     private String testUnitName;
-    
+
     @Size(max = 40)
     @Column(name = "description")
     private String description;
-    
-    @Column(name = "topoid")    
+
+    @Column(name = "topoid")
     private Integer topoid;
-    
+
     @JoinColumn(name = "product_name", referencedColumnName = "product_name")
     @ManyToOne
     private ProductsEntity productName;
-    
+
+    @JoinColumn(name = "platform_name", referencedColumnName = "NAME")
+    @ManyToOne
+    private PlatformEntity platform;
+
+    @JoinColumn(name = "release_name", referencedColumnName = "release_name")
+    @ManyToOne
+    private ReleasesEntity releaseEntity;
+
     @OneToMany(mappedBy = "testunitId")
     private List<RegressDetails> regressDetailsList;
-    
+
     @Lob
     @Size(max = 16777215)
     @Column(name = "JobreqAgentCommand")
     private String jobreqAgentCommand;
-    
+
     public TestUnitsEntity() {
     }
 
@@ -84,6 +96,24 @@ public class TestUnitsEntity implements Serializable {
 
     public Integer getId() {
         return id;
+    }
+
+    
+    public PlatformEntity getPlatform() {
+        return platform;
+    }
+
+    public void setPlatform(PlatformEntity platform) {
+        this.platform = platform;
+    }
+
+    
+    public ReleasesEntity getRelease() {
+        return releaseEntity;
+    }
+
+    public void setRelease(ReleasesEntity release) {
+        this.releaseEntity = release;
     }
 
     public void setId(Integer id) {
@@ -121,7 +151,6 @@ public class TestUnitsEntity implements Serializable {
     public void setJobreqAgentCommand(String jobreqAgentCommand) {
         this.jobreqAgentCommand = jobreqAgentCommand;
     }
-   
 
     @Override
     public int hashCode() {
@@ -145,7 +174,8 @@ public class TestUnitsEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "com.oracle.stagerun.entities.TestUnitsEntity[ id=" + id + " name:" + testUnitName + " productName:" + productName +  "]" ;
+        return "TestUnitsEntity[ id=" + id + " name:" + testUnitName + " productName:" + productName + " platform:" +
+                platform + " release: " + releaseEntity + "]";
     }
 
     public ProductsEntity getProductName() {
@@ -164,5 +194,5 @@ public class TestUnitsEntity implements Serializable {
     public void setRegressDetailsList(List<RegressDetails> regressDetailsList) {
         this.regressDetailsList = regressDetailsList;
     }
-    
+
 }

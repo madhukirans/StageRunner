@@ -10,16 +10,43 @@
 
     /** @ngInject */
     function AddTestUnitsCtrl($scope, $filter, $http, $q, myUtilService, UtilFactory, toastr, editableOptions, editableThemes) {
-        $scope.products = [];
-        $http.get("web/products").success(function (data) {
-            $scope.products = data;
+        
+        $scope.platforms = [];
+        $scope.testunits = [];
+        $scope.products = [];        
+        $scope.releases = [];
+        
+        $http.get("web/releases").success(function (data) {
+            $scope.releases = data;
         });
-
-        $scope.getTestUnits = function () {
-            $scope.testUnits = [];
-            $http.get("web/testunits/product/" + $scope.selectedProduct).success(function (data) {
-                $scope.testUnits = data;
+        
+        $scope.platforms = [];
+        $http.get("web/platforms").success(function (data) {
+            $scope.platforms = data;
+        });
+        
+        $scope.getProducts = function () {    
+            $scope.testunits = [];
+            $scope.products = [];
+            $http.get("web/products").success(function (data) {
+                $scope.products = data;
             });
+           // $scope.selectedProduct = "";
+        };
+
+        $scope.loadTable = function () {
+            $scope.testunits = [];
+            $http.get("web/testunits/release/" + $scope.selectedRelease + "/product/" + $scope.selectedProduct).success(function (data) {
+                $scope.testunits = data;
+            });
+        };
+        
+        $scope.getPlatforms = function (platform) {
+            var selected = [];
+            if (platform.name) {
+                selected = $filter('filter')($scope.platforms, {name: platform.name});
+            }
+            return selected.length ? selected[0].name : 'Not set';
         };
 
         $scope.smartTablePageSize = 10;
@@ -28,18 +55,20 @@
             $scope.inserted = {
                 "testUnitName": "",
                 "topoid": "",
-                "jobreqAgentCommand": "",
+                "jobreqAgentCommand": "#!/bin/bash\n",
                 "description": "",
-                "productName": {"productName": $scope.selectedProduct}
+                "productName": {"productName": $scope.selectedProduct},
+                "platform":{"name":""},
+                "release":{"releaseName":$scope.selectedRelease}
             };
-            $scope.testUnits.push($scope.inserted);
+            $scope.testunits.push($scope.inserted);
         };
 
         $scope.persistTestUnit = function (index, rowform) {
-            $scope.tempTestUnit = $scope.testUnits[index];
+            $scope.tempTestUnit = $scope.testunits[index];
 
             if ($scope.tempTestUnit.id >= 0) {
-                $http.put("web/testunits/" + $scope.testUnits[index].id, $scope.testUnits[index])
+                $http.put("web/testunits/" + $scope.testunits[index].id, $scope.testunits[index])
                         .success(function (data, status, headers, config) {
                             myUtilService.showSuccessMsg("Success: Record edited successfully");
                         }).error(function (data, status, header, config) {
@@ -48,7 +77,7 @@
                     return $q.reject('Server error!');
                 });
             } else {
-                $http.post("web/testunits", $scope.testUnits[index]).success(function (data, status, headers, config)
+                $http.post("web/testunits", $scope.testunits[index]).success(function (data, status, headers, config)
                 {
                     //console.log("madhu:" + "data:" + data + " Status:" + status + " headers:" + headers + " config:" + config);
                     if (status === 200) {
@@ -71,11 +100,11 @@
         };
 
         $scope.removeTestUnit = function (index) {
-            $http.delete("web/testunits/" + $scope.testUnits[index].id)
+            $http.delete("web/testunits/" + $scope.testunits[index].id)
                     .success(function (data, status, headers, config) {
                         myUtilService.showWarningMsg("Record Deleted.");
                     });
-            $scope.testUnits.splice(index, 1);
+            $scope.testunits.splice(index, 1);
         };
 
         // editableOptions.theme = 'bs3';

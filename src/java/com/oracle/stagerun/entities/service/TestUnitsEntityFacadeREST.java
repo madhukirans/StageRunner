@@ -84,13 +84,13 @@ public class TestUnitsEntityFacadeREST extends AbstractFacade<TestUnitsEntity> {
     }
     
     @GET
-    @Path("/product/{product}")
+    @Path("release/{release}/product/{product}")
     @Produces({MediaType.APPLICATION_JSON})
-    public List<TestUnitsEntity> findByProduct(@PathParam ("product") String product) {
-        TypedQuery<TestUnitsEntity> query = em.createNamedQuery("TestUnitsEntity.findByProducts", TestUnitsEntity.class);
-        ProductsEntity productObj = new ProductsEntity();
-        productObj.setProductName(product);
-        query.setParameter("pname", productObj);
+    public List<TestUnitsEntity> findByProductAndRelease(@PathParam ("release") String release, @PathParam ("product") String product) {
+        TypedQuery<TestUnitsEntity> query = em.createNamedQuery("TestUnitsEntity.findByReleaseAndProducts", TestUnitsEntity.class);
+        
+        query.setParameter("release", release);
+        query.setParameter("pname", product);
         return query.getResultList();
     }
 

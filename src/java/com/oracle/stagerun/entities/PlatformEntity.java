@@ -35,27 +35,42 @@ import javax.xml.bind.annotation.XmlTransient;
 public class PlatformEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    
     @Id
-    @Basic(optional = false)
+    @Basic(optional = false)    
     @NotNull
     @Size(min = 1, max = 20)
     @Column(name = "NAME")
     private String name;
+    
     @Size(max = 30)
     @Column(name = "DESCRIPTION")
     private String description;
+    
     @Size(max = 1)
     @Column(name = "ISDEFAULT")
     private String isdefault;
-    
+
     @OneToMany(mappedBy = "platform")
     private List<StageUpperstackShiphomesEntity> stageUpperstackShiphomesEntityList;
+
+    @OneToMany(mappedBy = "platform")
+    private List<TestUnitsEntity> testUnitsEntityList;
 
     public PlatformEntity() {
     }
 
     public PlatformEntity(String name) {
         this.name = name;
+    }
+
+    @XmlTransient
+    public List<TestUnitsEntity> getTestUnitsEntityList() {
+        return testUnitsEntityList;
+    }
+
+    public void setTestUnitsEntityList(List<TestUnitsEntity> testUnitsEntityList) {
+        this.testUnitsEntityList = testUnitsEntityList;
     }
 
     public String getName() {
@@ -82,7 +97,6 @@ public class PlatformEntity implements Serializable {
         this.isdefault = isdefault;
     }
 
-    
     @XmlTransient
     public List<StageUpperstackShiphomesEntity> getStageUpperstackShiphomesEntityList() {
         return stageUpperstackShiphomesEntityList;
@@ -114,7 +128,7 @@ public class PlatformEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "com.oracle.stagerun.entities.PlatformEntity[ name=" + name + " ]";
+        return "PlatformEntity[ name=" + name + " ]";
     }
-    
+
 }

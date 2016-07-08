@@ -2,12 +2,19 @@
      ba-panel-title="Add Release."
      ba-panel-class="with-scroll">
     <div class="form-horizontal" ng-controller="AddReleasesCtrl">
-        <div class="form-group">
-            <button  for="table1" class="btn btn-primary" ng-click="addRelease()">Add New Release</button>           
-            
-            
-            <button for="table1" progress-button="reloadTable()" pb-direction="horizontal" class="btn btn-primary"><i class="ion-refresh"></i></button>            
-            <table name="table1" st-table="releases" class="table table-bordered table-hover" >
+        <div class="form-group">            
+            <table class="table"> 
+                <tr>
+                    <td style="text-align: left">
+                        <button  for="table1" class="btn btn-primary" ng-click="addRelease()">Add New Release</button> 
+                    </td>
+                    <td style="text-align: right">        
+                        <button for="table1" progress-button="loadTable()" pb-direction="horizontal" class="btn btn-primary"><i class="ion-refresh"></i></button>
+                    </td>
+                </tr>
+            </table>
+                      
+            <table name="table1" st-table="releases" class="table table-bordered table-hover" > 
                 <thead>
                     <tr class="sortable header-row black-muted-bg">
                         <th class="table-id">Index</th>

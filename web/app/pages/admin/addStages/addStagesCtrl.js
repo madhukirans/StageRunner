@@ -19,7 +19,7 @@
         });
 
         $scope.stages = [];
-        $scope.selectStage = function () {
+        $scope.loadTable = function () {
             $http.get("web/stages/release/" + $scope.selectedRelease).success(function (data) {
                 $scope.stages = data;
             });
@@ -35,7 +35,8 @@
             };
             $scope.stages.push($scope.inserted);
         };
-
+        
+        
 
         $scope.persistStage = function (index, rowform) {
             $scope.tempStages = $scope.stages[index];
