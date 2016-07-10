@@ -6,6 +6,7 @@
 package com.oracle.stagerun.entities;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 import javax.persistence.Basic;
@@ -20,6 +21,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -34,6 +37,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "StageEntity.findAll", query = "SELECT s FROM StageEntity s"),
+    @NamedQuery(name = "StageEntity.getRecent", query = "SELECT s FROM StageEntity s WHERE s.datecreated = (select max(t.datecreated) from StageEntity t)"),
     //@NamedQuery(name = "StageEntity.findById", query = "SELECT s FROM StageEntity s WHERE s.id = :id"),
     //@NamedQuery(name = "StageEntity.findAllReleases", query = "SELECT DISTINCT s.releaseEntity FROM StageEntity"),
     @NamedQuery(name = "StageEntity.findByRelease", query = "SELECT s FROM StageEntity s WHERE s.releaseEntity.releaseName = :srelease"),    
@@ -62,6 +66,10 @@ public class StageEntity implements Serializable {
     @Column(name = "comments")
     private String comments;
     
+    @Column(name = "datecreated")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Calendar datecreated;
+    
     @JoinColumn(name = "release_name", referencedColumnName = "release_name")
     @ManyToOne
     private ReleasesEntity releaseEntity;
@@ -73,12 +81,16 @@ public class StageEntity implements Serializable {
     public void setReleaseEntity(ReleasesEntity releaseEntity) {
         this.releaseEntity = releaseEntity;
     }
+
+    public Calendar getDatecreated() {
+        return datecreated;
+    }
+
+    public void setDatecreated(Calendar datecreated) {
+        this.datecreated = datecreated;
+    }
     
-//    @OneToMany(mappedBy = "stageid")
-//    private Collection<StageUpperstackShiphomesEntity> stageUpperstackShiphomesEntityCollection;
     
-//    @OneToMany(mappedBy = "stageid")
-//    private Collection<StageInfraDetailsEntity> stageInfraDetailsEntityCollection;
 
     public StageEntity() {
     }

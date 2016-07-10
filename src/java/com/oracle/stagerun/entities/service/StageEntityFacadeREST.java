@@ -7,7 +7,9 @@ package com.oracle.stagerun.entities.service;
 
 import com.oracle.stagerun.entities.StageEntity;
 import com.oracle.stagerun.entities.TestUnitsEntity;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -43,6 +45,7 @@ public class StageEntityFacadeREST extends AbstractFacade<StageEntity> {
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response create(StageEntity entity) {
         System.out.println("StageEntiry:" + entity);
+        entity.setDatecreated(Calendar.getInstance());
         em.persist(entity);
         Response r = Response.ok(entity).build();
         System.out.println(" StageEntiry Add Successful -" + r.toString());
@@ -54,6 +57,7 @@ public class StageEntityFacadeREST extends AbstractFacade<StageEntity> {
     @Path("{id}")
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public void edit(@PathParam("id") Integer id, StageEntity entity) {
+        entity.setDatecreated(Calendar.getInstance());
         super.edit(entity);
     }
 

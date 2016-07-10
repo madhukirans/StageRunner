@@ -7,3 +7,6 @@
 /web1/
 /web1-dev-release/
 /target/
+/.tmp/
+/dev-web1/
+/lib/CopyLibs/

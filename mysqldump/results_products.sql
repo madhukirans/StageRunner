@@ -38,7 +38,7 @@ CREATE TABLE `products` (
 
 LOCK TABLES `products` WRITE;
 /*!40000 ALTER TABLE `products` DISABLE KEYS */;
-INSERT INTO `products` VALUES ('JRF','Java required files'),('OHS','oracle http server'),('OTD','oracle traffic director'),('WLS','weblogic');
+INSERT INTO `products` VALUES ('BI',NULL),('EDQ',NULL),('FormsReports','Forms  & Reports'),('IDM',NULL),('JRF','Java required files'),('OHS','oracle http server'),('OTD','oracle traffic director'),('SOA',NULL),('WebCenter',NULL),('WLS','weblogic');
 /*!40000 ALTER TABLE `products` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -51,4 +51,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-07-08 17:58:54
+-- Dump completed on 2016-07-11  1:11:13

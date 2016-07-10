@@ -17,14 +17,14 @@
         'BlurAdmin.pages.admin.addTestUnits'
     ]).config(routeConfig);
 
-
+ 
     app.factory('UtilFactory', function ($http) {
-        return {
+        return { 
             findSquare: function (num) {
                 return num * num;
             },
             //this.products = [];
-            getProducts: function () {
+            getProducts_1: function () {
                 return $http.get('web/products').then(function (response) {
                     console.log("coming from servicejs", response.data);
                     return response.data;

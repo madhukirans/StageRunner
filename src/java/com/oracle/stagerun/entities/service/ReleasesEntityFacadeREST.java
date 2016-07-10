@@ -74,7 +74,7 @@ public class ReleasesEntityFacadeREST extends AbstractFacade<ReleasesEntity> {
     public ReleasesEntity find(@PathParam("id") String id) {
         return super.find(id);
     }
-
+  
     @GET
     @Override
     @Produces({MediaType.APPLICATION_JSON})

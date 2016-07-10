@@ -29,11 +29,12 @@ CREATE TABLE `stage` (
   `stage_name` varchar(45) NOT NULL,
   `comments` varchar(200) DEFAULT NULL,
   `release_name` varchar(20) NOT NULL,
+  `datecreated` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `stage_name_UNIQUE` (`stage_name`,`release_name`),
   KEY `release_fk_idx` (`release_name`),
   CONSTRAINT `release_fk` FOREIGN KEY (`release_name`) REFERENCES `releases` (`release_name`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -42,7 +43,7 @@ CREATE TABLE `stage` (
 
 LOCK TABLES `stage` WRITE;
 /*!40000 ALTER TABLE `stage` DISABLE KEYS */;
-INSERT INTO `stage` VALUES (8,'1','Stage 1','12.2.1.1.0'),(9,'22','Stage 2 for 12.2.1.1.0','12.2.1.1.0'),(10,'1','stage1','12.2.1.2.0'),(11,'RC1',NULL,'12.2.1.1.0'),(12,'3',NULL,'12.2.1.1.0'),(14,'5','Stage 5','12.2.1.2.0');
+INSERT INTO `stage` VALUES (8,'1','Stage 1','12.2.1.1.0','2016-07-11 01:07:33'),(9,'22','Stage 2 for 12.2.1.1.0','12.2.1.1.0','2016-07-11 00:58:33'),(11,'RC1',NULL,'12.2.1.1.0','2016-07-10 00:55:23'),(14,'5','Stage 5','12.2.1.2.0',NULL);
 /*!40000 ALTER TABLE `stage` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -55,4 +56,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-07-08 17:58:56
+-- Dump completed on 2016-07-11  1:11:14

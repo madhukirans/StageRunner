@@ -47,12 +47,21 @@ public class RunRegressService {//extends AbstractFacade<RegressDetails> {
     }
 
     @GET
-    public List<StageUpperstackShiphomesEntity> findAll() {
-        TypedQuery<StageUpperstackShiphomesEntity> query = em.createNamedQuery("StageUpperstackShiphomesEntity.findByStageId", StageUpperstackShiphomesEntity.class);
-        query.setParameter("stageid", 8);
-        List<StageUpperstackShiphomesEntity> shiphomeList = query.getResultList();
-        System.out.println("shiphomeList:" + shiphomeList);
-        return query.getResultList();
+    @Consumes({MediaType.APPLICATION_JSON}) 
+    public List<RegressDetails> findAll() {
+        TypedQuery<StageEntity> query = em.createNamedQuery("StageEntity.getRecent", StageEntity.class);
+        List<StageEntity> recentStage = query.getResultList();
+        System.out.println(":" + recentStage);
+
+        if (recentStage != null && recentStage.size() >= 1) {
+            TypedQuery<RegressDetails> query1 = em.createNamedQuery("RegressDetails.findByStage", RegressDetails.class);
+            query1.setParameter("stageId", recentStage.get(0).getId());
+            List<RegressDetails> regressList = query1.getResultList();
+            System.out.println("regressListSize:" + regressList.size() + ": regressList:" + regressList);
+            return regressList;
+        }
+
+        return null;
     }
 
 //    @GET    
@@ -64,27 +73,26 @@ public class RunRegressService {//extends AbstractFacade<RegressDetails> {
 //            
     @POST
     //@Path("stage/{stageId}")///product/{productName}/testunit/{testunitId}")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public void runRegress1(List <StageEntity> stage1) //@PathParam("stageId") Integer stageId) 
+    @Consumes({MediaType.APPLICATION_JSON})
+    public void runRegress1(List<StageEntity> stage1) //@PathParam("stageId") Integer stageId) 
     //@PathParam("testunitId") Integer testunitId) 
     {
         StageEntity stage = stage1.get(0);
-        
+
         System.out.println("shiphomeList:1" + stage);
         TypedQuery<StageUpperstackShiphomesEntity> query = em.createNamedQuery("StageUpperstackShiphomesEntity.findByStageId", StageUpperstackShiphomesEntity.class);
         query.setParameter("stageid", stage.getId());
         List<StageUpperstackShiphomesEntity> shiphomeList = query.getResultList();
         System.out.println("shiphomeList:" + shiphomeList);
 
-       // StageEntity stage1 = em.find(StageEntity.class, stage.getId());
+        // StageEntity stage1 = em.find(StageEntity.class, stage.getId());
         ReleasesEntity release = stage.getReleaseEntity();
         List<RegressDetails> rList = new ArrayList<>();
-        
-        for (StageUpperstackShiphomesEntity shiphome:shiphomeList)
-        {       
+
+        for (StageUpperstackShiphomesEntity shiphome : shiphomeList) {
             ProductsEntity product = shiphome.getProduct();
             PlatformEntity platform = shiphome.getPlatform();
-            
+
             TypedQuery<TestUnitsEntity> query1 = em.createNamedQuery("TestUnitsEntity.findByReleaseAndProductsAndPlatform", TestUnitsEntity.class);
             query1.setParameter("release", release.getReleaseName());
             query1.setParameter("pname", product.getProductName());
@@ -92,19 +100,19 @@ public class RunRegressService {//extends AbstractFacade<RegressDetails> {
 
             List<TestUnitsEntity> testUnitList = query1.getResultList();
 
-            for (TestUnitsEntity testUnit : testUnitList){
+            for (TestUnitsEntity testUnit : testUnitList) {
                 RegressDetails rDetails = new RegressDetails();
                 rDetails.setStarttime(Calendar.getInstance());
                 rDetails.setStageId(stage);
                 rDetails.setStatus(RegressStatus.notstarted.name());
-                rDetails.setProduct(testUnit.getProductName());                
+                rDetails.setProduct(testUnit.getProductName());
                 rDetails.setTestunitId(testUnit);
-                rList.add(rDetails);                
+                rList.add(rDetails);
                 em.persist(rDetails);
             };
         };
         System.out.println("List: " + rList);
-       // return rList;
+        // return rList;
         RunJobs jobs = new RunJobs(rList, shiphomeList);
     }
 

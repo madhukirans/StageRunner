@@ -46,10 +46,10 @@
             if ($scope.tempStages.id >= 0) {
                 $http.put("web/stages/" + $scope.stages[index].id, $scope.stages[index])
                         .success(function (data, status, headers, config) {
-                            $scope.showSuccessMsg("Success: Record edited successfully");
+                            myUtilService.showSuccessMsg("Success: Record edited successfully");
                         }).error(function (data, status, header, config) {
                     //console.log("in Error:" + " Status:" + status + " headers:" + header + " config:" + config + "data:" + data);
-                    rowform.$setError(rowform.saveButton, "Error: Problem while editing record");
+                    myUtilService.showSuccessMsg("Success: Record edited successfully");
                     return $q.reject('Server error!');
                 });
             } else {
@@ -57,7 +57,7 @@
                 {
                     //console.log("madhu:" + "data:" + data + " Status:" + status + " headers:" + headers + " config:" + config);
                     if (status === 200) {
-                        $scope.showSuccessMsg("Success: Record added successfully");
+                        myUtilService.showSuccessMsg("Success: Record added successfully");
                     } else {
                         rowform.$setError(rowform.saveButton, "Error occurred while saving record: staus : " + status);
                         myUtilService.showErrorMsg("Error while saving Record");
@@ -70,7 +70,6 @@
                     return $q.reject('Server error!');
                 });
             }
-
             // return d.promice;
         };
 

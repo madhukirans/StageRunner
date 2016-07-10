@@ -76,7 +76,7 @@
                 "product": "",
                 "shiphomeloc": "",
                 "shiphomenames": "",
-                "stageid": $scope.stage,
+                "stageid": {"id":$scope.selectedStage},
                 "comment": ""
             };
             $scope.shiphomes.push($scope.inserted);
