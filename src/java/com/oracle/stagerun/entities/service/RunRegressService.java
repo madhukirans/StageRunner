@@ -47,30 +47,30 @@ public class RunRegressService {//extends AbstractFacade<RegressDetails> {
     }
 
     @GET
-    @Consumes({MediaType.APPLICATION_JSON}) 
+    @Consumes({MediaType.APPLICATION_JSON})
     public List<RegressDetails> findAll() {
         TypedQuery<StageEntity> query = em.createNamedQuery("StageEntity.getRecent", StageEntity.class);
         List<StageEntity> recentStage = query.getResultList();
         System.out.println(":" + recentStage);
 
         if (recentStage != null && recentStage.size() >= 1) {
-            TypedQuery<RegressDetails> query1 = em.createNamedQuery("RegressDetails.findByStage", RegressDetails.class);
-            query1.setParameter("stageId", recentStage.get(0).getId());
-            List<RegressDetails> regressList = query1.getResultList();
-            System.out.println("regressListSize:" + regressList.size() + ": regressList:" + regressList);
-            return regressList;
+            return getREsultsByStage(recentStage.get(0).getId());
         }
 
         return null;
     }
 
-//    @GET    
-//    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-//    public List<StageUpperstackShiphomesEntity> runRegress() {
-//        TypedQuery<StageUpperstackShiphomesEntity> query = em.createNamedQuery("StageUpperstackShiphomesEntity.findAll", StageUpperstackShiphomesEntity.class);
-//        return query.getResultList();
-//    }
-//            
+    @GET
+    @Path("stage/{stageid}")
+    @Consumes({MediaType.APPLICATION_JSON})
+    public List<RegressDetails> getREsultsByStage(@PathParam("stageid") Integer stageid) {
+        TypedQuery<RegressDetails> query1 = em.createNamedQuery("RegressDetails.findByStage", RegressDetails.class);
+        query1.setParameter("stageId", stageid);
+        List<RegressDetails> regressList = query1.getResultList();
+        System.out.println("regressListSize:" + regressList.size() + ": regressList:" + regressList);
+        return regressList;
+    }
+
     @POST
     //@Path("stage/{stageId}")///product/{productName}/testunit/{testunitId}")
     @Consumes({MediaType.APPLICATION_JSON})

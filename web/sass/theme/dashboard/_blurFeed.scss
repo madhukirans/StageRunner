@@ -186,7 +186,7 @@
 }
 
 
-/*@supports (-webkit-line-clamp: 1)
+@supports (-webkit-line-clamp: 1)
 {
   .line-clamp:after
   {
@@ -217,4 +217,4 @@
 {
   -webkit-line-clamp : 5;
   height             : calc(1em * 1.2 * 5);
-}*/
+}

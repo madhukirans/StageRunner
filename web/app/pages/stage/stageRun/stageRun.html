@@ -16,7 +16,7 @@
         </select>
         <select ng-model="selectedTestUnit" class="form-control selectpicker" title="Standard Select" ng-change="loadTable()" selectpicker>    
             <option value="">Select TestUnit</option>
-            <option ng-repeat="r in testunits" ng-value="r.id">{{r.testUnitName}}</option>
+            <option ng-repeat="r in testunits" ng-value="r.id">{{r.platform.name + "-" + r.testUnitName}}</option>
         </select>
         <table class="table"> 
             <tr>
