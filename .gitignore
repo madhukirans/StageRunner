@@ -1,12 +1,11 @@
 /build/
 /dist/
 /nbproject/private/
-/web/bower_components/
+/src/bower_components/
 /node_modules/
 /bower_components/
-/web1/
-/web1-dev-release/
+/release/
+/dev-release/
 /target/
 /.tmp/
-/dev-web1/
 /lib/CopyLibs/
