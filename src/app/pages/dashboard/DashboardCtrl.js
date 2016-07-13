@@ -46,7 +46,8 @@
                     else
                     {
                         productSet[$scope.regress[x].product.productName] = 1;
-                        $scope.stageName = "Stage :[" + $scope.regress[x].stageId.stageName + "] Release:[" + $scope.regress[x].stageId.releaseEntity.releaseName + "]";
+                        $scope.stageName = "Stage :[" + $scope.regress[x].stageId.stageName + "] Release:[" + 
+                                $scope.regress[x].stageId.releaseEntity.releaseName + "] \n Click on slice to get the testunits.";
                     }
                 }
 
