@@ -15,10 +15,9 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class RunJobs {
-
     Map<String, String> shiphomesEnv = new HashMap<>();
     List<String> jobList = new ArrayList<>();
-    String rootFolder = "d:/sr/logs";
+    String rootFolder = "/tmp/sr/work";
 
     public RunJobs(List<RegressDetails> jobsList, List<StageUpperstackShiphomesEntity> shiphomeList) {
 

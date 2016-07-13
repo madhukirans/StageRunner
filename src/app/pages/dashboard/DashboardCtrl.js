@@ -100,6 +100,7 @@
         $scope.pieChart.clickSlice = function (event) {
             console.log(event.title);
             var productName = event.title;
+            barChartDataProvider=[];
             for (var x in $scope.regress) {
                 //console.log($scope.regress[x].product.productName);
                 if ($scope.regress[x].product.productName === productName) {
@@ -110,14 +111,16 @@
                         testsucs: $scope.regress[x].sucCount ? $scope.regress[x].sucCount : 0,
                         testdiffs: $scope.regress[x].difCount ? $scope.regress[x].difCount : 0,
                         bellonSuc: "TestUnit:[" + $scope.regress[x].testunitId.testUnitName + "] Sucs:" + ($scope.regress[x].sucCount ? $scope.regress[x].sucCount : 0),
-                        bellonDif: "TestUnit:[" + $scope.regress[x].testunitId.testUnitName + "] Diffs:" + ($scope.regress[x].difCount ? $scope.regress[x].difCount : 0),
+                        bellonDif: "Diffs:" + ($scope.regress[x].difCount ? $scope.regress[x].difCount : 0),
                         color: ('#' + Math.floor(Math.random() * 16777215).toString(16))
                     };
                     barChartDataProvider.push(data);
                 }
             }
+            
+            console.log(barChartDataProvider);
 
-            $scope.barChart.dataProvider = barChartDataProvider;
+            $scope.barChart.dataProvider = barChartDataProvider;            
             $scope.barChart.validateData();
             $scope.barChart.animateAgain();
         }
@@ -146,7 +149,7 @@
             angle: 30,
             categoryField: 'testunit',
             startDuration: 1,
-            dataProvider: $scope.barChartData,
+            dataProvider: barChartDataProvider,
             "trendLines": [],
             "valueAxes": [
                 {

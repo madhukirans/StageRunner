@@ -31,7 +31,7 @@
                         <th>Platform</th>
                         <th>TestUnits Name</th>
                         <th>Topoid</th>
-                        <th>JobReqCommand</th>
+                        <th>ScriptToRunTests</th>
                         <th>Description</th>
                         <th>Actions</th>
                     </tr>
@@ -86,5 +86,19 @@
                 </tbody>              
             </table>
         </div>
+        <uib-accordion>            
+            <uib-accordion-group heading="Note" panel-class="panel-info bootstrap-panel accordion-panel">
+                Note <i class="ion-information-circled"></i>
+                <p><b>"ScriptToRunTests"</b> can be DTE jobReqAgent command or Linux bash commands. 
+                    <br>Following environment variables available to the script.
+                    <br>$PLATFORM Ex: OTD/OHS/WLS etc..
+                    <br>$RELEASE Ex: 12.2.1.1.0/12.2.1.0 etc.
+                    <br>User can access desired shiphome using following pattern. 
+                    <br>${PLATFORM}_${PRODUCT}_SHIPHOME_LOC
+                    <br>EX: If user needs OTD shiphome for LINUX.X64 platform then  $LINUX.X64_OTD_SHIPHOME_LOC
+                </p>
+                <br> 
+            </uib-accordion-group>            
+        </uib-accordion>       
     </div>
 </div>
