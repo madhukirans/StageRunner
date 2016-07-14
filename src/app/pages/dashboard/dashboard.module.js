@@ -27,7 +27,7 @@
     AmCharts.themes.blur = {
 
       themeName: "blur", 
-/*
+
       AmChart: {
         color: layoutColors.defaultText,
         backgroundColor: "#FFFFFF"
@@ -76,9 +76,9 @@
         cursorAlpha: 0.5
       },
 
-      AmLegend: {
-        color: "#FFFFFF"
-      },
+//      AmLegend: {
+//        color: "#FFFFFF"
+//      },
 
       AmGraph: {
         lineAlpha: 0.9
@@ -219,7 +219,7 @@
         border: "1px solid rgba(0, 0, 0, .3)",
         outline: "none"
       }
-*/
+
     };
   }
 

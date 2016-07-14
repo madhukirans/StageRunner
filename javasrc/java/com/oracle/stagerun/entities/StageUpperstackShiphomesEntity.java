@@ -32,7 +32,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "StageUpperstackShiphomesEntity.findByStageId", 
             query = "SELECT s FROM StageUpperstackShiphomesEntity s WHERE s.stageid.id = :stageid"),
     @NamedQuery(name = "StageUpperstackShiphomesEntity.findByStageAndProduct", 
-                    query = "SELECT s FROM StageUpperstackShiphomesEntity s WHERE s.stageid = :stageid AND s.product.productName = :productname"),
+                    query = "SELECT s FROM StageUpperstackShiphomesEntity s WHERE s.stageid.id = :stageid AND s.product.productName = :productname"),
     @NamedQuery(name = "StageUpperstackShiphomesEntity.findProductsStageId", 
                     query = "SELECT DISTINCT s.product FROM StageUpperstackShiphomesEntity s WHERE s.stageid = :stageid"),
  //   @NamedQuery(name = "StageUpperstackShiphomesEntity.findByShiphomeloc", query = "SELECT s FROM StageUpperstackShiphomesEntity s WHERE s.shiphomeloc = :shiphomeloc"),

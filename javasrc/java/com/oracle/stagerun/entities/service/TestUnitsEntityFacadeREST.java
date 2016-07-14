@@ -42,12 +42,12 @@ public class TestUnitsEntityFacadeREST extends AbstractFacade<TestUnitsEntity> {
     @Override
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response create(TestUnitsEntity entity) {
-       // entity.setId(100);
-       // entity.setJobreqAgentCommand("commad");
-       // entity.setTestUnitName("JRF_1");
-       // entity.setProductName(new ProductsEntity("JRF"));
+        // entity.setId(100);
+        // entity.setJobreqAgentCommand("commad");
+        // entity.setTestUnitName("JRF_1");
+        // entity.setProductName(new ProductsEntity("JRF"));
         System.out.println("test unit entity:" + entity);
-        
+
         em.persist(entity);
         Response r = Response.ok(entity).build();
         System.out.println(" StageEntiry Add Successful -" + r.toString());
@@ -61,6 +61,48 @@ public class TestUnitsEntityFacadeREST extends AbstractFacade<TestUnitsEntity> {
     public void edit(@PathParam("id") Integer id, TestUnitsEntity entity) {
         System.out.println("test unit entity:" + entity);
         super.edit(entity);
+    }
+    
+    @GET
+    @Path("updateall")
+    @Produces({MediaType.APPLICATION_JSON})
+    public List <TestUnitsEntity> updateAllBashscripts() {
+        
+        TypedQuery<ProductsEntity> query = em.createNamedQuery("ProductsEntity.findAll", ProductsEntity.class);
+        List <ProductsEntity> list = query.getResultList();
+        
+        String strProduct ="";
+        for (ProductsEntity product : list) {
+            strProduct = strProduct + "echo $WINDOWS_X64_" + product.getProductName() + "_SHIPHOME_LOC\n"; 
+            strProduct = strProduct + "echo $LINUX_X64_" + product.getProductName() + "_SHIPHOME_LOC\n"; 
+            strProduct = strProduct + "echo $GENERIC_" + product.getProductName() + "_SHIPHOME_LOC\n"; 
+        };
+        
+        String str = "#!/bin/bash\n"
+                + "\n"
+                + "export VIEW_LABEL=`ade showlabels -series OTDQA_MAIN_GENERIC -latest | tail -1`\n"
+                + "echo \" TARGETLOC=%ADE_VIEW_ROOT%/otd_test\" >  download_export.txt\n"
+                + "echo $PLATFORM"
+                + "echo $PRODUCT"
+                + "echo $RELEASE"
+                + "echo $STAGE"
+                + strProduct
+                + "\n"
+                + "/ade_autofs/ade_base/AIME_MAIN_LINUX.rdd/LATEST/dte/DTE/bin/jobReqAgent -topoid 90854 " 
+                + "-p $PRODUCT -r $RELEASE -s ${OTD_SHIPHOME_LOC} -l $VIEW_LABEL "
+                + "-preExecuted\\=OTD_MT.DOWNLOAD_TEST1,OTD_Setup.DOWNLOAD_TEST1,OTD_HA_Setup.DOWNLOAD_TEST1 "
+                + "-preExportedFile=download_export.txt,download_export.txt,download_export.txt ENV:MY_JRF_SHIPHOME_LOCATION=${JRF_SHIPOME_LOC} "
+                + "JAVA_OPTIONS=-javaagent:/ade_autofs/gd12_fmw/OTDQA_MAIN_GENERIC.rdd/LATEST/otd_test/lib/jacoco/jacocoagent.jar=destfile=%T_WORK%/coverage.dump "
+                + "-Dcom.oracle.lifecycle.oob=true";
+        
+        List <TestUnitsEntity> list1 = findAll();
+        for (TestUnitsEntity entity : list1) {
+            entity.setJobreqAgentCommand(str);
+            entity.setTopoid(90854);
+            em.persist(entity);
+        }
+        
+        return list1;
     }
 
     @DELETE
@@ -82,13 +124,13 @@ public class TestUnitsEntityFacadeREST extends AbstractFacade<TestUnitsEntity> {
     public List<TestUnitsEntity> findAll() {
         return super.findAll();
     }
-    
+
     @GET
     @Path("release/{release}/product/{product}")
     @Produces({MediaType.APPLICATION_JSON})
-    public List<TestUnitsEntity> findByProductAndRelease(@PathParam ("release") String release, @PathParam ("product") String product) {
+    public List<TestUnitsEntity> findByProductAndRelease(@PathParam("release") String release, @PathParam("product") String product) {
         TypedQuery<TestUnitsEntity> query = em.createNamedQuery("TestUnitsEntity.findByReleaseAndProducts", TestUnitsEntity.class);
-        
+
         query.setParameter("release", release);
         query.setParameter("pname", product);
         return query.getResultList();
@@ -112,5 +154,5 @@ public class TestUnitsEntityFacadeREST extends AbstractFacade<TestUnitsEntity> {
     protected EntityManager getEntityManager() {
         return em;
     }
-    
+
 }

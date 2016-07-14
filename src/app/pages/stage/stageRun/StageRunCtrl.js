@@ -27,6 +27,7 @@
             $scope.products = [];
             $http.get("web/shiphomes/stage/" + $scope.selectedStage + "/products").success(function (data) {
                 $scope.products = data;
+                console.log(data); 
             });
 
             $scope.loadTable();
@@ -59,20 +60,29 @@
 
         $scope.runStage = function () {
             var URL = 'web/runregress';///stage/' + $scope.selectedStage;
-
+            
+            var tempStage = $filter('filter')($scope.stages, {id: $scope.selectedStage});
+            
+            var tempProduct = {};
+            var tempTestunit = {}; 
             if ($scope.selectedProduct) {
-                URL = URL + "/product/" + $scope.selectedProduct;
+                 tempProduct = $filter('filter')($scope.products, {productName: $scope.selectedProduct});
             }
-
+  
             if ($scope.selectedTestUnit) {
-                URL = URL + "/testunit/" + $scope.selectedTestUnit;
+                tempTestunit = $filter('filter')($scope.testunits, {id: $scope.selectedTestUnit});
             }
+           
+            var postdata = {
+                stage: tempStage,
+                product: tempProduct,
+                testunit: tempTestunit
+            };
 
-            $scope.tempStage = $filter('filter')($scope.stages, {id: $scope.selectedStage});
-            console.log($scope.selectedStage);
-            console.log($scope.tempStage);
-            $http.post(URL, $scope.tempStage).success(function (data, status, headers, config)
-            {
+            console.log(tempProduct);
+            console.log(tempStage);
+            console.log(tempTestunit);
+            $http.post(URL, postdata).success(function (data, status, headers, config)    {
 
             });
 

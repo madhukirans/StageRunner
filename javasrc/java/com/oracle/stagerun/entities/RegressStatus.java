@@ -13,7 +13,8 @@ public enum RegressStatus {
     notstarted,
     running,
     completed, 
-    aborted;
+    aborted,
+    failed;
 //    
 //    notstarted("notstarted"),
 //    running ("running"),

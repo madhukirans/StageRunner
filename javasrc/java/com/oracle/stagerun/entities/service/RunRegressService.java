@@ -13,6 +13,7 @@ import com.oracle.stagerun.entities.ReleasesEntity;
 import com.oracle.stagerun.entities.StageEntity;
 import com.oracle.stagerun.entities.StageUpperstackShiphomesEntity;
 import com.oracle.stagerun.entities.TestUnitsEntity;
+import com.oracle.stagerun.entities.service.helper.PostRegressHelper;
 import com.oracle.stagerun.tool.RunJobs;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -74,46 +75,65 @@ public class RunRegressService {//extends AbstractFacade<RegressDetails> {
     @POST
     //@Path("stage/{stageId}")///product/{productName}/testunit/{testunitId}")
     @Consumes({MediaType.APPLICATION_JSON})
-    public void runRegress1(List<StageEntity> stage1) //@PathParam("stageId") Integer stageId) 
+    public void runRegress1(PostRegressHelper post)//, List<ProductsEntityFacadeREST> products1, List<TestUnitsEntity> testunits1) //@PathParam("stageId") Integer stageId) 
     //@PathParam("testunitId") Integer testunitId) 
     {
-        StageEntity stage = stage1.get(0);
+        System.out.println("getStage:1" + post.getStage());
+        System.out.println("getProduct:1" + post.getProduct());
+        System.out.println("getTestunit:1" + post.getTestunit());
 
-        System.out.println("shiphomeList:1" + stage);
-        TypedQuery<StageUpperstackShiphomesEntity> query = em.createNamedQuery("StageUpperstackShiphomesEntity.findByStageId", StageUpperstackShiphomesEntity.class);
-        query.setParameter("stageid", stage.getId());
-        List<StageUpperstackShiphomesEntity> shiphomeList = query.getResultList();
+        StageEntity stage = post.getStage();
+        ProductsEntity product = post.getProduct();
+        TestUnitsEntity testunit = post.getTestunit();
+
+        //Get shiphomes based on postdata
+        TypedQuery<StageUpperstackShiphomesEntity> shiphomeQery;
+        if (product.getProductName() == null) {
+            shiphomeQery = em.createNamedQuery("StageUpperstackShiphomesEntity.findByStageId", StageUpperstackShiphomesEntity.class);
+        } else {
+            shiphomeQery = em.createNamedQuery("StageUpperstackShiphomesEntity.findByStageAndProduct", StageUpperstackShiphomesEntity.class);
+            shiphomeQery.setParameter("productname", product.getProductName());
+        }
+
+        shiphomeQery.setParameter("stageid", stage.getId());
+        List<StageUpperstackShiphomesEntity> shiphomeList = shiphomeQery.getResultList();
+
         System.out.println("shiphomeList:" + shiphomeList);
 
         // StageEntity stage1 = em.find(StageEntity.class, stage.getId());
         ReleasesEntity release = stage.getReleaseEntity();
-        List<RegressDetails> rList = new ArrayList<>();
+        List<RegressDetails> regressList = new ArrayList<>();
 
         for (StageUpperstackShiphomesEntity shiphome : shiphomeList) {
-            ProductsEntity product = shiphome.getProduct();
-            PlatformEntity platform = shiphome.getPlatform();
+            ProductsEntity tempProduct = shiphome.getProduct();
+            PlatformEntity tempPlatform = shiphome.getPlatform();
 
-            TypedQuery<TestUnitsEntity> query1 = em.createNamedQuery("TestUnitsEntity.findByReleaseAndProductsAndPlatform", TestUnitsEntity.class);
-            query1.setParameter("release", release.getReleaseName());
-            query1.setParameter("pname", product.getProductName());
-            query1.setParameter("platform", platform.getName());
-
-            List<TestUnitsEntity> testUnitList = query1.getResultList();
+            List<TestUnitsEntity> testUnitList = new ArrayList<>();
+            if (testunit.getId() == null) {
+                TypedQuery<TestUnitsEntity> testunitQuery = em.createNamedQuery("TestUnitsEntity.findByReleaseAndProductsAndPlatform", TestUnitsEntity.class);
+                testunitQuery.setParameter("release", release.getReleaseName());
+                testunitQuery.setParameter("pname", tempProduct.getProductName());
+                testunitQuery.setParameter("platform", tempPlatform.getName());
+                testUnitList = testunitQuery.getResultList();
+            } else {
+                testUnitList.add(testunit);
+            }
 
             for (TestUnitsEntity testUnit : testUnitList) {
                 RegressDetails rDetails = new RegressDetails();
                 rDetails.setStarttime(Calendar.getInstance());
                 rDetails.setStageId(stage);
-                rDetails.setStatus(RegressStatus.notstarted.name());
+                System.out.println(RegressStatus.notstarted);
+                rDetails.setStatus(RegressStatus.notstarted);
                 rDetails.setProduct(testUnit.getProductName());
                 rDetails.setTestunitId(testUnit);
-                rList.add(rDetails);
+                regressList.add(rDetails);
                 em.persist(rDetails);
-            };
+            }; 
         };
-        System.out.println("List: " + rList);
+        System.out.println("List: " + regressList);
         // return rList;
-        RunJobs jobs = new RunJobs(rList, shiphomeList);
+        RunJobs jobs = new RunJobs(regressList, shiphomeList);
     }
 
     //@Override

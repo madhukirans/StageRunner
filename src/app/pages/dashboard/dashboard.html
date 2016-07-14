@@ -1,12 +1,18 @@
 <!--<div ba-panel ba-panel-class="with-scroll" >-->
-<div class="widgets">
-    <div class="row" ng-controller="DashboardCtrl">
+<div class="widgets"  ng-controller="DashboardCtrl">
+ 
+    <div class="col-md-12">
          <select ng-model="selectedStage" class="form-control" title="Select Stage" data-style="btn-primary" ng-change="updateChart()" selectpicker>    
             <option value="">Select Stage</option>
             <option ng-repeat="r in stages" ng-value="r.id">{{ r.releaseEntity.releaseName  + "-" + r.stageName}}</option>
         </select>
-        <div id="pieChart" class="admin-chart" ></div>
-        <div id="barChart" class="admin-chart" ></div>
+    </div>
+    <div class="col-md-6">
+        <div id="pieChart" class="admin-chart col-lg-5" ></div>
+    </div>
+    <div class="col-md-6">
+        <div id="barChart" class="admin-chart col-lg-5" ></div>
     </div>
     
 </div>
+ 

@@ -87,10 +87,10 @@ public class RegressDetails implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Calendar endtime;
     
-    @Size(max = 11)
+  //  @Size(max = 11)
     @Column(name = "status")
-    //@Enumerated (EnumType.STRING) 
-    private String status;
+    @Enumerated (EnumType.STRING) 
+    private RegressStatus status;
     
     @Lob
     @Size(max = 16777215)
@@ -180,11 +180,11 @@ public class RegressDetails implements Serializable {
         this.endtime = endtime;
     }
 
-    public String getStatus() {
+    public RegressStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(RegressStatus status) {
         this.status = status;
     }
 
@@ -243,7 +243,7 @@ public class RegressDetails implements Serializable {
     @Override
     public String toString() {
         return "RegressDetails[ id=" + id + " ] farmrunId: " + farmrunId + " StartTime:" + starttime + 
-                " EndTime:" + endtime + " status:" + status + "\nProduct: " + product + "\nstageId: " + stageId + 
+                " EndTime:" + endtime + " status:" + getStatus() + "\nProduct: " + product + "\nstageId: " + stageId + 
                 "\nTestUnitId:" + testunitId;
     }    
 }

@@ -46,7 +46,7 @@
                     else
                     {
                         productSet[$scope.regress[x].product.productName] = 1;
-                        $scope.stageName = "Stage :[" + $scope.regress[x].stageId.stageName + "] Release:[" + 
+                        $scope.stageName = "Stage :[" + $scope.regress[x].stageId.stageName + "] Release:[" +
                                 $scope.regress[x].stageId.releaseEntity.releaseName + "] \n Click on slice to get the testunits.";
                     }
                 }
@@ -66,6 +66,7 @@
                 $scope.pieChart.animateAgain();
 
                 $scope.barChart.dataProvider = [];
+                $scope.barChart.valueAxes[0].title = "Click on slice to get the TestUnits.";
                 $scope.barChart.validateData();
                 $scope.barChart.animateAgain();
             });
@@ -75,7 +76,7 @@
 
         $scope.pieChart = AmCharts.makeChart("pieChart", {
             "type": "pie",
-            "theme": "light",
+            "theme": "blur",
             "valueField": "value",
             "titleField": "product",
             "outlineAlpha": 0.4,
@@ -85,7 +86,7 @@
             "export": {
                 "enabled": true
             },
-             "legend": {
+            "legend": {
                 position: 'left',
                 //marginRight: 100,
                 autoMargins: true,
@@ -101,12 +102,12 @@
         $scope.pieChart.clickSlice = function (event) {
             console.log(event.title);
             var productName = event.title;
-            barChartDataProvider=[];
+            barChartDataProvider = [];
             for (var x in $scope.regress) {
                 //console.log($scope.regress[x].product.productName);
                 if ($scope.regress[x].product.productName === productName) {
-                   // console.log($scope.regress[x])
-                  //  console.log($scope.regress[x].sucCount + ":" + $scope.regress[x].difCount);
+                    // console.log($scope.regress[x])
+                    //  console.log($scope.regress[x].sucCount + ":" + $scope.regress[x].difCount);
                     var data = {
                         testunit: $scope.regress[x].testunitId.testUnitName,
                         testsucs: $scope.regress[x].sucCount ? $scope.regress[x].sucCount : 0,
@@ -114,14 +115,15 @@
                         bellonSuc: "TestUnit:[" + $scope.regress[x].testunitId.testUnitName + "] Sucs:" + ($scope.regress[x].sucCount ? $scope.regress[x].sucCount : 0),
                         bellonDif: "Diffs:" + ($scope.regress[x].difCount ? $scope.regress[x].difCount : 0),
                         color: ('#' + Math.floor(Math.random() * 16777215).toString(16))
-                    };
+                    }; 
                     barChartDataProvider.push(data);
                 }
             }
-            
-            console.log(barChartDataProvider);
 
-            $scope.barChart.dataProvider = barChartDataProvider;            
+            console.log(barChartDataProvider);
+            
+            $scope.barChart.valueAxes[0].title = "Number of Tests";
+            $scope.barChart.dataProvider = barChartDataProvider;
             $scope.barChart.validateData();
             $scope.barChart.animateAgain();
         }
@@ -144,7 +146,7 @@
 
         $scope.barChart = AmCharts.makeChart('barChart', {
             type: 'serial',
-            theme: "light",
+            theme: "blur",
             // color: layoutColors.defaultText,
             depth3D: 30,
             angle: 30,
@@ -167,12 +169,14 @@
                     "id": "AmGraph-1",
                     "title": "graph 1",
                     "type": "column",
+                    //"fixedColumnWidth": 15,
                     "valueField": "testsucs"
                 },
                 {
                     "balloonText": '<b>[[bellonDif]]</b>',
                     //"fillColors": "#FF0000",
                     "fillAlphas": 1,
+                    //"fixedColumnWidth": 15,
                     "id": "AmGraph-2",
                     "title": "graph 2",
                     "type": "column",
