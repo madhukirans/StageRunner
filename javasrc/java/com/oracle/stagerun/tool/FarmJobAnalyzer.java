@@ -18,7 +18,7 @@ public class FarmJobAnalyzer // implements Callable<Void>
    
    public FarmJobAnalyzer(FarmJob job)
    {
-      StageRun.print("In FarmJobAnalyzer.", Color.BLUE);
+      StageRun.print("In FarmJobAnalyzer.");
       this.job = job;
       analyze();
    }
@@ -105,7 +105,7 @@ public class FarmJobAnalyzer // implements Callable<Void>
             int i = 0;
             while ((currLine = in.readLine()) != null)
             {
-               StageRun.print("Farm Job Line:" + currLine, Color.BLUE);
+               StageRun.print("Farm Job Line:" + currLine);
                i++;               
 
                if (i == 3 && currLine.contains("finished"))

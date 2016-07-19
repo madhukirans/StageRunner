@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import javax.persistence.TypedQuery;
 
 public class RunJobs {
 
@@ -21,14 +22,16 @@ public class RunJobs {
     List<File> jobList = new ArrayList<>();
     String rootFolder = "/tmp/sr/work";
 
-    public RunJobs(List<RegressDetails> jobsList, List<StageUpperstackShiphomesEntity> shiphomeList) {
+    public RunJobs(List<RegressDetails> jobsList, List<StageUpperstackShiphomesEntity> shiphomeList,
+            List<StageUpperstackShiphomesEntity> allShiphomeList) {
         if (shiphomeList != null && shiphomeList.size() > 0) {
             shiphomesEnv.put("RELEASE", shiphomeList.get(0).getStageid().getReleaseEntity().getReleaseName());
             shiphomesEnv.put("STAGE", shiphomeList.get(0).getStageid().getStageName());
         }
         
-        shiphomeList.stream().forEach((shiphome) -> {
-            shiphomesEnv.put(shiphome.getPlatform().getName() + "_" + shiphome.getProduct().getProductName() + "_SHIPHOME",
+        
+        allShiphomeList.stream().forEach((shiphome) -> {
+            shiphomesEnv.put(shiphome.getPlatform().getName().replace(".", "_") + "_" + shiphome.getProduct().getProductName() + "_SHIPHOME_LOC",
                     shiphome.getShiphomeloc() + "/" + shiphome.getShiphomenames());
         });
 
@@ -71,10 +74,10 @@ public class RunJobs {
         try {
 
             for (File job : jobList) {
-                StageRun.print("Farm Submit Command:" + job.getCanonicalPath(), Color.BLUE);
+                StageRun.print("Farm Submit Command:" + job.getCanonicalPath());
                 shiphomesEnv.put("PLATFORM", regress.getTestunitId().getPlatform().getName());
-                shiphomesEnv.put("PRODUCT", regress.getProduct().getProductName());
-                
+                shiphomesEnv.put("PRODUCT", regress.getProduct().getProductName());                
+                StageRun.print("shiphomesEnv:" + shiphomesEnv);
                 ProcessBuilder processBuilder = new ProcessBuilder("bash", job.getCanonicalPath());
                 Map<String, String> env = processBuilder.environment();
                 env.putAll(shiphomesEnv);
@@ -84,21 +87,21 @@ public class RunJobs {
                 process.waitFor(30, TimeUnit.MINUTES);
 
                 int exitStatus = process.exitValue();
-                StageRun.print("Fram job submit status:" + exitStatus, Color.GREEN);
+                StageRun.print("Fram job submit status:" + exitStatus);
                 if (exitStatus == 0) {
                     BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
                     BufferedReader err = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 
                     String errString;
                     while ((errString = err.readLine()) != null) {
-                        StageRun.print("Command Error:" + errString + "\n", Color.RED);
+                        StageRun.print("Command Error:" + errString + "\n");
                         regress.setStatus(RegressStatus.failed);
                     }
 
                     String currLine = null;
                     int farmId = 0;
                     while ((currLine = in.readLine()) != null) {
-                        StageRun.print("Output: " + currLine + "\n", Color.BLUE);
+                        StageRun.print("Output: " + currLine + "\n");
                         if (currLine.contains("farm showjobs -d -j")) {
                             String str = currLine.substring(currLine.indexOf("(") + 1, currLine.indexOf(")")).trim();
                             str = str.substring(str.lastIndexOf(" ")).trim();
@@ -119,9 +122,9 @@ public class RunJobs {
                 } else {
                     BufferedReader err = new BufferedReader(new InputStreamReader(process.getErrorStream()));
                     String errString;
-                    StageRun.print("Error: Command failed " + regress, Color.RED);
+                    StageRun.print("Error: Command failed " + regress);
                     while ((errString = err.readLine()) != null) {
-                        StageRun.print("Error:" + errString, Color.RED);
+                        StageRun.print("Error:" + errString);
                     }
                     regress.setStatus(RegressStatus.failed);
                 }

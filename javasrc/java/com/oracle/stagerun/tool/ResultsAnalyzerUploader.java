@@ -129,7 +129,7 @@ public class ResultsAnalyzerUploader implements Runnable
    public boolean analyzeResults()
    {
       File f = new File(resultDir);
-      StageRun.print(job + " loc:" + resultDir, Color.CYAN);
+      StageRun.print(job + " loc:" + resultDir);
 
       FilenameFilter sucFilter = new FilenameFilter()
          {
@@ -152,8 +152,8 @@ public class ResultsAnalyzerUploader implements Runnable
       int sucFileCount = sucFiles.length;
       int difFileCount = difFiles.length;
 
-      StageRun.print(job + " sucfile count:" + sucFileCount, Color.PURPLE);
-      StageRun.print(job + " diffile count:" + difFileCount, Color.PURPLE);
+      StageRun.print(job + " sucfile count:" + sucFileCount);
+      StageRun.print(job + " diffile count:" + difFileCount);
 
       int totalResults = sucFileCount + difFileCount;
 
@@ -175,7 +175,7 @@ public class ResultsAnalyzerUploader implements Runnable
       }
       else
       {
-         StageRun.print(job + " Results are fine. Generating gtlf.", Color.GREEN);
+         StageRun.print(job + " Results are fine. Generating gtlf.");
       }
 
       return true;
@@ -183,19 +183,19 @@ public class ResultsAnalyzerUploader implements Runnable
 
    public void uploadGTLF()
    {
-      StageRun.print(job + " Upload begins.", Color.GREEN);
+      StageRun.print(job + " Upload begins.");
       try
       {
          System.setProperty("testmgr.validate", "false");
          System.setProperty("notify", StageRun.user + "@oracle.com");
         // weblogic.coconutx.WLCustomGTLFUploader.uploadGTLF(StageRun.StageDir + "/" + gtlfFileName);
-         StageRun.print(job + " Upload Successful.", Color.GREEN);
+         StageRun.print(job + " Upload Successful.");
       }
       catch (Exception e)
       {
          e.printStackTrace();
       }
-      StageRun.print(job + " -------------------------------------------------------.", Color.CYAN);
+      StageRun.print(job + " -------------------------------------------------------.");
 
    }
 

@@ -25,12 +25,15 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.SecurityContext;
 
 /**
  *
@@ -49,11 +52,12 @@ public class RunRegressService {//extends AbstractFacade<RegressDetails> {
 
     @GET
     @Consumes({MediaType.APPLICATION_JSON})
-    public List<RegressDetails> findAll() {
-        TypedQuery<StageEntity> query = em.createNamedQuery("StageEntity.getRecent", StageEntity.class);
+    public List<RegressDetails> findAll(@Context HttpServletRequest requestContext,@Context SecurityContext context) {
+        String yourIP = requestContext.getRemoteAddr();
+        
+        TypedQuery<StageEntity> query = em.createNamedQuery("StageEntity.getRecent", StageEntity.class);        
         List<StageEntity> recentStage = query.getResultList();
-        System.out.println(":" + recentStage);
-
+        System.out.println(":" + recentStage + "Remote IP:" + yourIP);
         if (recentStage != null && recentStage.size() >= 1) {
             return getREsultsByStage(recentStage.get(0).getId());
         }
@@ -85,18 +89,27 @@ public class RunRegressService {//extends AbstractFacade<RegressDetails> {
         StageEntity stage = post.getStage();
         ProductsEntity product = post.getProduct();
         TestUnitsEntity testunit = post.getTestunit();
+        
+        List<StageUpperstackShiphomesEntity> allShiphomeList = null;
+        List<StageUpperstackShiphomesEntity> shiphomeList = null;
 
         //Get shiphomes based on postdata
         TypedQuery<StageUpperstackShiphomesEntity> shiphomeQery;
         if (product.getProductName() == null) {
             shiphomeQery = em.createNamedQuery("StageUpperstackShiphomesEntity.findByStageId", StageUpperstackShiphomesEntity.class);
+            shiphomeQery.setParameter("stageid", stage.getId());
+            shiphomeList = shiphomeQery.getResultList();
+            allShiphomeList=shiphomeList;
         } else {
             shiphomeQery = em.createNamedQuery("StageUpperstackShiphomesEntity.findByStageAndProduct", StageUpperstackShiphomesEntity.class);
             shiphomeQery.setParameter("productname", product.getProductName());
+            shiphomeQery.setParameter("stageid", stage.getId());
+            shiphomeList = shiphomeQery.getResultList();
+            
+            TypedQuery<StageUpperstackShiphomesEntity> allShiphomeQery = em.createNamedQuery("StageUpperstackShiphomesEntity.findByStageId", StageUpperstackShiphomesEntity.class);
+            allShiphomeQery.setParameter("stageid", stage.getId());
+            allShiphomeList = allShiphomeQery.getResultList();
         }
-
-        shiphomeQery.setParameter("stageid", stage.getId());
-        List<StageUpperstackShiphomesEntity> shiphomeList = shiphomeQery.getResultList();
 
         System.out.println("shiphomeList:" + shiphomeList);
 
@@ -107,6 +120,8 @@ public class RunRegressService {//extends AbstractFacade<RegressDetails> {
         for (StageUpperstackShiphomesEntity shiphome : shiphomeList) {
             ProductsEntity tempProduct = shiphome.getProduct();
             PlatformEntity tempPlatform = shiphome.getPlatform();
+            
+            //if (product.getProductName() != null && tempProduct.getProductName().equals(product.getProductName())) {
 
             List<TestUnitsEntity> testUnitList = new ArrayList<>();
             if (testunit.getId() == null) {
@@ -130,10 +145,11 @@ public class RunRegressService {//extends AbstractFacade<RegressDetails> {
                 regressList.add(rDetails);
                 em.persist(rDetails);
             }; 
+            //}
         };
         System.out.println("List: " + regressList);
         // return rList;
-        RunJobs jobs = new RunJobs(regressList, shiphomeList);
+        RunJobs jobs = new RunJobs(regressList, shiphomeList, allShiphomeList);
     }
 
     //@Override
