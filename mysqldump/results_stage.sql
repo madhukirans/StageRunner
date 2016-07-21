@@ -1,10 +1,10 @@
-CREATE DATABASE  IF NOT EXISTS `results` /*!40100 DEFAULT CHARACTER SET utf8 */;
+CREATE DATABASE  IF NOT EXISTS `results` /*!40100 DEFAULT CHARACTER SET latin1 */;
 USE `results`;
--- MySQL dump 10.13  Distrib 5.6.23, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.12, for linux-glibc2.5 (x86_64)
 --
 -- Host: localhost    Database: results
 -- ------------------------------------------------------
--- Server version	5.6.25-log
+-- Server version	5.7.13
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -34,7 +34,7 @@ CREATE TABLE `stage` (
   UNIQUE KEY `stage_name_UNIQUE` (`stage_name`,`release_name`),
   KEY `release_fk_idx` (`release_name`),
   CONSTRAINT `release_fk` FOREIGN KEY (`release_name`) REFERENCES `releases` (`release_name`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -43,7 +43,7 @@ CREATE TABLE `stage` (
 
 LOCK TABLES `stage` WRITE;
 /*!40000 ALTER TABLE `stage` DISABLE KEYS */;
-INSERT INTO `stage` VALUES (8,'1','Stage 1','12.2.1.1.0','2016-07-11 01:07:33'),(9,'22','Stage 2 for 12.2.1.1.0','12.2.1.1.0','2016-07-11 00:58:33'),(11,'RC1',NULL,'12.2.1.1.0','2016-07-10 00:55:23'),(14,'5','Stage 5','12.2.1.2.0',NULL);
+INSERT INTO `stage` VALUES (8,'1','Stage 1','12.2.1.1.0','2016-07-13 03:29:14'),(9,'22','Stage 2 for 12.2.1.1.0','12.2.1.1.0','2016-07-12 01:39:46'),(11,'RC1',NULL,'12.2.1.1.0','2016-07-10 00:55:23'),(14,'5','Stage 5','12.2.1.2.0',NULL),(15,'6','stage 6','12.2.1.2.0','2016-07-12 01:40:19');
 /*!40000 ALTER TABLE `stage` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -56,4 +56,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-07-11  1:11:14
+-- Dump completed on 2016-07-21  7:41:59
