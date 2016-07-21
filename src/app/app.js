@@ -15,4 +15,4 @@ angular.module('BlurAdmin', [
  // 'ngTableResize',
   'BlurAdmin.theme',
   'BlurAdmin.pages',  
-]);
+]);angular.module("myApp", ["ngTable"]);

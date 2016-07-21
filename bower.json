@@ -52,7 +52,8 @@
     "textAngular": "~1.4.6",
     "angular-xeditable": "~0.1.9",
     "ng-js-tree": "~0.0.7",
-    "col-resizable":"1.6"
+    "col-resizable":"1.6",
+    "ng-table":"0.8.3" 
   },
   "overrides": {
     "amcharts": {

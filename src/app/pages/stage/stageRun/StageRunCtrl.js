@@ -6,10 +6,13 @@
     'use strict';
 
     angular.module('BlurAdmin.pages.stage.stagerun').controller('StageRunCtrl', StageRunCtrl);
+    
+ 
 
     function StageRunCtrl($scope, $http, $filter, myUtilService, UtilFactory) {
         //$scope.selectedProduct = "";
         //$scope.selectedTestUnit = "";
+
 
         $scope.releases = [];
         $http.get("web/releases").success(function (data) {
@@ -27,7 +30,7 @@
             $scope.products = [];
             $http.get("web/shiphomes/stage/" + $scope.selectedStage + "/products").success(function (data) {
                 $scope.products = data;
-                console.log(data); 
+                console.log(data);
             });
 
             $scope.loadTable();
@@ -55,24 +58,24 @@
 
             $http.get(URL).success(function (data) {
                 $scope.regressdetails = data;
-            });
+            });                     
         };
 
         $scope.runStage = function () {
             var URL = 'web/runregress';///stage/' + $scope.selectedStage;
-            
+
             var tempStage = $filter('filter')($scope.stages, {id: $scope.selectedStage});
-            
+
             var tempProduct = {};
-            var tempTestunit = {}; 
+            var tempTestunit = {};
             if ($scope.selectedProduct) {
-                 tempProduct = $filter('filter')($scope.products, {productName: $scope.selectedProduct});
+                tempProduct = $filter('filter')($scope.products, {productName: $scope.selectedProduct});
             }
-  
+
             if ($scope.selectedTestUnit) {
                 tempTestunit = $filter('filter')($scope.testunits, {id: $scope.selectedTestUnit});
             }
-           
+
             var postdata = {
                 stage: tempStage,
                 product: tempProduct,
@@ -82,7 +85,7 @@
             console.log(tempProduct);
             console.log(tempStage);
             console.log(tempTestunit);
-            $http.post(URL, postdata).success(function (data, status, headers, config)    {
+            $http.post(URL, postdata).success(function (data, status, headers, config) {
 
             });
 

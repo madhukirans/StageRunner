@@ -1,20 +1,20 @@
 <div ba-panel      
      ba-panel-title="Trigger Stage."
      ba-panel-class="with-scroll">
-    <div class="row form-inline" ng-controller="StageRunCtrl as products" >
-        <select ng-model="selectedRelease" class="form-control selectpicker" title="Standard Select" ng-change="getStages()" selectpicker>    
+    <div class="row form-inline" ng-controller="StageRunCtrl" >
+        <select ng-model="selectedRelease" class="form-control selectpicker" title="Standard Select" ng-change="getStages()">    
             <option value="">Select Release</option>
             <option ng-repeat="r in releases" ng-value="r.releaseName">{{r.releaseName}}</option>
         </select>            
-        <select ng-model="selectedStage" class="form-control selectpicker" title="Standard Select" ng-change="getProducts()" selectpicker>    
+        <select ng-model="selectedStage" class="form-control selectpicker" title="Standard Select" ng-change="getProducts()">    
             <option value="">Select Stage</option>
             <option ng-repeat="r in stages" ng-value="r.id">{{r.stageName}}</option>
         </select>
-        <select ng-model="selectedProduct" class="form-control selectpicker" title="Standard Select" ng-change="getTestUnits()" selectpicker>    
+        <select ng-model="selectedProduct" class="form-control selectpicker" title="Standard Select" ng-change="getTestUnits()">    
             <option value="">Select Products</option>
             <option ng-repeat="r in products" ng-value="r.id">{{r.productName}}</option>
         </select>
-        <select ng-model="selectedTestUnit" class="form-control selectpicker" title="Standard Select" ng-change="loadTable()" selectpicker>    
+        <select ng-model="selectedTestUnit" class="form-control selectpicker" title="Standard Select" ng-change="loadTable()">    
             <option value="">Select TestUnit</option>
             <option ng-repeat="r in testunits" ng-value="r.id">{{r.platform.name + "-" + r.testUnitName}}</option>
         </select>
@@ -28,10 +28,22 @@
                 </td>
             </tr>  
         </table>      
-     
+
         <div class="farm-group">
-            <table  class="table table-bordered table-hover" >
-                <thead>
+            <table col-resizeable class="table table-bordered table-hover" >
+                <colgroup>
+                    <col width="1%" />
+                    <col width="10%" />
+                    <col width="10%" />
+                    <col width="10%" />
+                    <col width="10%" />
+                    <col width="10%" />
+                    <col width="10%" />
+                    <col width="10%" />
+                    <col width="10%" />
+                    <col width="15%" />
+                </colgroup>
+                <thead> 
                     <tr class="sortable header-row black-muted-bg">
                         <th class="table-id">#</th>
                         <th>TestUnitName</th>
