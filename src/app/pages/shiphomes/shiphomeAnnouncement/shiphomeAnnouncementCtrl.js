@@ -85,6 +85,11 @@
 
         $scope.tempshiphomedisplay = [];
         $scope.persistShiphome = function (index, rowform) {
+            if (! $scope.shiphomeloc) {
+                return "error";
+            }
+                
+            
             $scope.tempshiphomedisplay = $scope.shiphomes[index];
             if ($scope.tempshiphomedisplay.id >= 0) {
                 $http.put("web/shiphomes/" + $scope.shiphomes[index].id, $scope.shiphomes[index])

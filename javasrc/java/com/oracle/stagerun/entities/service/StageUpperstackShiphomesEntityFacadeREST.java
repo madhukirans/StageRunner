@@ -8,6 +8,7 @@ package com.oracle.stagerun.entities.service;
 import com.oracle.stagerun.entities.ProductsEntity;
 import com.oracle.stagerun.entities.StageEntity;
 import com.oracle.stagerun.entities.StageUpperstackShiphomesEntity;
+import java.io.File;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -67,6 +68,32 @@ public class StageUpperstackShiphomesEntityFacadeREST extends AbstractFacade<Sta
     }
 
     @GET
+    @Path("platform/{platform}/shiphomeLoc/{shiphomeLoc}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response checkShiphomeExistence(@PathParam("platform") String platform, @PathParam("shiphomeLoc") String shiphomeLoc) {
+        File f = new File(shiphomeLoc);
+        if (f.exists()) {
+            return Response.ok().build();
+        }
+
+        System.out.println(platform + ":" + shiphomeLoc);
+
+        if (platform.equals("WINDOWS.X64")) {
+            //\\adcavere03-cifs.us.oracle.com\gd17_fmw\ASKERNEL_12.2.1.2.0_GENERIC.rdd\160715.1137.251.S\askernel\shiphome
+            try {
+                String str[] = shiphomeLoc.split("\\\\");
+                String hostName = str[0];
+                String shareName = str[1];
+                System.out.println(":" + str);
+            } catch (Exception e) {
+                System.out.println("Exception SR:" + e);
+            }
+        }
+        return Response.status(Response.Status.NOT_ACCEPTABLE).build();
+
+    }
+
+    @GET
     @Path("stage/{stageId}/products")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public List<ProductsEntity> findProductsByStage(@PathParam("stageId") Integer stageId) {
@@ -75,7 +102,7 @@ public class StageUpperstackShiphomesEntityFacadeREST extends AbstractFacade<Sta
         sEntity.setId(stageId);
         query.setParameter("stageid", sEntity);
         System.out.println(sEntity);
-        return query.getResultList();        
+        return query.getResultList();
     }
 
     @PUT

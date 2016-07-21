@@ -24,14 +24,15 @@
                 </tr>
             </table>
 
-            <table name="table1" st-table="testunits" class="table table-bordered table-hover" >
+            <table name="myTable" col-resizeable st-table="testunits" class="table table-bordered table-hover"  >
                 <thead>
                     <tr class="sortable header-row black-muted-bg">
                         <th class="table-id">Index</th>                        
                         <th>Platform</th>
                         <th>TestUnits Name</th>
-                        <th>Topoid</th>
+                        <th>DTE/BASH?</th>
                         <th>ScriptToRunTests</th>
+                        <th>Emails</th>
                         <th>Description</th>
                         <th>Actions</th>
                     </tr>
@@ -53,14 +54,20 @@
                             </span>
                         </td>
                         <td>
-                            <span editable-text="testunit.topoid" e-name="testunittopoid" e-form="rowform">
-                                {{testunit.topoid}}
+                            <span editable-select="testunit.isDte" e-name="isDteName" e-form="rowform" e-selectpicker
+                                  e-ng-options="s.name as s.name for s in isDtes">
+                                {{getIsDteSelected(testunit.isDte)}}
                             </span>
                         </td>
 
                         <td>
                             <span  editable-textarea="testunit.jobreqAgentCommand" e-name="jobreqAgentCommand" e-form="rowform">
-                                <textarea placeholder="Default Input" disabled="true" class="form-control">{{testunit.jobreqAgentCommand}}</textarea>
+                                <textarea placeholder="Default Input" readonly="true" class="form-control">{{testunit.jobreqAgentCommand}}</textarea>
+                            </span>
+                        </td>
+                        <td>
+                            <span editable-textarea="testunit.emails" e-name="emails" e-form="rowform">
+                                {{testunit.emails}}
                             </span>
                         </td>
                         <td>

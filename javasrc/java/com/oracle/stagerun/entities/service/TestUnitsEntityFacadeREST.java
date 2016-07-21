@@ -7,6 +7,7 @@ package com.oracle.stagerun.entities.service;
 
 import com.oracle.stagerun.entities.ProductsEntity;
 import com.oracle.stagerun.entities.TestUnitsEntity;
+import com.oracle.stagerun.entities.TestUnitRunTypeEnum;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -99,7 +100,7 @@ public class TestUnitsEntityFacadeREST extends AbstractFacade<TestUnitsEntity> {
         List <TestUnitsEntity> list1 = findAll();
         for (TestUnitsEntity entity : list1) {
             entity.setJobreqAgentCommand(str);
-            entity.setTopoid(90854);
+            entity.setIsDte(TestUnitRunTypeEnum.DTE);
             em.persist(entity);
         }
         

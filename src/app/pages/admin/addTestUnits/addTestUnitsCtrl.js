@@ -7,31 +7,39 @@
 
     angular.module('BlurAdmin.pages.admin.addTestUnits').controller('AddTestUnitsCtrl', AddTestUnitsCtrl);
 
+    
 
     /** @ngInject */
-    function AddTestUnitsCtrl($scope, $filter, $http, $q, myUtilService, UtilFactory, toastr, editableOptions, editableThemes) {
-        
+    function AddTestUnitsCtrl($scope, $filter, $http, myUtilService) {
+
         $scope.platforms = [];
         $scope.testunits = [];
-        $scope.products = [];        
+        $scope.products = [];
         $scope.releases = [];
-        
+        $scope.resizeMode = "BasicResizer";
+        $scope.isDtes = [{
+                name: "DTE"
+            },
+            {
+                name: "BASH"
+            }];
+
         $http.get("web/releases").success(function (data) {
             $scope.releases = data;
         });
-        
+
         $scope.platforms = [];
         $http.get("web/platforms").success(function (data) {
             $scope.platforms = data;
         });
-        
-        $scope.getProducts = function () {    
+
+        $scope.getProducts = function () {
             $scope.testunits = [];
             $scope.products = [];
             $http.get("web/products").success(function (data) {
                 $scope.products = data;
             });
-           // $scope.selectedProduct = "";
+            // $scope.selectedProduct = "";
         };
 
         $scope.loadTable = function () {
@@ -40,7 +48,15 @@
                 $scope.testunits = data;
             });
         };
-        
+
+        $scope.getIsDteSelected = function (isDte) {
+            var selected = [];
+            if (isDte) {
+                selected = $filter('filter')($scope.isDtes, {name: isDte});
+            }
+            return selected.length ? selected[0].name : 'Not set';
+        };
+
         $scope.getPlatforms = function (platform) {
             var selected = [];
             if (platform.name) {
@@ -57,9 +73,10 @@
                 "topoid": "",
                 "jobreqAgentCommand": "#!/bin/bash\n",
                 "description": "",
+                "emails": "",
                 "productName": {"productName": $scope.selectedProduct},
-                "platform":{"name":""},
-                "release":{"releaseName":$scope.selectedRelease}
+                "platform": {"name": ""},
+                "release": {"releaseName": $scope.selectedRelease}
             };
             $scope.testunits.push($scope.inserted);
         };
@@ -74,7 +91,7 @@
                         }).error(function (data, status, header, config) {
                     rowform.$setError(rowform.saveButton, "Error: Problem while editing record");
                     myUtilService.showErrorMsg("Error while saving Record");
-                    return $q.reject('Server error!');
+                    //return $q.reject('Server error!');
                 });
             } else {
                 $http.post("web/testunits", $scope.testunits[index]).success(function (data, status, headers, config)
@@ -86,13 +103,13 @@
                     } else {
                         rowform.$setError(rowform.saveButton, "Error occurred while saving record: staus : " + status);
                         myUtilService.showErrorMsg("Error occurred while saving record: staus : " + status);
-                        return $q.reject("Error");
+                        // return $q.reject("Error");
                     }
                 }).error(function (data, status, header, config) {
                     //console.log("in Error:" + " Status:" + status + " headers:" + header + " config:" + config + "data:" + data);
                     rowform.$setError(rowform.saveButton, "Error: Problem while adding record");
                     myUtilService.showErrorMsg("Error: Problem while adding record");
-                    return $q.reject('Server error!');
+                    //return $q.reject('Server error!');
                 });
             }
 

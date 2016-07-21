@@ -10,6 +10,8 @@ import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -59,13 +61,19 @@ public class TestUnitsEntity implements Serializable {
     @NotNull
     @Column(name = "test_unit_name")
     private String testUnitName;
-
+    
+    @Size(max=200)
+    @Column(name = "emails")
+    private String emails;
+    
     @Size(max = 40)
     @Column(name = "description")
     private String description;
 
-    @Column(name = "topoid")
-    private Integer topoid;
+    @Column(name = "isDte")
+    @Enumerated (EnumType.STRING) 
+    private TestUnitRunTypeEnum isDte;
+    
 
     @JoinColumn(name = "product_name", referencedColumnName = "product_name")
     @ManyToOne
@@ -94,6 +102,22 @@ public class TestUnitsEntity implements Serializable {
         this.id = id;
     }
 
+    public TestUnitRunTypeEnum getIsDte() {
+        return isDte;
+    }
+
+    public void setIsDte(TestUnitRunTypeEnum isDte) {
+        this.isDte = isDte;
+    }
+
+    public String getEmails() {
+        return emails;
+    }
+
+    public void setEmails(String emails) {
+        this.emails = emails;
+    }
+
     public Integer getId() {
         return id;
     }
@@ -105,15 +129,6 @@ public class TestUnitsEntity implements Serializable {
 
     public void setPlatform(PlatformEntity platform) {
         this.platform = platform;
-    }
-
-    
-    public ReleasesEntity getRelease() {
-        return releaseEntity;
-    }
-
-    public void setRelease(ReleasesEntity release) {
-        this.releaseEntity = release;
     }
 
     public void setId(Integer id) {
@@ -136,13 +151,15 @@ public class TestUnitsEntity implements Serializable {
         this.description = description;
     }
 
-    public Integer getTopoid() {
-        return topoid;
+    
+
+    public ReleasesEntity getReleaseEntity() {
+        return releaseEntity;
     }
 
-    public void setTopoid(Integer topoid) {
-        this.topoid = topoid;
-    }
+    public void setReleaseEntity(ReleasesEntity releaseEntity) {
+        this.releaseEntity = releaseEntity;
+    }   
 
     public String getJobreqAgentCommand() {
         return jobreqAgentCommand;
