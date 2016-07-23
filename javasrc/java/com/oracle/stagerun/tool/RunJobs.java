@@ -14,21 +14,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
 public class RunJobs {
 
-    Map<String, String> shiphomesEnv = new HashMap<>();
-    List<File> jobList = new ArrayList<>();
+    Map<String, String> shiphomesEnv = new HashMap<>();    
     String rootFolder = "/tmp/sr/work";
+    private EntityManager em;
 
     public RunJobs(List<RegressDetails> jobsList, List<StageUpperstackShiphomesEntity> shiphomeList,
-            List<StageUpperstackShiphomesEntity> allShiphomeList) {
+            List<StageUpperstackShiphomesEntity> allShiphomeList, EntityManager em) {
+        this.em = em;
         if (shiphomeList != null && shiphomeList.size() > 0) {
             shiphomesEnv.put("RELEASE", shiphomeList.get(0).getStageid().getReleaseEntity().getReleaseName());
             shiphomesEnv.put("STAGE", shiphomeList.get(0).getStageid().getStageName());
         }
         
+        new File(rootFolder).delete();
         
         allShiphomeList.stream().forEach((shiphome) -> {
             shiphomesEnv.put(shiphome.getPlatform().getName().replace(".", "_") + "_" + shiphome.getProduct().getProductName() + "_SHIPHOME_LOC",
@@ -54,37 +57,26 @@ public class RunJobs {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            try {
-                jobList.add(jobFile);
-            } catch (Exception e) {
-
-            }
+            regress.setFileToRun(jobFile);            
             runFarmCommand(regress);
         };
 
-//        for (FarmJob job : jobs) {
-//            if (job.isEnabled()) {
-//                StageRun.sapphireProperties.setProperty(job + ".farmid", job.getFarmId() + "");
-//            }
-//        }
-        //  StageRun.updatePropertyFile();
+
     }
 
     private void runFarmCommand(RegressDetails regress) {
-        try {
-
-            for (File job : jobList) {
-                StageRun.print("Farm Submit Command:" + job.getCanonicalPath());
+        try {            
+                StageRun.print("Farm Submit Command:" + regress.getFileToRun().getCanonicalPath());
                 shiphomesEnv.put("PLATFORM", regress.getTestunitId().getPlatform().getName());
                 shiphomesEnv.put("PRODUCT", regress.getProduct().getProductName());                
                 StageRun.print("shiphomesEnv:" + shiphomesEnv);
-                ProcessBuilder processBuilder = new ProcessBuilder("bash", job.getCanonicalPath());
+                ProcessBuilder processBuilder = new ProcessBuilder("bash", regress.getFileToRun().getCanonicalPath());
                 Map<String, String> env = processBuilder.environment();
                 env.putAll(shiphomesEnv);
                 env.put("PLATFORM", regress.getTestunitId().getPlatform().getName());
 
                 Process process = processBuilder.start();
-                process.waitFor(30, TimeUnit.MINUTES);
+                process.waitFor(10, TimeUnit.MINUTES);
 
                 int exitStatus = process.exitValue();
                 StageRun.print("Fram job submit status:" + exitStatus);
@@ -96,6 +88,7 @@ public class RunJobs {
                     while ((errString = err.readLine()) != null) {
                         StageRun.print("Command Error:" + errString + "\n");
                         regress.setStatus(RegressStatus.failed);
+                        em.merge(regress);
                     }
 
                     String currLine = null;
@@ -108,6 +101,8 @@ public class RunJobs {
                             try {
                                 farmId = Integer.parseInt(str);
                                 regress.setFarmrunId(farmId);
+                                regress.setStatus(RegressStatus.running);
+                                em.merge(regress);
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -127,8 +122,9 @@ public class RunJobs {
                         StageRun.print("Error:" + errString);
                     }
                     regress.setStatus(RegressStatus.failed);
+                    em.merge(regress);
                 }
-            }
+            
         } catch (Exception e) {
             e.printStackTrace();
         }

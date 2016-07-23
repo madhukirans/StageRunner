@@ -118,11 +118,11 @@ public class RunRegressService {//extends AbstractFacade<RegressDetails> {
         List<RegressDetails> regressList = new ArrayList<>();
 
         for (StageUpperstackShiphomesEntity shiphome : shiphomeList) {
+           
+            //Get all testunits based on release, product and platform if user not selected form UI
             ProductsEntity tempProduct = shiphome.getProduct();
-            PlatformEntity tempPlatform = shiphome.getPlatform();
-            
-            //if (product.getProductName() != null && tempProduct.getProductName().equals(product.getProductName())) {
-
+            PlatformEntity tempPlatform = shiphome.getPlatform();            
+           
             List<TestUnitsEntity> testUnitList = new ArrayList<>();
             if (testunit.getId() == null) {
                 TypedQuery<TestUnitsEntity> testunitQuery = em.createNamedQuery("TestUnitsEntity.findByReleaseAndProductsAndPlatform", TestUnitsEntity.class);
@@ -133,23 +133,23 @@ public class RunRegressService {//extends AbstractFacade<RegressDetails> {
             } else {
                 testUnitList.add(testunit);
             }
-
+            
+            //prepare regressDetails to trigger for all testunits.
             for (TestUnitsEntity testUnit : testUnitList) {
                 RegressDetails rDetails = new RegressDetails();
                 rDetails.setStarttime(Calendar.getInstance());
-                rDetails.setStageId(stage);
-                System.out.println(RegressStatus.notstarted);
+                rDetails.setStageId(stage);               
                 rDetails.setStatus(RegressStatus.notstarted);
                 rDetails.setProduct(testUnit.getProductName());
-                rDetails.setTestunitId(testUnit);
-                regressList.add(rDetails);
+                rDetails.setTestunitId(testUnit);               
                 em.persist(rDetails);
+                regressList.add(rDetails);
             }; 
             //}
         };
         System.out.println("List: " + regressList);
-        // return rList;
-        RunJobs jobs = new RunJobs(regressList, shiphomeList, allShiphomeList);
+       
+        RunJobs jobs = new RunJobs(regressList, shiphomeList, allShiphomeList, em);
     }
 
     //@Override

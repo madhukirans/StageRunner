@@ -784,21 +784,6 @@ a {
 .socicon-behace:before {
     content: "H"; }
 
-table.imagetable {
-    font-family: verdana,arial,sans-serif;
-    font-size:11px;
-    color:#333333;
-    border-width: 1px;
-    border-color: #999999;
-    border-collapse: collapse;
-}
-table.imagetable th {
-    background:#b5cfd2 url("../assets/img/blur-bg-blurred.jpg");
-    border-width: 1px;
-    padding: 8px;
-    border-style: solid;
-    border-color: #999999;
-}
 
 .table {
     margin-bottom: 0px; 
@@ -861,7 +846,7 @@ table.imagetable th {
 .table .header-row th {
     vertical-align: middle;
     background-image:url(../assets/img/th.png);    
-	height:30px;
+	height:20px;
 	background-repeat:no-repeat;
 	color:#FFF;
 	text-shadow:#012b4d 2px 2px 2px;
@@ -870,7 +855,7 @@ table.imagetable th {
 
 .grip {
 	width:20px;
-	height:30px;
+	height:20px;
 	margin-top:-3px;
 	background-image:url(../assets/img/grip.png);
 	margin-left:-5px;

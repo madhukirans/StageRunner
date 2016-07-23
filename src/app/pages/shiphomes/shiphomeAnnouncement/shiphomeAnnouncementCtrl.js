@@ -85,7 +85,8 @@
 
         $scope.tempshiphomedisplay = [];
         $scope.persistShiphome = function (index, rowform) {
-            if (! $scope.shiphomeloc) {
+            if (! $scope.shiphomes[index].shiphomeloc) {
+                $scope.rowform.$setError('shiphomeloc', 'Missing shiphome location.');
                 return "error";
             }
                 

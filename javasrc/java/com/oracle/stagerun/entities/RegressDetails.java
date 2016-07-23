@@ -5,6 +5,7 @@
  */
 package com.oracle.stagerun.entities;
 
+import java.io.File;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Calendar;
@@ -97,6 +98,8 @@ public class RegressDetails implements Serializable {
     @Column(name = "gtlf_file_loc")
     private String gtlfFileLoc;
     
+    private transient File fileToRun;
+    
     @JoinColumn(name = "product", referencedColumnName = "product_name")
     @ManyToOne
     private ProductsEntity product;
@@ -112,6 +115,15 @@ public class RegressDetails implements Serializable {
     public RegressDetails() {
     }
 
+    public File getFileToRun() {
+        return fileToRun;
+    }
+
+    public void setFileToRun(File fileToRun) {
+        this.fileToRun = fileToRun;
+    }
+
+    
     public RegressDetails(Integer id) {
         this.id = id;
     }
