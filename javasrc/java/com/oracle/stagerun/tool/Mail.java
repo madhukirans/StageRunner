@@ -2,6 +2,7 @@ package com.oracle.stagerun.tool;
 
 
 
+import com.oracle.stagerun.entities.RegressDetails;
 import java.io.FileInputStream;
 import java.util.Properties;
 
@@ -15,11 +16,11 @@ import javax.mail.internet.MimeUtility;
 public class Mail
 {
    StringBuffer strBuffer;
-   Properties prop;
-   private int numberOfJobs;
-   public Mail(Properties prop)
+   private RegressDetails regressDetail;
+  // private int numberOfJobs;
+   public Mail(RegressDetails prop)
    {
-      this.prop = prop;
+      this.regressDetail = prop;
       strBuffer = new StringBuffer();
       strBuffer.append("<HTML>\n");
       strBuffer.append("    <HEAD>\n");
@@ -106,8 +107,9 @@ public class Mail
          message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
 
          // Set Subject: header field
-         String subject = "Results for stage:" + prop.getProperty("stage") + " Release: " + prop.getProperty("release") +
-               " Number of jobs:" + numberOfJobs + "";         
+         String subject = "Results for stage:" + regressDetail.getStageId().getStageName() + " Release: " + 
+                 regressDetail.getStageId().getReleaseEntity().getReleaseName()
+                 + regressDetail.getTestunitId().getTestUnitName();     
          
          String yourEncodedString = MimeUtility.encodeText(subject, "UTF-8", "B");
 
@@ -118,7 +120,7 @@ public class Mail
 
          // Send message
          Transport.send(message);
-         System.out.println("Sent message successfully....");
+         StageRun.print("Sent message successfully....",regressDetail);
       }
       catch (Exception mex)
       {
@@ -133,70 +135,16 @@ public class Mail
          //int numberOfJobs = Integer.parseInt(prop.getProperty("numberOfJobs"));
          //int numberOfFarmJobs = Integer.parseInt(prop.getProperty("numberOfFarmJobs"));
 
-         String caption = "Stage:" + prop.getProperty("stage") + "<br>Release: " + prop.getProperty("release") +
-               "<br>Farm Job IDs:";
-//         for (FarmJob job: FarmJob.values())
-//         {
-//            if (job.isEnabled())
-//               caption += prop.getProperty(job + ".farmid") + " ";
-//         }
+         String caption = "Stage:" + regressDetail.getStageId().getStageName() + "<br>Release: " + regressDetail.getStageId().getReleaseEntity().getReleaseName();
 
-         strBuffer.append("        <table>\n");
-         strBuffer.append("            <CAPTION><b><i>" + caption + "</i><b></CAPTION>\n");
-         strBuffer.append("            <thead>\n");
-         strBuffer.append("                <tr><td>S.No</td><td>Suite</td> <td>WorkLocation</td> <td>SucCount</td>" +
-               " <td>DifCount</td> <td>UploadStatus</td> <td>Diffs</td></TR>\n");
-         strBuffer.append("            </thead>\n");
-         strBuffer.append("            <tbody>\n");
-         
-         int j =0;
-//         for (FarmJob job: FarmJob.values())
-//         {
-//            if (!job.isEnabled())
-//               continue;
-//            
-//            strBuffer.append("<tr>\n");
-//            strBuffer.append("\t<td id=\"id1\">" + ++j + "</td>\n");
-//            String str = prop.getProperty(job + ".dir") + "/";
-//            strBuffer.append("\t<td id=\"id2\">" + job.toString() + "</td>\n");
-//            strBuffer.append("\t<td id=\"id2\">" + str + "</td>\n");
-//            strBuffer.append("\t<td id=\"id1\">" + prop.getProperty(job + ".succount") + "</td>\n");
-//            strBuffer.append("\t<td id=\"id1\">" + prop.getProperty(job + ".difcount") + "</td>\n");
-//
-//            String uploadingStatus = prop.getProperty(job + ".uploadStatus");
-//            if (uploadingStatus==null || uploadingStatus.equals("false"))
-//               uploadingStatus = "<font color=\"red\"><h1>false</h1></font>";
-//            
-//            strBuffer.append("\t<td id=\"id1\">" + uploadingStatus + "</td>\n");
-//            String diffs = prop.getProperty(job + ".difs");
-//            
-//            if (diffs != null)
-//               diffs =  diffs.replaceAll(",", "\n").replaceAll(str, "");
-//            
-//            strBuffer.append("\t<td id=\"id2\"><textarea style=\"color:red; width: 100%; height: 100%; border: none\" >" + diffs + "</textarea></td>\n");
-//            strBuffer.append("</tr>\n");
-//         }
-         
-         numberOfJobs = j;
-
-         strBuffer.append("            </tbody>\n");
-         strBuffer.append("            <tfoot>\n");
-
-//         for (FarmJob job: FarmJob.values())
-//         {
-//            if (!job.isEnabled())
-//               continue;
-//            strBuffer.append("            <tr>\n");
-//            strBuffer.append("<td>\n");
-//            strBuffer.append(prop.getProperty(job + ".farmid"));
-//            strBuffer.append("</td>\n");
-//            strBuffer.append("<td  colspan=5>\n");
-//            strBuffer.append(prop.getProperty(job + ".farmcommand"));
-//            strBuffer.append("</td>\n");
-//            strBuffer.append("            </tr>\n");
-//         }
-
-         strBuffer.append("            </tfoot>\n");
+         strBuffer.append("    <table>\n");
+         strBuffer.append("       <CAPTION><b><i>" + caption + "</i><b></CAPTION>\n");         
+         strBuffer.append("          <tr><td>Stage</td></tr> <td>"+ regressDetail.getStageId().getStageName() +"</td></tr>\n");
+         strBuffer.append("          <tr><td>Release</td></tr> <td>"+ regressDetail.getStageId().getReleaseEntity().getReleaseName() +"</td></tr>\n");
+         strBuffer.append("          <tr><td>ResultDirectory</td></tr> <td>"+ regressDetail.getWorkLoc() +"</td></tr>\n");
+         strBuffer.append("          <tr><td>FarmRunId</td></tr> <td>"+ regressDetail.getFarmrunId() +"</td></tr>\n");
+         strBuffer.append("          <tr><td>StartTime</td></tr> <td>"+ regressDetail.getStarttime() +"</td></tr>\n");
+         strBuffer.append("          <tr><td>StartTime</td></tr> <td>"+ regressDetail.getEndtime() + "</td></tr>\n");
          strBuffer.append("        </table>\n");
          strBuffer.append("    </BODY>\n");
          strBuffer.append("</HTML>\n");
@@ -208,13 +156,5 @@ public class Mail
      // System.out.println(strBuffer.toString());
    }
 
-   public static void main(String a[]) throws Exception
-   {
-      Properties prop = new Properties();
-
-      FileInputStream fin = new FileInputStream(a[0]);
-      prop.load(fin);
-      Mail mail = new Mail(prop);      
-      mail.sendMail();
-   }
+  
 }

@@ -1,73 +1,58 @@
 package com.oracle.stagerun.tool;
 
-
-
+import com.oracle.stagerun.entities.RegressDetails;
+import com.oracle.stagerun.entities.RegressStatus;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
+import javax.persistence.EntityManager;
 
-public class FarmJobAnalyzer // implements Callable<Void>
-{
-   private String rootWorkLoc;
-   private boolean completed = false;
-  // private int farmJobId;
-   private FarmJob job;
-   
-   public FarmJobAnalyzer(FarmJob job)
-   {
-      StageRun.print("In FarmJobAnalyzer.");
-      this.job = job;
-      analyze();
-   }
-   
-   public FarmJob getJob(){
-      return job;
-   }
-   
-   public boolean getStatus()
-   {
-      return completed;
-   }
+public class FarmJobAnalyzer implements Callable<Boolean> {
 
-   public String toString()
-   {
-      return null;//"ID:" + job.getFarmId() + " Status:" + completed + " rootWorkLoc: " + rootWorkLoc;
-   }
+    private String rootWorkLoc;
+    private boolean completed = false;
+    // private int farmJobId;
+    private EntityManager em;
+    private RegressDetails regressDetail;
 
-   public List<String> getWorkLoc()
-   {
-      List<String> dirs = new ArrayList<String>();
-      File f = new File(rootWorkLoc);
-      File files[] = f.listFiles();
-      for (File file : files)
-      {
-         if (file.isDirectory() && !file.getPath().endsWith("build"))
-         {
-            dirs.add(file.getAbsolutePath());
-         }
-      }
-      return dirs;
-   }
+    public FarmJobAnalyzer(RegressDetails regressDetail, EntityManager em) {
+        StageRun.print("In FarmJobAnalyzer.", regressDetail);
+        this.regressDetail = regressDetail;
+        this.em = em;
+    }
 
-   public void analyze()
-   {
-      try
-      {
-         List<String> listArg = new ArrayList<String>();
-         listArg.add("farm");
-         listArg.add("showjobs");
-         listArg.add("-d");
-         listArg.add("-j");
- //        listArg.add(job.getFarmId() + "");
+//    public List<String> getWorkLoc() {
+//        List<String> dirs = new ArrayList<String>();
+//        File f = new File(rootWorkLoc);
+//        File files[] = f.listFiles();
+//        for (File file : files) {
+//            if (file.isDirectory() && !file.getPath().endsWith("build")) {
+//                dirs.add(file.getAbsolutePath());
+//            }
+//        }
+//        return dirs;
+//    }
 
-         ProcessBuilder processBuilder = new ProcessBuilder(listArg);
-         Process process = processBuilder.start();
-         process.waitFor(30, TimeUnit.MINUTES);
-         
-         /*
+    public Boolean call() {
+        try {
+            List<String> listArg = new ArrayList<String>();
+            listArg.add("farm");
+            listArg.add("showjobs");
+            listArg.add("-d");
+            listArg.add("-j");
+            listArg.add(regressDetail.getFarmrunId().toString());
+
+            ProcessBuilder processBuilder = new ProcessBuilder(listArg);
+            Process process = processBuilder.start();
+            process.waitFor(5, TimeUnit.MINUTES);
+
+            /*
           * Farm command output
          $ farm showjobs -j 16799530 -d
          Farm Command Line - 2.9
@@ -95,54 +80,52 @@ public class FarmJobAnalyzer // implements Callable<Void>
           Scheduler         : adc00zmb
           LRGs              : total=1, started=1, done=1
           31315213.Failover_JRF : fin : 32 sucs,  0 difs in  .8 hrs [03/06 18:23 - 03/06 19:12 UTC]
-         */
-         
-         int exitStatus = process.exitValue();
-         if (exitStatus == 0)
-         {
-            BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String currLine = null;
-            int i = 0;
-            while ((currLine = in.readLine()) != null)
-            {
-               StageRun.print("Farm Job Line:" + currLine);
-               i++;               
+             */
+            int exitStatus = process.exitValue();
+            if (exitStatus == 0) {
+                BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                String currLine = null;
+                int i = 0;
+                while ((currLine = in.readLine()) != null) {
+                    StageRun.print("Farm Job Line:" + currLine, regressDetail);
+                    i++;
 
-               if (i == 3 && currLine.contains("finished"))
-               {
-                  completed = true;
-                  while ((currLine = in.readLine()) != null)
-                  {
-                     // System.out.println("currLine2:" + currLine);
-                     if (currLine.contains("Results location"))
-                     {
-                        rootWorkLoc = currLine.split(":")[1].trim();
-                        // System.out.println("rootWorkLoc; " + rootWorkLoc);
+                    if (i == 3 && currLine.contains("finished")) {
+                        regressDetail.setStatus(RegressStatus.completed);
+                        while ((currLine = in.readLine()) != null) {
+                            if (currLine.contains("Results location")) {
+                                rootWorkLoc = currLine.split(":")[1].trim();
+                                regressDetail.setWorkLoc(rootWorkLoc);
+                                regressDetail.setEndtime(Calendar.getInstance());                                
+                                em.merge(regressDetail);
+                                return true;
+                            }
+                        }
                         break;
-                     } 
-                  }
-                  break;
-               }
-               else if (i == 3 && (currLine.contains("failed") || currLine.contains("aborted")))
-               {
-                  completed = true;
- //                 System.out.println("Failed/Aborted: " + job.getFarmId());
-                  rootWorkLoc = null;
-                  break;
-               }
-            }
-            
-            /*if (i==2)
+                    } else if (i == 3 && (currLine.contains("failed") || currLine.contains("aborted"))) {
+                        if (currLine.contains("failed")) {
+                            regressDetail.setStatus(RegressStatus.failed);
+                        } else if (currLine.contains("aborted")) {
+                            regressDetail.setStatus(RegressStatus.aborted);
+                        }
+                        em.merge(regressDetail);
+                        return false;
+                    }
+                }
+
+                /*if (i==2)
             {
                StageRun.print("Jobs output has only tow lines. There is a peobelem in farm submit command or label/shiphome existance. " + job.toString() + " :" + currLine, Color.RED);
                job.setFailed(true);
                job.setCompleted(true);
             }*/
-         }
-      }
-      catch (Exception e)
-      {
-         e.printStackTrace();
-      }
-   }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+    
+    
 }

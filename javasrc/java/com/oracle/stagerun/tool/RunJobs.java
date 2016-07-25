@@ -20,7 +20,7 @@ import javax.persistence.TypedQuery;
 public class RunJobs {
 
     Map<String, String> shiphomesEnv = new HashMap<>();    
-    String rootFolder = "/tmp/sr/work";
+    
     private EntityManager em;
 
     public RunJobs(List<RegressDetails> jobsList, List<StageUpperstackShiphomesEntity> shiphomeList,
@@ -31,7 +31,7 @@ public class RunJobs {
             shiphomesEnv.put("STAGE", shiphomeList.get(0).getStageid().getStageName());
         }
         
-        new File(rootFolder).delete();
+        new File(StageRun.getRootFolder()).delete();
         
         allShiphomeList.stream().forEach((shiphome) -> {
             shiphomesEnv.put(shiphome.getPlatform().getName().replace(".", "_") + "_" + shiphome.getProduct().getProductName() + "_SHIPHOME_LOC",
@@ -44,13 +44,12 @@ public class RunJobs {
             String releaseName = regress.getStageId().getReleaseEntity().getReleaseName();
             String testUnitName = regress.getTestunitId().getTestUnitName();
 
-            String filePath = rootFolder + "/" + releaseName + "/" + stageName;
-            String jobFileName = filePath + "/" + regress.getProduct().getProductName()
-                    + "_" + testUnitName + "_" + LocalDateTime.now().toString().replace(":", ".") + ".sh";
+            String regressDir = StageRun.getStageDirectory(regress);
+            String jobFileName = regressDir + "/" + LocalDateTime.now().toString().replace(":", ".") + ".sh";
             File jobFile = new File(jobFileName);
 
             try {
-                new File(filePath).mkdirs();
+                new File(regressDir).mkdirs();
                 try (PrintWriter out = new PrintWriter(new FileWriter(jobFile))) {
                     out.println(farmJobCommand);
                 }
@@ -60,16 +59,14 @@ public class RunJobs {
             regress.setFileToRun(jobFile);            
             runFarmCommand(regress);
         };
-
-
     }
 
     private void runFarmCommand(RegressDetails regress) {
         try {            
-                StageRun.print("Farm Submit Command:" + regress.getFileToRun().getCanonicalPath());
+                StageRun.print("Farm Submit Command:" + regress.getFileToRun().getCanonicalPath(), regress);
                 shiphomesEnv.put("PLATFORM", regress.getTestunitId().getPlatform().getName());
                 shiphomesEnv.put("PRODUCT", regress.getProduct().getProductName());                
-                StageRun.print("shiphomesEnv:" + shiphomesEnv);
+                StageRun.print("shiphomesEnv:" + shiphomesEnv, regress);
                 ProcessBuilder processBuilder = new ProcessBuilder("bash", regress.getFileToRun().getCanonicalPath());
                 Map<String, String> env = processBuilder.environment();
                 env.putAll(shiphomesEnv);
@@ -79,7 +76,7 @@ public class RunJobs {
                 process.waitFor(10, TimeUnit.MINUTES);
 
                 int exitStatus = process.exitValue();
-                StageRun.print("Fram job submit status:" + exitStatus);
+                StageRun.print("Fram job submit status:" + exitStatus, regress);
                 if (exitStatus == 0) {
                     BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
                     BufferedReader err = new BufferedReader(new InputStreamReader(process.getErrorStream()));

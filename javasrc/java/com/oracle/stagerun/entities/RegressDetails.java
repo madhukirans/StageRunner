@@ -49,7 +49,8 @@ import javax.xml.bind.annotation.XmlRootElement;
             query = "SELECT r FROM RegressDetails r WHERE r.stageId.id = :stageId AND r.product.productName=:product AND r.testunitId.id = :testunitId"),
     @NamedQuery(name = "RegressDetails.findByStarttime", query = "SELECT r FROM RegressDetails r WHERE r.starttime = :starttime"),
     @NamedQuery(name = "RegressDetails.findByEndtime", query = "SELECT r FROM RegressDetails r WHERE r.endtime = :endtime"),
-    @NamedQuery(name = "RegressDetails.findByStatus", query = "SELECT r FROM RegressDetails r WHERE r.status = :status")})
+    @NamedQuery(name = "RegressDetails.findByStatus", query = "SELECT r FROM RegressDetails r WHERE r.status = :notstartedstatus OR r.status = :runningstatus")    
+    })
 public class RegressDetails implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -111,6 +112,8 @@ public class RegressDetails implements Serializable {
     @JoinColumn(name = "testunit_id", referencedColumnName = "id")
     @ManyToOne
     private TestUnitsEntity testunitId;
+    
+    
 
     public RegressDetails() {
     }
@@ -123,6 +126,7 @@ public class RegressDetails implements Serializable {
         this.fileToRun = fileToRun;
     }
 
+    
     
     public RegressDetails(Integer id) {
         this.id = id;
