@@ -27,6 +27,8 @@ All rights reserved.*/
  */
 import com.oracle.stagerun.entities.RegressDetails;
 import com.oracle.stagerun.entities.RegressStatus;
+import java.io.File;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -45,21 +47,26 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
 
-
 //import weblogic.qa.frame.util.ant.SapphireLogFileUploaderTask;
 public class StageRun {
-    public static boolean upload = false;
-    public static Logger logger;    
-    private static Logger LOGGER;
-    
 
-    private EntityManager em;
+    public static boolean upload = false;
+    public static Logger logger;
+    private static Logger LOGGER;
+
+    private static EntityManager em;
+
     public StageRun() {
+
+    }
+
+    static {
+        init();
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("StageRunnerDemonPU");
         em = emf.createEntityManager();
     }
 
-    private void init() {        
+    private static void init() {
         LOGGER = Logger.getLogger("stageruner.log");
         try {
             FileHandler fileHandler = new FileHandler("stagerun.log");
@@ -68,20 +75,27 @@ public class StageRun {
             LOGGER.addHandler(fileHandler);
             fileHandler.setFormatter(simpleFormatter);
             fileHandler.setLevel(Level.ALL);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private static String rootFolder = "/tmp/sr/work";
-    
+    private static final String rootFolder = "/tmp/sr/work";
+
     public static String getRootFolder() {
         return rootFolder;
     }
-    
+
     public static String getStageDirectory(RegressDetails rDetails) {
-        return rootFolder + "/" + rDetails.getStageId().getReleaseEntity().getReleaseName() + 
-                "/" + rDetails.getStageId().getStageName() + "/" + rDetails.getProduct().getProductName() + "/" + rDetails.getTestunitId().getTestUnitName();
+        String loc = rootFolder + "/" + rDetails.getStageId().getReleaseEntity().getReleaseName()
+                + "/" + rDetails.getStageId().getStageName() + "/" + rDetails.getProduct().getProductName() + "/" + rDetails.getTestunitId().getTestUnitName();
+        File f = new File(loc);
+        if (!f.exists()) {
+            f.mkdirs();
+        }
+
+        return loc;
     }
 
     private List<RegressDetails> getRunningRegressList() {
@@ -90,53 +104,91 @@ public class StageRun {
         query.setParameter("runningstatus", RegressStatus.running);
         return query.getResultList();
     }
-    
+
     private void runFarmJobAnalyzer() {
         List<RegressDetails> regressList = getRunningRegressList();
-        
+
         StageRun.print("List: " + regressList);
         ExecutorService executor = Executors.newFixedThreadPool(10);
-        
+
         List<Future<Boolean>> futureList = new ArrayList<>();
-        
-        regressList.forEach( regress -> { 
-            Callable <Boolean> call = new FarmJobAnalyzer(regress, em);
-            Future<Boolean> future = executor.submit(call);
-            futureList.add(future);
+
+        List<Callable<Boolean>> farmJobList = new ArrayList<>();
+
+        regressList.forEach(regress -> {
+            farmJobList.add(new FarmJobAnalyzer(regress));
         });
-        
-        for(Future<Boolean> fut : futureList){
+
+        try {
+            futureList = executor.invokeAll(farmJobList);
+        } catch (InterruptedException e) {
+
+        }
+
+        for (Future<Boolean> fut : futureList) {
             try {
                 //print the return value of Future, notice the output delay in console
                 // because Future.get() waits for task to get completed
                 StageRun.print("Thread ended" + fut.get());
-            } catch (InterruptedException  | ExecutionException e) {
+            } catch (InterruptedException | ExecutionException e) {
                 StageRun.print("" + e);
             }
         }
         //shut down the executor service now
         executor.shutdown();
     }
-    
+
+    private static final int interval = 10;
+
     public static void main(String args[]) {
+        LocalDateTime startTime = LocalDateTime.now();
         StageRun sr = new StageRun();
-        sr.runFarmJobAnalyzer();
+
+        while (true) {
+            sr.runFarmJobAnalyzer();
+            LocalDateTime endTime = LocalDateTime.now();
+            Duration timeElapsed = Duration.between(startTime, endTime);
+            StageRun.print("TimeElapsed:" + timeElapsed.toMillis());
+
+            if (timeElapsed.toMinutes() < interval) {
+                try {
+                    StageRun.print("Sleeping for:" + ((interval * 60 * 1000) - timeElapsed.toMillis()));
+                    Thread.sleep((interval * 60 * 1000) - timeElapsed.toMillis());
+                } catch (Exception e) {
+
+                }
+            }
+
+            startTime = LocalDateTime.now();
+        }
     }
-    
-    public static void print(String message, RegressDetails rdetails){
-        String str = "[" + rdetails.getStageId().getStageName() + "\t" + rdetails.getProduct().getProductName()
-                    + "\t" + rdetails.getTestunitId().getTestUnitName() + rdetails.getFarmrunId()+"]";
-        print (str + message);
+
+    public static void print(String message, RegressDetails rdetails) {
+        String str = "[" + rdetails.getStageId().getStageName() + " " + rdetails.getProduct().getProductName()
+                + " " + rdetails.getTestunitId().getTestUnitName() + " " + rdetails.getFarmrunId() + "]";
+        print(str + message);
     }
-    
+
+    public synchronized static void merge(RegressDetails rdetails) {
+        try {
+            em.getTransaction().begin();
+            em.merge(rdetails);
+            em.flush();
+            em.getTransaction().commit();
+           
+        } catch (Exception e) {
+            System.out.println("Exception :" + e);
+        }
+        print("Record saved", rdetails);
+    }
+
     public static void print(String message) {
         String time = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 
         if (StageRun.LOGGER != null) {
-            StageRun.LOGGER.info(message);
+            StageRun.LOGGER.fine(message);
         }
 
         System.out.println(time + " " + message);
-
     }
 }

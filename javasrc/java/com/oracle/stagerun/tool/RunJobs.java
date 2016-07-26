@@ -83,7 +83,7 @@ public class RunJobs {
 
                     String errString;
                     while ((errString = err.readLine()) != null) {
-                        StageRun.print("Command Error:" + errString + "\n");
+                        StageRun.print("Command Error:" + errString + "\n", regress);
                         regress.setStatus(RegressStatus.failed);
                         em.merge(regress);
                     }
@@ -91,7 +91,7 @@ public class RunJobs {
                     String currLine = null;
                     int farmId = 0;
                     while ((currLine = in.readLine()) != null) {
-                        StageRun.print("Output: " + currLine + "\n");
+                        StageRun.print("Output: " + currLine + "\n", regress);
                         if (currLine.contains("farm showjobs -d -j")) {
                             String str = currLine.substring(currLine.indexOf("(") + 1, currLine.indexOf(")")).trim();
                             str = str.substring(str.lastIndexOf(" ")).trim();
@@ -110,13 +110,13 @@ public class RunJobs {
                         regress.setStatus(RegressStatus.failed);
                     }
 
-                    StageRun.print("Farm id: " + regress.getFarmrunId());
+                    StageRun.print("Farm id: " , regress);
                 } else {
                     BufferedReader err = new BufferedReader(new InputStreamReader(process.getErrorStream()));
                     String errString;
-                    StageRun.print("Error: Command failed " + regress);
+                    StageRun.print("Error: Command failed " , regress);
                     while ((errString = err.readLine()) != null) {
-                        StageRun.print("Error:" + errString);
+                        StageRun.print("Error:" + errString, regress);
                     }
                     regress.setStatus(RegressStatus.failed);
                     em.merge(regress);

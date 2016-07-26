@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 import java.util.concurrent.Callable;
+import javax.persistence.EntityManager;
 
 //import org.testlogic.toolkit.gtlf.converters.testng.Main;
 public class SapphireUploader implements Callable<Boolean> {
@@ -27,8 +28,10 @@ public class SapphireUploader implements Callable<Boolean> {
     private String testUnit;
     private String email;
     private RegressDetails regressDetails;
+    EntityManager em;
 
     public SapphireUploader(RegressDetails regressDetails) {
+        this.em = em;
         this.regressDetails = regressDetails;
         this.resultDir = regressDetails.getWorkLoc();
         this.stageId = regressDetails.getStageId().getStageName();
@@ -44,26 +47,31 @@ public class SapphireUploader implements Callable<Boolean> {
 
         runKey = runId;
 
-        gtlfFileName = StageRun.getStageDirectory(regressDetails) + "/" + runId + ".xml";
+        gtlfFileName = runId + ".xml";
     }
 
-    public Boolean call() {      
-      copyCoverageDump();
-      generateGTLF();
-      uploadGTLF();
-      regressDetails.setSapphireUploadStatus("uploaded");
-      return true;
+    public Boolean call() {
+        StageRun.print("In sapphire upload thread", regressDetails);
+        copyCoverageDump();
+        generateGTLF();
+        uploadGTLF();
+        regressDetails.setGtlfFileLoc(StageRun.getStageDirectory(regressDetails) + "/" + gtlfFileName);
+        regressDetails.setSapphireUploadStatus("uploaded");
+
+        StageRun.merge(regressDetails);
+        return true;
     }
 
     private void copyCoverageDump() {
         try {
             if (Files.exists(FileSystems.getDefault().getPath(resultDir, "coverage.dump"))) {
-                StageRun.print("Copying coverage dump from " + resultDir + "/coverage.dimp" + " to " + StageRun.getStageDirectory(regressDetails) + "/" + runId + ".coverage.dump");
+                StageRun.print("Copying coverage dump from " + resultDir + "/coverage.dimp" + " to "
+                        + StageRun.getStageDirectory(regressDetails) + "/" + runId + ".coverage.dump", regressDetails);
                 Files.copy(FileSystems.getDefault().getPath(resultDir, "coverage.dump"),
                         FileSystems.getDefault().getPath(StageRun.getStageDirectory(regressDetails), runId + ".coverage.dump"));
             }
         } catch (Exception e) {
-            StageRun.print("Copy coverage dump exception " + e.getMessage());
+            StageRun.print("Copy coverage dump exception " + e.getMessage(), regressDetails);
         }
     }
 
@@ -94,24 +102,28 @@ public class SapphireUploader implements Callable<Boolean> {
         list.add("-filename");
         list.add(gtlfFileName);
         list.add("-verbose");
-        StageRun.print("Generating gtlf. Gtlf command:" + list.toString());
-        org.testlogic.toolkit.gtlf.converters.file.Main.main(list.toArray(new String[list.size()]));
-        StageRun.print("Completed generating gtlf for: ");
+        StageRun.print("Generating gtlf. Gtlf command:" + list.toString(), regressDetails);
+        //try {
+            org.testlogic.toolkit.gtlf.converters.file.Main.main(list.toArray(new String[list.size()]));
+        //} catch (Exception e) {
+        //    StageRun.print("Exception : " + e, regressDetails);
+        //}
+        StageRun.print("Completed generating gtlf for: ", regressDetails);
     }
 
     public void uploadGTLF() {
-        StageRun.print("Upload begins.");
+        StageRun.print("Upload begins.", regressDetails);
         try {
             System.setProperty("testmgr.validate", "false");
             System.setProperty("notify", email);
-            weblogic.coconutx.WLCustomGTLFUploader.uploadGTLF(gtlfFileName);
-            StageRun.print("Upload Successful.");
+            // weblogic.coconutx.WLCustomGTLFUploader.uploadGTLF(StageRun.getStageDirectory(regressDetails) + "/" + gtlfFileName);
+            StageRun.print("Upload Successful.", regressDetails);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    
-     private void sendMail() {
+
+    private void sendMail() {
         // Send mail
         Mail mail = new Mail(regressDetails);
         mail.sendMail();

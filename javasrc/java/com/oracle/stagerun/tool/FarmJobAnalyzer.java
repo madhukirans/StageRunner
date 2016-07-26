@@ -10,6 +10,9 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import javax.persistence.EntityManager;
 
@@ -18,13 +21,12 @@ public class FarmJobAnalyzer implements Callable<Boolean> {
     private String rootWorkLoc;
     private boolean completed = false;
     // private int farmJobId;
-    private EntityManager em;
+    
     private RegressDetails regressDetail;
 
-    public FarmJobAnalyzer(RegressDetails regressDetail, EntityManager em) {
+    public FarmJobAnalyzer(RegressDetails regressDetail) {
         StageRun.print("In FarmJobAnalyzer.", regressDetail);
-        this.regressDetail = regressDetail;
-        this.em = em;
+        this.regressDetail = regressDetail;    
     }
 
 //    public List<String> getWorkLoc() {
@@ -38,17 +40,21 @@ public class FarmJobAnalyzer implements Callable<Boolean> {
 //        }
 //        return dirs;
 //    }
-
     public Boolean call() {
         try {
+            if (regressDetail.getFarmrunId() == null)
+                return false;
+            
             List<String> listArg = new ArrayList<String>();
             listArg.add("farm");
             listArg.add("showjobs");
             listArg.add("-d");
             listArg.add("-j");
             listArg.add(regressDetail.getFarmrunId().toString());
-
+            
+            StageRun.print("command:" + listArg, regressDetail);
             ProcessBuilder processBuilder = new ProcessBuilder(listArg);
+            processBuilder.redirectErrorStream(true);
             Process process = processBuilder.start();
             process.waitFor(5, TimeUnit.MINUTES);
 
@@ -91,14 +97,19 @@ public class FarmJobAnalyzer implements Callable<Boolean> {
                     i++;
 
                     if (i == 3 && currLine.contains("finished")) {
+                        
                         regressDetail.setStatus(RegressStatus.completed);
                         while ((currLine = in.readLine()) != null) {
                             if (currLine.contains("Results location")) {
                                 rootWorkLoc = currLine.split(":")[1].trim();
                                 regressDetail.setWorkLoc(rootWorkLoc);
-                                regressDetail.setEndtime(Calendar.getInstance());                                
-                                em.merge(regressDetail);
-                                return true;
+                                regressDetail.setEndtime(Calendar.getInstance());
+                                StageRun.merge(regressDetail);
+                                
+                                ExecutorService executor = Executors.newCachedThreadPool();
+                                Future<Boolean> fut = executor.submit(new SapphireUploader(regressDetail));
+                                return fut.get(10, TimeUnit.MINUTES);
+                                //return true;
                             }
                         }
                         break;
@@ -108,7 +119,8 @@ public class FarmJobAnalyzer implements Callable<Boolean> {
                         } else if (currLine.contains("aborted")) {
                             regressDetail.setStatus(RegressStatus.aborted);
                         }
-                        em.merge(regressDetail);
+                        
+                        StageRun.merge(regressDetail);
                         return false;
                     }
                 }
@@ -126,6 +138,5 @@ public class FarmJobAnalyzer implements Callable<Boolean> {
 
         return false;
     }
-    
-    
+
 }
