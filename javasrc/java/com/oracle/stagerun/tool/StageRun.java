@@ -62,7 +62,7 @@ public class StageRun {
 
     static {
         init();
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("StageRunnerDemonPU");
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("StageRunnerPU");
         em = emf.createEntityManager();
     }
 

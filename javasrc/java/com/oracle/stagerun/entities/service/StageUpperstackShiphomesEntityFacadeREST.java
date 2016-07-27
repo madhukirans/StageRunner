@@ -56,7 +56,17 @@ public class StageUpperstackShiphomesEntityFacadeREST extends AbstractFacade<Sta
         query.setParameter("stageid", stageid);
         return query.getResultList();
     }
-
+    
+    @GET
+    @Path("release/{release}/stage/{stagename}")
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public List<StageUpperstackShiphomesEntity> findByStageId(@PathParam("release") String release, @PathParam("stagename") String stagename) {
+        TypedQuery<StageUpperstackShiphomesEntity> query = em.createNamedQuery("StageUpperstackShiphomesEntity.findByReleaseANDStage", StageUpperstackShiphomesEntity.class);
+        query.setParameter("release", release);
+        query.setParameter("stagename", stagename);
+        return query.getResultList();
+    }
+    
     @GET
     @Path("stage/{stageid}/product/{productName}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})

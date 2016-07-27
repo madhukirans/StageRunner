@@ -3,7 +3,11 @@
     <persistence-unit name="StageRunnerPU" transaction-type="JTA">
         <jta-data-source>java:app/StageRunner</jta-data-source>
         <exclude-unlisted-classes>false</exclude-unlisted-classes>
-        <properties/>
+        <properties>             
+            <property name="eclipselink.cache.shared.default" value="false"/>
+            <property name="eclipselink.cache.size.default" value="0"/>
+            <property name="eclipselink.cache.type.default" value="None"/>
+        </properties>
     </persistence-unit>
 </persistence>
 

@@ -31,9 +31,20 @@
         $scope.selectProducts = function () {
             $http.get("web/shiphomes/stage/" + $scope.selectedStage).success(function (data) {
                 $scope.shiphomes = data;
-                $scope.tempShiphomes = data;
+                //$scope.tempShiphomes = data;
 
-                $scope.jsonurl = window.location.protocol + "//" + window.location.host + "/sr/web/shiphomes/stage/" + $scope.selectedStage;
+                var stagename = "";
+                 $scope.jsonurl = "";
+                for (var i in $scope.stages) {
+                    console.log("Madhu" + $scope.stages[i].id + ":" + $scope.selectedStage);
+                    if ($scope.stages[i].id == $scope.selectedStage)
+                    {
+                        stagename = $scope.stages[i].stageName;
+                        $scope.jsonurl = window.location.protocol + "//" + window.location.host + "/sr/web/shiphomes/release/" +
+                        $scope.selectedRelease + "/stage/" + stagename;
+                    }                    
+                }                
+
                 $scope.products = {};
                 $scope.platforms = {};
                 for (var key in $scope.shiphomes) {
@@ -58,36 +69,33 @@
 
             if (!$scope.selectedProduct && !$scope.selectedPlatform) {
                 $scope.tempShiphomes = $scope.shiphomes;
-            } 
-            else if ($scope.selectedProduct && !$scope.selectedPlatform) {
+            } else if ($scope.selectedProduct && !$scope.selectedPlatform) {
                 for (var key in $scope.shiphomes) {
                     if ($scope.shiphomes.hasOwnProperty(key)) {
                         if ($scope.shiphomes[key].product.productName === $scope.selectedProduct)
                             $scope.tempShiphomes[key] = $scope.shiphomes[key];
                     }
                 }
-            }
-            else if (!$scope.selectedProduct && $scope.selectedPlatform) {
+            } else if (!$scope.selectedProduct && $scope.selectedPlatform) {
                 for (var key in $scope.shiphomes) {
                     if ($scope.shiphomes.hasOwnProperty(key)) {
-                        if ($scope.shiphomes[key].platform.name  === $scope.selectedPlatform)
+                        if ($scope.shiphomes[key].platform.name === $scope.selectedPlatform)
+                            $scope.tempShiphomes[key] = $scope.shiphomes[key];
+                    }
+                }
+            } else {
+                for (var key in $scope.shiphomes) {
+                    if ($scope.shiphomes.hasOwnProperty(key)) {
+                        if ($scope.shiphomes[key].product.productName === $scope.selectedProduct && $scope.shiphomes[key].platform.name === $scope.selectedPlatform)
                             $scope.tempShiphomes[key] = $scope.shiphomes[key];
                     }
                 }
             }
-            else  {
-                for (var key in $scope.shiphomes) {
-                    if ($scope.shiphomes.hasOwnProperty(key)) {
-                        if ($scope.shiphomes[key].product.productName === $scope.selectedProduct && $scope.shiphomes[key].platform.name  === $scope.selectedPlatform)
-                            $scope.tempShiphomes[key] = $scope.shiphomes[key];
-                    }
-                }
-            }          
-            
-            
+
+
         };
     }
-    
+
     /** @ngInject */
     function prettyJSON() {
         function prettyPrintJson(json) {
