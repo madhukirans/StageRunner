@@ -1,5 +1,3 @@
-CREATE DATABASE  IF NOT EXISTS `results` /*!40100 DEFAULT CHARACTER SET latin1 */;
-USE `results`;
 -- MySQL dump 10.13  Distrib 5.7.12, for linux-glibc2.5 (x86_64)
 --
 -- Host: localhost    Database: results
@@ -54,4 +52,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-07-21  7:41:59
+-- Dump completed on 2016-07-27  4:29:51
