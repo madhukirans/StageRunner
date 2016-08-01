@@ -15,7 +15,8 @@
         'BlurAdmin.pages.admin.addreleases',
         'BlurAdmin.pages.admin.addStages',
         'BlurAdmin.pages.admin.addTestUnits',
-        
+        'BlurAdmin.pages.help',        
+        'BlurAdmin.pages.about',
     ]).config(routeConfig);
     
     app.directive('colResizeable', colResizeable);

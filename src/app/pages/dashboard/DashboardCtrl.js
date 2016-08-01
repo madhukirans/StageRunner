@@ -22,6 +22,7 @@
         $scope.stages = [];
         $http.get("web/stages").success(function (data) {
             $scope.stages = data;
+            console.log($scope.stages);
         });
 
 
@@ -169,14 +170,14 @@
                     "id": "AmGraph-1",
                     "title": "graph 1",
                     "type": "column",
-                    //"fixedColumnWidth": 15,
+                    "fixedColumnWidth": 15,
                     "valueField": "testsucs"
                 },
                 {
                     "balloonText": '<b>[[bellonDif]]</b>',
                     //"fillColors": "#FF0000",
                     "fillAlphas": 1,
-                    //"fixedColumnWidth": 15,
+                    "fixedColumnWidth": 15,
                     "id": "AmGraph-2",
                     "title": "graph 2",
                     "type": "column",

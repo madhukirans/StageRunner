@@ -1,0 +1,97 @@
+<!--<div ba-panel ba-panel-class="with-scroll" >-->
+<div class="widgets">
+
+
+    <div class=WordSection1>
+
+        <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt;line-height:
+           normal'><b><span style='font-size:12.0pt;font-family:"Times New Roman","serif"'>Abstract
+                </span></b></p>
+
+        <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt;line-height:
+           normal'><span style='font-size:12.0pt;font-family:"Times New Roman","serif"'>The
+                current process for stage testing across FMW product family involves manual
+                regress execution, aggregating code coverage from multiple regress suites,
+                globalization regress execution for multiple locales, dif analysis followed by
+                sapphire upload. The article proposes a process to centralize and automate the
+                workflow for stage testing. The component teams shall involve only analyzing
+                new failures.</span></p>
+
+        <p class=MsoNormal style='line-height:normal'><b><span style='font-size:12.0pt;
+                                                               font-family:"Times New Roman","serif"'>Current Overhead</span></b></p>
+
+        <ul type=disc>
+            <li class=MsoNormal style='line-height:normal'><span style='font-size:12.0pt;
+                                                                 font-family:"Times New Roman","serif"'>Stage testing manual, repetitive
+                    and monotonous.</span></li>
+            <li class=MsoNormal style='line-height:normal'><span style='font-size:12.0pt;
+                                                                 font-family:"Times New Roman","serif"'>At least two person-day, every week
+                    (stage announcement frequency) from each product QA team is dedicated for
+                    stage testing and coverage report generation alone.</span></li>
+            <li class=MsoNormal style='line-height:normal'><span style='font-size:12.0pt;
+                                                                 font-family:"Times New Roman","serif"'>Human errors while copying
+                    shiphomes form wiki page or while announcing. </span></li>
+        </ul>
+
+        <p class=MsoNormal style='line-height:normal'><b><span style='font-size:12.0pt;
+                                                               font-family:"Times New Roman","serif"'>RM uses ASTC to trigger stage
+                    announcements</span></b></p>
+
+        <p class=MsoNormal style='margin-left:30.0pt;line-height:normal'><span
+                style='font-size:12.0pt;font-family:"Times New Roman","serif"'>StageRunner can
+                have a UI for RM to publish the stage shiphomes. Once announced,&nbsp;the
+                details shall be published in the site and shall also be available as a JSON
+                object that can be readily consumed using a REST request.</span></p>
+
+        <p class=MsoNormal style='line-height:normal'><b><span style='font-size:12.0pt;
+                                                               font-family:"Times New Roman","serif"'>How StageRunner Works?</span></b><span
+                style='font-size:12.0pt;font-family:"Times New Roman","serif"'> </span></p>
+
+        <ul type=disc>
+            <li class=MsoNormal style='line-height:normal'><span style='font-size:12.0pt;
+                                                                 font-family:"Times New Roman","serif"'>StageRunner shall submit&nbsp;jobs
+                    to form in parallel and capture coverage for all products.&nbsp;</span></li>
+            <li class=MsoNormal style='line-height:normal'><span style='font-size:12.0pt;
+                                                                 font-family:"Times New Roman","serif"'>StageRunner shall email QA regarding
+                    the job submissions for the new stage. QA/RM can visually monitor progress
+                    of the jobs submitted.</span></li>
+            <li class=MsoNormal style='line-height:normal'><span style='font-size:12.0pt;
+                                                                 font-family:"Times New Roman","serif"'>StageRunner shall poll for all jobs
+                    to complete, consolidate the coverage dump from each job and keep it in
+                    common location and generate a unified coverage report.</span></li>
+            <li class=MsoNormal style='line-height:normal'><span style='font-size:12.0pt;
+                                                                 font-family:"Times New Roman","serif"'>StageRunner shall verify the
+                    regress results with pre-configured acceptable range, pre-configured dif
+                    analysis, auto upload the qualifying suite results to sapphire and notify
+                    QA by email.</span></li>
+            <li class=MsoNormal style='line-height:normal'><span style='font-size:12.0pt;
+                                                                 font-family:"Times New Roman","serif"'>QA can work on any failing suites
+                    or unexpected diffs by accessing work locations preserved by StageRunner. </span></li>
+            <li class=MsoNormal style='line-height:normal'><span style='font-size:12.0pt;
+                                                                 font-family:"Times New Roman","serif"'>QA/RM can resubmit failed jobs form
+                    StageRunner UI.</span></li>
+        </ul>
+
+        <p class=MsoNormal style='line-height:normal'><b><span style='font-size:12.0pt;
+                                                               font-family:"Times New Roman","serif"'>What does StageRunner accomplish?</span></b></p>
+
+        <ul type=disc>
+            <li class=MsoNormal style='line-height:normal'><span style='font-size:12.0pt;
+                                                                 font-family:"Times New Roman","serif"'>StageRunner shall make stage
+                    shiphome details available as a REST resource to be consumed by any tool
+                    (Including StageRunner itself)</span></li>
+            <li class=MsoNormal style='line-height:normal'><span style='font-size:12.0pt;
+                                                                 font-family:"Times New Roman","serif"'>StageRunner shall automate repetitive
+                    job of stage regress execution, coverage consolidation&nbsp;and result
+                    publishing. For example, in case of Oracle Traffic
+                    Director&nbsp;(relatively small product), with 6 regress suites, 20
+                    man-hours per week were saved.</span></li>
+            <li class=MsoNormal style='line-height:normal'><span style='font-size:12.0pt;
+                                                                 font-family:"Times New Roman","serif"'>QA can focus automation rather than
+                    manual stage execution.</span></li>
+        </ul>       
+        Contact: <a href="mailto:webtierqa_in@oracle.com">webtierqa_in@oracle.com</a>
+    </div>
+
+</div>
+

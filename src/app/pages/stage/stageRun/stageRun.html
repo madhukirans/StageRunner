@@ -34,14 +34,16 @@
                 <colgroup>
                     <col width="1%" />
                     <col width="10%" />
-                    <col width="10%" />
-                    <col width="10%" />
-                    <col width="10%" />
-                    <col width="10%" />
-                    <col width="10%" />
+                    <col width="5%" />
+                    <col width="5%" />
                     <col width="10%" />
                     <col width="10%" />
                     <col width="15%" />
+                    <col width="5%" />
+                    <col width="5%" />
+                    <col width="5%" />
+                    <col width="15%" />
+                    <col width="5%" />
                 </colgroup>
                 <thead> 
                     <tr class="sortable header-row black-muted-bg">
@@ -56,6 +58,7 @@
                         <th>DifCount</th>
                         <th>UploadStatus</th>
                         <th>GtlfLoc</th>
+                        <th>ReRun</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -92,7 +95,12 @@
                         </td>
                         <td>                   
                             {{r.gtlfFileLoc}}                        
-                        </td>                    
+                        </td>      
+                        <td>                   
+                            <button type="submit" class="btn btn-primary editable-table-button btn-xs" ng-click="reRunTests($index)" >
+                                ReRun
+                            </button>                      
+                        </td> 
                     </tr>
                 </tbody>              
             </table>

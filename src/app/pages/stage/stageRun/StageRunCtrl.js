@@ -6,10 +6,10 @@
     'use strict';
 
     angular.module('BlurAdmin.pages.stage.stagerun').controller('StageRunCtrl', StageRunCtrl);
-    
- 
 
-    function StageRunCtrl($scope, $http, $filter, myUtilService, UtilFactory) {
+
+
+    function StageRunCtrl($scope, $http, $filter, myUtilService, UtilFactory, toastr) {
         //$scope.selectedProduct = "";
         //$scope.selectedTestUnit = "";
 
@@ -58,8 +58,47 @@
 
             $http.get(URL).success(function (data) {
                 $scope.regressdetails = data;
-            });                     
+            });
         };
+
+        $scope.options = {
+            autoDismiss: true,
+            positionClass: 'toast-top-full-width',
+            type: 'info',
+            timeOut: '50000',
+            extendedTimeOut: '2000',
+            allowHtml: true,
+            closeButton: false,
+            tapToDismiss: false,
+            progressBar: true,
+            newestOnTop: false,
+            maxOpened: 1,
+            preventDuplicates: true,
+            preventOpenDuplicates: true,
+            title: "Please wait. ",
+            msg: "Job submisstion is in progress..."
+        };
+
+
+
+        $scope.reRunTests = function (index) {
+            console.log("Madhu" + $scope.regressdetails[index].stageId.id);
+
+            var postdata = {
+                stage: $scope.regressdetails[index].stageId,
+                product: $scope.regressdetails[index].product,
+                testunit: $scope.regressdetails[index].testunitId
+            };
+
+            var URL = 'web/runregress';
+            toastr.info($scope.options.title, $scope.options.msg, $scope.options);
+            $http.post(URL, postdata).success(function (data, status, headers, config) {                
+                $scope.loadTable();
+                toastr.clear();
+            }).error(function (err){
+                toastr.clear();
+            });
+        }
 
         $scope.runStage = function () {
             var URL = 'web/runregress';///stage/' + $scope.selectedStage;
@@ -85,8 +124,14 @@
             console.log(tempProduct);
             console.log(tempStage);
             console.log(tempTestunit);
-            $http.post(URL, postdata).success(function (data, status, headers, config) {
+            
+            toastr.info($scope.options.title, $scope.options.msg, $scope.options);
 
+            $http.post(URL, postdata).success(function (data, status, headers, config) {
+                $scope.loadTable();
+                toastr.clear();
+            }).error(function (err){
+                toastr.clear();
             });
 
         };

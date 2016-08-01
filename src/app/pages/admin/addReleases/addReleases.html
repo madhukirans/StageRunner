@@ -29,7 +29,7 @@
                             {{$index}}
                         </td>                    
                         <td>                        
-                            <span editable-text="release.releaseName" id="releasenames" name="releasenames" e-name="releasenames" e-form="rowform" e-required>
+                            <span editable-text="release.releaseName" name="releasenames" e-name="releasenames" e-form="rowform" e-required>
                                 {{release.releaseName}}
                             </span>                       
                         </td>
@@ -38,7 +38,7 @@
                                 {{release.desc1}}
                             </span>
                         </td>                    
-                        <td>
+                        <td>                            
                             <form editable-form name="rowform" ng-show="rowform.$visible" class="form-buttons form-inline"  shown="inserted == release" onaftersave="persistRelease($index,rowform)">
                                 <button type="submit" id="saveButton"  name="saveButton" e-name="saveButton" ng-disabled="rowform.$waiting" class="btn btn-primary editable-table-button btn-xs" >
                                     Save
@@ -49,7 +49,7 @@
                             </form>
                             <div class="buttons" ng-show="!rowform.$visible">
                                 <button class="btn btn-primary editable-table-button btn-xs" ng-click="rowform.$show()">Edit</button>
-                                <button class="btn btn-danger editable-table-button btn-xs" ng-click="removeRelease($index)">Delete</button>
+                                <button class="btn btn-danger editable-table-button btn-xs" ng-click="removeRelease($index, releasenames)">Delete</button>
                             </div>                        
                         </td>
                     </tr>

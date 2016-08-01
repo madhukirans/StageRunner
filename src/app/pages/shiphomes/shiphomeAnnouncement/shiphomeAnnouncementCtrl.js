@@ -7,7 +7,7 @@
 
     angular.module('BlurAdmin.pages.shiphomes.announcement').controller('ShiphomeAnnouncementCtrl', ShiphomeAnnouncementCtrl);
 
-    function ShiphomeAnnouncementCtrl($scope, $http, $filter, myUtilService, UtilFactory, editableOptions, editableThemes) {
+    function ShiphomeAnnouncementCtrl($scope, $http, $filter, myUtilService, UtilFactory, editableOptions, editableThemes, $q, $timeout) {
         $scope.smartTablePageSize = 10;
 
 
@@ -105,6 +105,8 @@
                 });
             }
         };
+        
+        
 
         editableOptions.theme = 'bs3';
         editableThemes['bs3'].submitTpl = '<button type="submit" class="btn btn-primary btn-with-icon"><i class="ion-checkmark-round"></i></button>';
