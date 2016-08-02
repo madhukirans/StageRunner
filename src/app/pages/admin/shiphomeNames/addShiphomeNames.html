@@ -1,0 +1,72 @@
+<div ba-panel      
+     ba-panel-title="Add Stage."
+     ba-panel-class="with-scroll">
+    <div class="form-horizontal" ng-controller="AddShiphomeNamesCtrl">
+        <div class="form-group">
+            <table class="table"> 
+                <tr>
+                    <td style="text-align: left">
+                        <div class="col-sm-3">
+                            <select ng-model="selectedRelease" class="form-control selectpicker" ng-change="loadTable()">    
+                                <option value="">Select Release</option>
+                                <option ng-repeat="r in releases" ng-value="r.releaseName">{{r.releaseName}}</option>
+                            </select>
+                        </div>
+                        <button  for="table1" class="btn btn-primary" ng-click="addStage()">Add ShiphomeNames</button>
+                    </td>
+                    <td style="text-align: right">        
+                        <button for="table1" progress-button="loadTable()" pb-direction="horizontal" class="btn btn-primary"><i class="ion-refresh"></i></button>
+                    </td>
+                </tr>
+            </table>
+
+            <table col-resizeable  name="table1" st-table="stages" class="table table-bordered table-hover">
+                <thead>
+                    <tr class="sortable header-row black-muted-bg">
+                        <th class="table-id">#</th>
+                        <th>Product</th>
+                        <th>Platform</th>
+                        <th>ShiphomeName</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="s in shiphomes" class="editable-row">
+                        <td class="table-id">
+                            {{$index}}
+                        </td>                    
+                        <td>                        
+                            <span editable-text="s.product" e-name="product" e-form="rowform" e-required>
+                                {{s.product}}
+                            </span>                       
+                        </td>
+                        <td class="select-td">
+                            <span editable-text="s.platform" e-name="platform" e-form="rowform">
+                                {{s.platform}}
+                            </span>
+                        </td>                    
+                        <td class="select-td">
+                            <span editable-text="s.shiphomeName" e-name="shiphomeName" e-form="rowform">
+                                {{p.platform}}
+                            </span>
+                        </td> 
+                        <td>
+                            <form editable-form name="rowform" ng-show="rowform.$visible" class="form-buttons form-inline"  shown="inserted == stage" onaftersave="persist($index,rowform)">
+                                <button type="submit" id="saveButton"  name="saveButton" e-name="saveButton" ng-disabled="rowform.$waiting" class="btn btn-primary editable-table-button btn-xs" >
+                                    Save
+                                </button>
+                                <button type="button" ng-disabled="rowform.$waiting" ng-click="rowform.$cancel()" class="btn btn-default editable-table-button btn-xs">
+                                    Cancel
+                                </button>
+                            </form>
+                            <div class="buttons" ng-show="!rowform.$visible">
+                                <button class="btn btn-primary editable-table-button btn-xs" ng-click="rowform.$show()">Edit</button>
+                                <button class="btn btn-danger editable-table-button btn-xs" ng-click="removeStage($index)">Delete</button>
+                            </div>                        
+                        </td>
+                    </tr>
+                </tbody>              
+            </table>
+        </div>
+    </div>
+</div>

@@ -35,18 +35,18 @@ import javax.xml.bind.annotation.XmlTransient;
 public class PlatformEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    
+
     @Id
-    @Basic(optional = false)    
+    @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 20)
     @Column(name = "NAME")
     private String name;
-    
+
     @Size(max = 30)
     @Column(name = "DESCRIPTION")
     private String description;
-    
+
     @Size(max = 1)
     @Column(name = "ISDEFAULT")
     private String isdefault;
@@ -56,6 +56,9 @@ public class PlatformEntity implements Serializable {
 
     @OneToMany(mappedBy = "platform")
     private List<TestUnitsEntity> testUnitsEntityList;
+
+    @OneToMany(mappedBy = "platformEntity")
+    private List<ShiphomeNamesEntity> shiphomeNamesList;
 
     public PlatformEntity() {
     }
@@ -95,6 +98,15 @@ public class PlatformEntity implements Serializable {
 
     public void setIsdefault(String isdefault) {
         this.isdefault = isdefault;
+    }
+
+    @XmlTransient
+    public List<ShiphomeNamesEntity> getShiphomeNamesList() {
+        return shiphomeNamesList;
+    }
+
+    public void setShiphomeNamesList(List<ShiphomeNamesEntity> shiphomeNamesList) {
+        this.shiphomeNamesList = shiphomeNamesList;
     }
 
     @XmlTransient

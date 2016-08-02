@@ -39,6 +39,7 @@ public class ProductsEntity implements Serializable {
     @Size(min = 1, max = 20)
     @Column(name = "product_name")
     private String productName;
+    
     @Size(max = 45)
     @Column(name = "product_desc")
     private String productDesc;
@@ -49,7 +50,9 @@ public class ProductsEntity implements Serializable {
     @OneToMany(mappedBy = "product")
     private List<RegressDetails> regressDetailsList;
     
-
+    @OneToMany (mappedBy = "product")
+    private List<ShiphomeNamesEntity> shiphomeNamesList;
+    
     @OneToMany(mappedBy = "product")
     private List<StageUpperstackShiphomesEntity> stageUpperstackShiphomesEntityList;
 
@@ -60,6 +63,22 @@ public class ProductsEntity implements Serializable {
         this.productName = productName;
     }
 
+    public List<ShiphomeNamesEntity> getShiphomeNamesList() {
+        return shiphomeNamesList;
+    }
+
+    public void setShiphomeNamesList(List<ShiphomeNamesEntity> shiphomeNamesList) {
+        this.shiphomeNamesList = shiphomeNamesList;
+    }
+
+    public List<StageUpperstackShiphomesEntity> getStageUpperstackShiphomesEntityList() {
+        return stageUpperstackShiphomesEntityList;
+    }
+
+    public void setStageUpperstackShiphomesEntityList(List<StageUpperstackShiphomesEntity> stageUpperstackShiphomesEntityList) {
+        this.stageUpperstackShiphomesEntityList = stageUpperstackShiphomesEntityList;
+    }
+    
     public String getProductName() {
         return productName;
     }

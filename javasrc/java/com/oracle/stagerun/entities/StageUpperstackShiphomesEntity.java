@@ -152,7 +152,7 @@ public class StageUpperstackShiphomesEntity implements Serializable {
         this.stageid = stageid;
     }
 
-    @Override
+//    @Override
     public int hashCode() {
         int hash = 0;
         hash += (id != null ? id.hashCode() : 0);

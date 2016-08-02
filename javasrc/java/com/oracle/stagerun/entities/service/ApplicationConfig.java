@@ -34,6 +34,7 @@ public class ApplicationConfig extends Application {
         resources.add(com.oracle.stagerun.entities.service.RegressDetailsFacadeREST.class);
         resources.add(com.oracle.stagerun.entities.service.ReleasesEntityFacadeREST.class);
         resources.add(com.oracle.stagerun.entities.service.RunRegressService.class);
+        resources.add(com.oracle.stagerun.entities.service.ShiphomeNamesFacadeREST.class);
         resources.add(com.oracle.stagerun.entities.service.StageEntityFacadeREST.class);
         resources.add(com.oracle.stagerun.entities.service.StageInfraDetailsEntityFacadeREST.class);
         resources.add(com.oracle.stagerun.entities.service.StageUpperstackShiphomesEntityFacadeREST.class);

@@ -61,7 +61,6 @@ public class RunRegressService {//extends AbstractFacade<RegressDetails> {
         if (recentStage != null && recentStage.size() >= 1) {
             return getREsultsByStage(recentStage.get(0).getId());
         }
-
         return null;
     }
 
