@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.6.23, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.12, for linux-glibc2.5 (x86_64)
 --
 -- Host: localhost    Database: results
 -- ------------------------------------------------------
--- Server version	5.6.25-log
+-- Server version	5.7.13
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -24,15 +24,17 @@ DROP TABLE IF EXISTS `stage`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `stage` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `users` int(11) DEFAULT NULL,
   `stage_name` varchar(45) NOT NULL,
   `comments` varchar(200) DEFAULT NULL,
-  `release_name` varchar(20) NOT NULL,
+  `releaseid` int(11) NOT NULL,
   `datecreated` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `stage_name_UNIQUE` (`stage_name`,`release_name`),
-  KEY `release_fk_idx` (`release_name`),
-  CONSTRAINT `release_fk` FOREIGN KEY (`release_name`) REFERENCES `releases` (`release_name`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
+  KEY `fk_stage_userid` (`users`),
+  KEY `fk_stage_releaseid_idx` (`releaseid`),
+  CONSTRAINT `fk_stage_releaseid` FOREIGN KEY (`releaseid`) REFERENCES `releases` (`releaseid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_stage_userid` FOREIGN KEY (`users`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -41,7 +43,7 @@ CREATE TABLE `stage` (
 
 LOCK TABLES `stage` WRITE;
 /*!40000 ALTER TABLE `stage` DISABLE KEYS */;
-INSERT INTO `stage` VALUES (8,'1','Stage 1','12.2.1.1.0','2016-07-13 03:29:14'),(9,'22','Stage 2 for 12.2.1.1.0','12.2.1.1.0','2016-07-12 01:39:46'),(11,'RC1',NULL,'12.2.1.1.0','2016-07-10 00:55:23'),(14,'5','Stage 5','12.2.1.2.0',NULL),(15,'6','stage 6','12.2.1.2.0','2016-07-12 01:40:19');
+INSERT INTO `stage` VALUES (5,NULL,'Stage1','stage 1',1,'2016-08-09 10:37:40');
 /*!40000 ALTER TABLE `stage` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -54,4 +56,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-08-02 13:49:11
+-- Dump completed on 2016-08-12  6:03:49

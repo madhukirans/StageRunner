@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import javax.ejb.EJB;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
@@ -27,10 +26,8 @@ public class RunJobs {
     Map<String, String> shiphomesEnv = new HashMap<>();
     private Releases release;
     private Stage stage;
-
     private EntityManager em;
-    
-    //@Stateless
+
     public RunJobs(Releases release, Stage stage, List<RegressDetails> jobsList, List<StageUpperstackShiphomes> shiphomeList,
             List<StageUpperstackShiphomes> allShiphomeList, EntityManager em) {
         this.em = em;
@@ -40,18 +37,18 @@ public class RunJobs {
         shiphomesEnv.put("RELEASE", release.getName());
         shiphomesEnv.put("STAGE", stage.getStageName());
         setShiphomeEnvironmentVariables(allShiphomeList);
-        
+
         //delete root folder @TODO. Remove this in production mode.
         new File(StageRun.getRootFolder()).delete();
-        
+
         for (RegressDetails regress : jobsList) {
             String farmJobCommand = regress.getTestunit().getJobreqAgentCommand();
             String stageName = regress.getStage().getStageName();
             String releaseName = regress.getStage().getRelease().getName();
             String testUnitName = regress.getTestunit().getTestunitName();
-            
+
             String regressDir = StageRun.getStageDirectory(regress);
-            if (regress.getTestunit().getIsDte() == TestUnitRunTypeEnum.DTE) {                
+            if (regress.getTestunit().getIsDte() == TestUnitRunTypeEnum.DTE) {
                 String jobFileName = regressDir + "/" + LocalDateTime.now().toString().replace(":", ".") + ".sh";
                 File jobFile = new File(jobFileName);
 
@@ -88,14 +85,14 @@ public class RunJobs {
                     e.printStackTrace();
                 }
                 regress.setFileToRun(jobFile);
-                */
+                 */
             }
-            
+
             runFarmCommand(regress);
         };
     }
-    
-    private void setShiphomeEnvironmentVariables(List <StageUpperstackShiphomes> allShiphomeList){
+
+    private void setShiphomeEnvironmentVariables(List<StageUpperstackShiphomes> allShiphomeList) {
         //Set SHIPHOME environemnt varibales
         allShiphomeList.stream().forEach((shiphome) -> {
 
@@ -112,23 +109,22 @@ public class RunJobs {
             });
         });
     }
-    
+
     public void print(String message, RegressDetails rdetails) {
         String str = "[" + rdetails.getStage().getStageName() + " " + rdetails.getProduct().getName()
                 + " " + rdetails.getTestunit().getTestunitName() + " " + rdetails.getFarmrunId() + "]";
         print(str + message);
     }
-    
+
     public void print(String message) {
         String time = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 
 //        if (StageRun.LOGGER != null) {
 //            StageRun.LOGGER.fine(message);
 //        }
-
         System.out.println(time + " " + message);
     }
-    
+
     private void runFarmCommand(RegressDetails regress) {
         try {
             print("Farm Submit Command:" + regress.getFileToRun().getCanonicalPath(), regress);

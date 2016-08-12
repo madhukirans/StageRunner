@@ -52,21 +52,21 @@ public class StageRun {
     public static boolean upload = false;
     public static Logger logger;
     private static Logger LOGGER;
-    
+
     //@PersistenceContext (unitName = "StageRunnerPU")
     private static EntityManager em;
 
     public StageRun() {
 
     }
-    
+
     private static final int interval = 10;
 
-     public static void main(String args[]) {
-     init();
+    public static void main(String args[]) {
+        init();
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("StageRunnerPU");
         em = emf.createEntityManager();
-        
+        runForEver();
     }
 
     private static void runForEver() {
@@ -91,9 +91,8 @@ public class StageRun {
             startTime = LocalDateTime.now();
         }
     }
-    
-    public static void init() {        
-        
+
+    public static void init() {
         LOGGER = Logger.getLogger("stageruner.log");
         try {
             FileHandler fileHandler = new FileHandler("stagerun.log");
@@ -106,10 +105,9 @@ public class StageRun {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
-        
+
     }
-    
+
     private static final String rootFolder = "/tmp/sr/work";
 
     public static String getRootFolder() {
@@ -167,7 +165,7 @@ public class StageRun {
         //shut down the executor service now
         executor.shutdown();
     }
-    
+
     public static void print(String message, RegressDetails rdetails) {
         String str = "[" + rdetails.getStage().getStageName() + " " + rdetails.getProduct().getName()
                 + " " + rdetails.getTestunit().getTestunitName() + " " + rdetails.getFarmrunId() + "]";

@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.6.23, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.12, for linux-glibc2.5 (x86_64)
 --
 -- Host: localhost    Database: results
 -- ------------------------------------------------------
--- Server version	5.6.25-log
+-- Server version	5.7.13
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -24,9 +24,11 @@ DROP TABLE IF EXISTS `regress_details`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `regress_details` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `stage_id` int(11) DEFAULT NULL,
-  `product` varchar(45) DEFAULT NULL,
-  `testunit_id` int(11) DEFAULT NULL,
+  `users` int(11) DEFAULT NULL,
+  `stage` int(11) DEFAULT NULL,
+  `product` int(11) DEFAULT NULL,
+  `component` int(11) DEFAULT NULL,
+  `testunit` int(11) DEFAULT NULL,
   `farmrun_id` int(11) DEFAULT NULL,
   `status` enum('notstarted','running','completed','aborted','failed') DEFAULT NULL,
   `starttime` datetime DEFAULT NULL,
@@ -37,13 +39,17 @@ CREATE TABLE `regress_details` (
   `sapphire_upload_status` varchar(10) DEFAULT NULL,
   `gtlf_file_loc` mediumtext,
   PRIMARY KEY (`id`),
-  KEY `results_details_stageid_fk_idx` (`stage_id`),
-  KEY `results_details_testunits_fk_idx` (`testunit_id`),
-  KEY `results_details_products_fk_idx` (`product`),
-  CONSTRAINT `results_details_products_fk` FOREIGN KEY (`product`) REFERENCES `products` (`product_name`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `results_details_stageid_fk` FOREIGN KEY (`stage_id`) REFERENCES `stage` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `results_details_testunits_fk` FOREIGN KEY (`testunit_id`) REFERENCES `test_units` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=123 DEFAULT CHARSET=utf8;
+  KEY `results_details_stageid_fk_idx` (`stage`),
+  KEY `results_details_testunit_fk_idx` (`testunit`),
+  KEY `results_details_product_fk_idx` (`product`),
+  KEY `fk_regress_details_component_name_idx` (`component`),
+  KEY `regress_details_user_fk` (`users`),
+  CONSTRAINT `fk_regress_details_component_name` FOREIGN KEY (`component`) REFERENCES `component` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `regress_details_product_fk` FOREIGN KEY (`product`) REFERENCES `product` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `regress_details_stageid_fk` FOREIGN KEY (`stage`) REFERENCES `stage` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `regress_details_testunit_fk` FOREIGN KEY (`testunit`) REFERENCES `testunit` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `regress_details_user_fk` FOREIGN KEY (`users`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -52,7 +58,7 @@ CREATE TABLE `regress_details` (
 
 LOCK TABLES `regress_details` WRITE;
 /*!40000 ALTER TABLE `regress_details` DISABLE KEYS */;
-INSERT INTO `regress_details` VALUES (2,8,'OTD',2,17914978,'completed',NULL,'2016-07-26 13:18:56','/net/adcnas470/export/farm_txn_results/FMWTOOLS_12.2.1.2.0_GENERIC_T17914978',2,3,'uploaded','/tmp/sr/work/12.2.1.1.0/1/OTD/OTD_HA/LINUX.X64_OTD12.2.1.1.0_stage1_OTD_HA_17914978.xml'),(98,9,'OTD',2,17914972,'completed','2016-07-22 12:08:01','2016-07-26 13:18:56','/net/adcnas470/export/farm_txn_results/OTDQA_MAIN_GENERIC_T17914972',789,87,'uploaded','/tmp/sr/work/12.2.1.1.0/22/OTD/OTD_HA/LINUX.X64_OTD12.2.1.1.0_stage22_OTD_HA_17914972.xml'),(99,8,'OTD',2,17949410,'running','2016-07-28 00:04:34',NULL,NULL,1234,20,NULL,NULL),(100,8,'OTD',2,17949411,'running','2016-07-28 00:04:34',NULL,NULL,350,6,NULL,NULL),(101,8,'OTD',6,NULL,'failed','2016-07-28 03:35:02',NULL,NULL,8,1,NULL,NULL),(102,8,'OHS',11,NULL,'failed','2016-07-28 03:35:02',NULL,NULL,8,1,NULL,NULL),(103,8,'OHS',10,NULL,'failed','2016-07-28 03:35:02',NULL,NULL,9,1,NULL,NULL),(104,8,'OTD',2,17950916,'running','2016-07-28 03:35:02',NULL,NULL,80,20,NULL,NULL),(105,8,'OTD',1,NULL,'failed','2016-07-28 03:35:02',NULL,NULL,2,1,NULL,NULL),(106,8,'WLS',9,NULL,'failed','2016-07-28 03:35:02',NULL,NULL,3,1,NULL,NULL),(107,8,'BI',12,NULL,'failed','2016-07-28 03:35:02',NULL,NULL,2,1,NULL,NULL),(108,8,'IDM',17,NULL,'failed','2016-07-28 03:35:02',NULL,NULL,5,1,NULL,NULL),(109,8,'EDQ',13,NULL,'failed','2016-07-28 03:35:02',NULL,NULL,2,1,NULL,NULL),(110,8,'BI',12,NULL,'failed','2016-07-28 03:35:02',NULL,NULL,NULL,1,NULL,NULL),(111,8,'SOA',18,NULL,'failed','2016-07-28 03:35:02',NULL,NULL,NULL,1,NULL,NULL),(112,15,'OTD',7,NULL,'failed','2016-07-28 03:40:12',NULL,NULL,NULL,1,NULL,NULL),(113,15,'OTD',20,NULL,'failed','2016-07-28 03:40:12',NULL,NULL,NULL,1,NULL,NULL),(114,15,'OTD',8,NULL,'failed','2016-07-28 03:40:12',NULL,NULL,NULL,1,NULL,NULL),(115,15,'OHS',21,NULL,'failed','2016-07-28 03:40:12',NULL,NULL,20,1,NULL,NULL),(116,15,'OHS',22,NULL,'failed','2016-07-28 03:40:12',NULL,NULL,12,1,NULL,NULL),(119,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,23,4,NULL,NULL),(120,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,2,3,NULL,NULL),(121,14,'OHS',21,NULL,'failed','2016-07-28 08:04:33',NULL,NULL,NULL,NULL,NULL,NULL),(122,14,'OHS',22,NULL,'failed','2016-07-28 08:40:48',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `regress_details` VALUES (1,NULL,5,1,4,4,NULL,'failed','2016-08-11 23:53:53',NULL,NULL,1,2,NULL,NULL),(2,NULL,5,1,4,3,NULL,'failed','2016-08-11 23:53:53',NULL,NULL,23,2,NULL,NULL),(3,NULL,5,1,4,4,NULL,'failed','2016-08-12 00:01:37',NULL,NULL,34,0,NULL,NULL),(4,NULL,5,1,4,3,18076259,'completed','2016-08-12 00:01:37','2016-08-12 12:31:40','/net/adcnas470/export/farm_txn_results/OTDQA_MAIN_GENERIC_T18076259',NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `regress_details` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -65,4 +71,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-08-02 13:49:10
+-- Dump completed on 2016-08-12  6:03:49

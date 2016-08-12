@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.6.23, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.12, for linux-glibc2.5 (x86_64)
 --
 -- Host: localhost    Database: results
 -- ------------------------------------------------------
--- Server version	5.6.25-log
+-- Server version	5.7.13
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -16,33 +16,33 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `stage_infra_details`
+-- Table structure for table `component`
 --
 
-DROP TABLE IF EXISTS `stage_infra_details`;
+DROP TABLE IF EXISTS `component`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `stage_infra_details` (
+CREATE TABLE `component` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `InfraDistributions` varchar(45) DEFAULT NULL,
-  `Platform` varchar(20) DEFAULT NULL,
-  `stageid` int(11) DEFAULT NULL,
+  `users` int(11) DEFAULT NULL,
+  `name` varchar(20) NOT NULL,
+  `product` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `stage_infra_fk_idx` (`id`),
-  KEY `stageid_stage_fk_idx` (`stageid`),
-  KEY `a_idx` (`Platform`),
-  CONSTRAINT `a` FOREIGN KEY (`Platform`) REFERENCES `platform` (`NAME`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `stage_infra_fk` FOREIGN KEY (`stageid`) REFERENCES `stage` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  KEY `fk_component_1_idx` (`product`),
+  KEY `component_user_fk` (`users`),
+  CONSTRAINT `component_user_fk` FOREIGN KEY (`users`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_component_1` FOREIGN KEY (`product`) REFERENCES `product` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `stage_infra_details`
+-- Dumping data for table `component`
 --
 
-LOCK TABLES `stage_infra_details` WRITE;
-/*!40000 ALTER TABLE `stage_infra_details` DISABLE KEYS */;
-/*!40000 ALTER TABLE `stage_infra_details` ENABLE KEYS */;
+LOCK TABLES `component` WRITE;
+/*!40000 ALTER TABLE `component` DISABLE KEYS */;
+INSERT INTO `component` VALUES (4,NULL,'otd',1),(5,NULL,'ohs',1),(6,NULL,'wls',3),(7,NULL,'jrf',3),(8,NULL,'Jdeveloper',3);
+/*!40000 ALTER TABLE `component` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -54,4 +54,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-08-02 13:49:08
+-- Dump completed on 2016-08-12  6:03:48

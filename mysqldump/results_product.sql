@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.6.23, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.12, for linux-glibc2.5 (x86_64)
 --
 -- Host: localhost    Database: results
 -- ------------------------------------------------------
--- Server version	5.6.25-log
+-- Server version	5.7.13
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -16,28 +16,30 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `products`
+-- Table structure for table `product`
 --
 
-DROP TABLE IF EXISTS `products`;
+DROP TABLE IF EXISTS `product`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `products` (
-  `product_name` varchar(20) NOT NULL,
-  `product_desc` varchar(45) DEFAULT NULL,
-  PRIMARY KEY (`product_name`),
-  UNIQUE KEY `product_name_UNIQUE` (`product_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='This table handles FMW products';
+CREATE TABLE `product` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(20) NOT NULL,
+  `users` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `product_user_fk` (`users`),
+  CONSTRAINT `product_user_fk` FOREIGN KEY (`users`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COMMENT='This table handles FMW product';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `products`
+-- Dumping data for table `product`
 --
 
-LOCK TABLES `products` WRITE;
-/*!40000 ALTER TABLE `products` DISABLE KEYS */;
-INSERT INTO `products` VALUES ('BI',NULL),('EDQ',NULL),('FormsReports','Forms  & Reports'),('IDM',NULL),('JRF','Java required files'),('OHS','oracle http server'),('OTD','oracle traffic director'),('SOA',NULL),('WebCenter',NULL),('WLS','weblogic');
-/*!40000 ALTER TABLE `products` ENABLE KEYS */;
+LOCK TABLES `product` WRITE;
+/*!40000 ALTER TABLE `product` DISABLE KEYS */;
+INSERT INTO `product` VALUES (1,'ascore',NULL),(2,'idm',NULL),(3,'askernel',NULL),(4,'bi',NULL);
+/*!40000 ALTER TABLE `product` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -49,4 +51,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-08-02 13:49:10
+-- Dump completed on 2016-08-12  6:03:48

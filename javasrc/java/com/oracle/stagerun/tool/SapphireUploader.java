@@ -1,11 +1,12 @@
 package com.oracle.stagerun.tool;
 
+
+
 import com.oracle.stagerun.entity.RegressDetails;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
-import javax.ejb.EJB;
 import javax.persistence.EntityManager;
 
 //import org.testlogic.toolkit.gtlf.converters.testng.Main;
@@ -24,6 +25,7 @@ public class SapphireUploader implements Callable<Boolean> {
     private String product;
     private String testUnit;
     private String email;
+    private String component;
     private RegressDetails regressDetails;
     EntityManager em;
 
@@ -35,13 +37,14 @@ public class SapphireUploader implements Callable<Boolean> {
         this.stageId = regressDetails.getStage().getStageName();
         this.testUnit = regressDetails.getTestunit().getTestunitName();
         this.release = regressDetails.getStage().getRelease().getName();
-        product = regressDetails.getTestunit().getProduct().getName();
-        platform = regressDetails.getTestunit().getPlatform().getName();
-        //toptestFile = "otd.tsc";
+        this.product = regressDetails.getTestunit().getProduct().getName();
+        this.component = regressDetails.getTestunit().getComponent().getName();
+        this.platform = regressDetails.getTestunit().getPlatform().getName();
+        toptestFile = product + "_" + component;
         email = regressDetails.getTestunit().getEmails();
 
         //runKey = platform + "_" + product + "_" + testUnit + "_" + job.getFarmId();
-        runId = platform + "_" + product + release + "_stage" + stageId + "_" + testUnit + "_" + regressDetails.getFarmrunId();
+        runId = platform + "_" + product + component + release + "_stage" + stageId + "_" + testUnit + "_" + regressDetails.getFarmrunId();
 
         runKey = runId;
 
@@ -80,8 +83,8 @@ public class SapphireUploader implements Callable<Boolean> {
         list.add("-Dgtlf.env.NativeIO=true");
         list.add("-Dgtlf.env.Primary_Config=LinuxOVM");
         list.add("-Dgtlf.branch=main");
-        list.add("-Dgtlf.product=" + product);
-        list.add("-Dgtlf.release=" + release);
+        list.add("-Dgtlf.product=" + component.toUpperCase());
+        list.add("-Dgtlf.release=" + (component+release).toUpperCase());
         list.add("-Dgtlf.load=" + stageId);
         list.add("-Dgtlf.runid=" + runId);
         //list.add("-Dgtlf.testruntype=" + "OTD_Tests");
