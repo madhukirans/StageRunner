@@ -4,7 +4,7 @@
     <div class="col-md-12">
          <select ng-model="selectedStage" class="form-control" title="Select Stage" data-style="btn-primary" ng-change="updateChart()" >    
             <option value="">Select Stage</option>
-            <option ng-repeat="r in stages" ng-value="r.id">{{ r.releaseEntity.releaseName  + "-" + r.stageName }}</option>
+            <option ng-repeat="r in stages" ng-value="r.id">{{ r.release.name  + "- (" + r.stageName + ")"}}</option>
         </select>
     </div>
     <div class="col-md-6">

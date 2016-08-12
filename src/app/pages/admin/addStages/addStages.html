@@ -1,7 +1,7 @@
 <div ba-panel      
      ba-panel-title="Add Stage."
      ba-panel-class="with-scroll">
-    <div class="form-horizontal" ng-controller="AddStagesCtrl">
+    <div ng-controller="AddStagesCtrl">
         <div class="form-group">
             <table class="table"> 
                 <tr>
@@ -9,7 +9,7 @@
                         <div class="col-sm-3">
                             <select ng-model="selectedRelease" class="form-control selectpicker" ng-change="loadTable()">    
                                 <option value="">Select Release</option>
-                                <option ng-repeat="r in releases" ng-value="r.releaseName">{{r.releaseName}}</option>
+                                <option ng-repeat="r in releases" ng-value="r.id">{{r.name}}</option>
                             </select>
                         </div>
                         <button  for="table1" class="btn btn-primary" ng-click="addStage()">Add New Stage</button>
@@ -24,8 +24,8 @@
                 <thead>
                     <tr class="sortable header-row black-muted-bg">
                         <th class="table-id">Index</th>
-                        <th>Stage Name</th>
-                        <th>Description</th>
+                        <th>Stage Name</th>                     
+                        <th>Description</th>     
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -39,11 +39,13 @@
                                 {{stage.stageName}}
                             </span>                       
                         </td>
-                        <td class="select-td">
-                            <span editable-text="stage.comments" e-name="stagecomments" e-form="rowform">
+                        
+                        <td>                        
+                            <span editable-text="stage.comments" id="comment" name="comment" e-name="comment" e-form="rowform" e-required>
                                 {{stage.comments}}
-                            </span>
-                        </td>                    
+                            </span>                       
+                        </td>
+                                          
                         <td>
                             <form editable-form name="rowform" ng-show="rowform.$visible" class="form-buttons form-inline"  shown="inserted == stage" onaftersave="persistStage($index,rowform)">
                                 <button type="submit" id="saveButton"  name="saveButton" e-name="saveButton" ng-disabled="rowform.$waiting" class="btn btn-primary editable-table-button btn-xs" >

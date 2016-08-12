@@ -1,20 +1,20 @@
 package com.oracle.stagerun.tool;
 
-import com.oracle.stagerun.entities.RegressDetails;
-import com.oracle.stagerun.entities.RegressStatus;
+import com.oracle.stagerun.entity.RegressDetails;
+import com.oracle.stagerun.entity.RegressStatus;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import javax.persistence.EntityManager;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+
 
 public class FarmJobAnalyzer implements Callable<Boolean> {
 
@@ -23,7 +23,7 @@ public class FarmJobAnalyzer implements Callable<Boolean> {
     // private int farmJobId;
     
     private RegressDetails regressDetail;
-
+    
     public FarmJobAnalyzer(RegressDetails regressDetail) {
         StageRun.print("In FarmJobAnalyzer.", regressDetail);
         this.regressDetail = regressDetail;    
@@ -103,7 +103,7 @@ public class FarmJobAnalyzer implements Callable<Boolean> {
                             if (currLine.contains("Results location")) {
                                 rootWorkLoc = currLine.split(":")[1].trim();
                                 regressDetail.setWorkLoc(rootWorkLoc);
-                                regressDetail.setEndtime(Calendar.getInstance());
+                                regressDetail.setEndtime(Calendar.getInstance().getTime());
                                 StageRun.merge(regressDetail);
                                 
                                 ExecutorService executor = Executors.newCachedThreadPool();

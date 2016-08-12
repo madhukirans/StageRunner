@@ -5,7 +5,7 @@
 (function () {
     'use strict';
 
-    angular.module('BlurAdmin.pages.admin', ['BlurAdmin.pages.admin.addreleases', 'BlurAdmin.pages.admin.addStages',
+    angular.module('BlurAdmin.pages.admin', ['BlurAdmin.pages.admin.addreleases','BlurAdmin.pages.admin.addProductsComponents', 'BlurAdmin.pages.admin.addStages',
         'BlurAdmin.pages.admin.addTestUnits', 'BlurAdmin.pages.admin.addShiphomeNames'])
             .config(routeConfig);
     

@@ -2,8 +2,7 @@ package com.oracle.stagerun.tool;
 
 
 
-import com.oracle.stagerun.entities.RegressDetails;
-import java.io.FileInputStream;
+import com.oracle.stagerun.entity.RegressDetails;
 import java.util.Properties;
 
 import javax.mail.Message;
@@ -13,10 +12,16 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeUtility;
 
+
 public class Mail
 {
    StringBuffer strBuffer;
    private RegressDetails regressDetail;
+   
+   
+   public Mail () {
+   }
+   
   // private int numberOfJobs;
    public Mail(RegressDetails prop)
    {
@@ -107,9 +112,9 @@ public class Mail
          message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
 
          // Set Subject: header field
-         String subject = "Results for stage:" + regressDetail.getStageId().getStageName() + " Release: " + 
-                 regressDetail.getStageId().getReleaseEntity().getReleaseName()
-                 + regressDetail.getTestunitId().getTestUnitName();     
+         String subject = "Results for stage:" + regressDetail.getStage().getStageName() + " Release: " + 
+                 regressDetail.getStage().getRelease().getName()
+                 + regressDetail.getTestunit().getTestunitName();     
          
          String yourEncodedString = MimeUtility.encodeText(subject, "UTF-8", "B");
 
@@ -135,12 +140,12 @@ public class Mail
          //int numberOfJobs = Integer.parseInt(prop.getProperty("numberOfJobs"));
          //int numberOfFarmJobs = Integer.parseInt(prop.getProperty("numberOfFarmJobs"));
 
-         String caption = "Stage:" + regressDetail.getStageId().getStageName() + "<br>Release: " + regressDetail.getStageId().getReleaseEntity().getReleaseName();
+         String caption = "Stage:" + regressDetail.getStage().getStageName() + "<br>Release: " + regressDetail.getStage().getRelease().getName();
 
          strBuffer.append("    <table>\n");
          strBuffer.append("       <CAPTION><b><i>" + caption + "</i><b></CAPTION>\n");         
-         strBuffer.append("          <tr><td>Stage</td></tr> <td>"+ regressDetail.getStageId().getStageName() +"</td></tr>\n");
-         strBuffer.append("          <tr><td>Release</td></tr> <td>"+ regressDetail.getStageId().getReleaseEntity().getReleaseName() +"</td></tr>\n");
+         strBuffer.append("          <tr><td>Stage</td></tr> <td>"+ regressDetail.getStage().getStageName() +"</td></tr>\n");
+         strBuffer.append("          <tr><td>Release</td></tr> <td>"+ regressDetail.getStage().getRelease().getName()+"</td></tr>\n");
          strBuffer.append("          <tr><td>ResultDirectory</td></tr> <td>"+ regressDetail.getWorkLoc() +"</td></tr>\n");
          strBuffer.append("          <tr><td>FarmRunId</td></tr> <td>"+ regressDetail.getFarmrunId() +"</td></tr>\n");
          strBuffer.append("          <tr><td>StartTime</td></tr> <td>"+ regressDetail.getStarttime() +"</td></tr>\n");

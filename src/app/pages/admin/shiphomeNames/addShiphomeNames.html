@@ -9,10 +9,16 @@
                         <div class="col-sm-3">
                             <select ng-model="selectedRelease" class="form-control selectpicker" ng-change="loadTable()">    
                                 <option value="">Select Release</option>
-                                <option ng-repeat="r in releases" ng-value="r.releaseName">{{r.releaseName}}</option>
+                                <option ng-repeat="r in releases" ng-value="r.id">{{r.name}}</option>
                             </select>
                         </div>
-                        <button  for="table1" class="btn btn-primary" ng-click="addStage()">Add ShiphomeNames</button>
+                        <div class="col-sm-3">
+                            <select ng-model="selectedProduct" class="form-control selectpicker" ng-change="loadTable()">    
+                                <option value="">Select Product</option>
+                                <option ng-repeat="r in products" ng-value="r.id">{{r.name}}</option>
+                            </select>
+                        </div>
+                        <button  for="table1" class="btn btn-primary" ng-click="addRow()">Add ShiphomeNames</button>
                     </td>
                     <td style="text-align: right">        
                         <button for="table1" progress-button="loadTable()" pb-direction="horizontal" class="btn btn-primary"><i class="ion-refresh"></i></button>
@@ -23,35 +29,39 @@
             <table col-resizeable  name="table1" st-table="stages" class="table table-bordered table-hover">
                 <thead>
                     <tr class="sortable header-row black-muted-bg">
-                        <th class="table-id">#</th>
-                        <th>Product</th>
+                        <th class="table-id">#</th>                        
                         <th>Platform</th>
+                        <th>Component</th>
                         <th>ShiphomeName</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="s in shiphomes" class="editable-row">
+                    <tr ng-repeat="s in shiphomeNames" class="editable-row">
                         <td class="table-id">
                             {{$index}}
-                        </td>                    
+                        </td>     
+                        <td>
+                            <span editable-select="s.platform.id" e-name="platformName" e-form="rowform" e-selectpicker
+                                  e-ng-options="p.id as p.name for p in platforms">
+                                {{selectPlatform(s.platform)}}
+                            </span>
+                        </td>            
+
                         <td>                        
-                            <span editable-text="s.product" e-name="product" e-form="rowform" e-required>
-                                {{s.product}}
-                            </span>                       
+                            <span editable-select="s.component.id" e-name="componentName" e-form="rowform" e-selectpicker
+                                  e-ng-options="p.id as p.name for p in components">
+                                {{selectComponent(s.component)}}
+                            </span>                     
                         </td>
-                        <td class="select-td">
-                            <span editable-text="s.platform" e-name="platform" e-form="rowform">
-                                {{s.platform}}
-                            </span>
-                        </td>                    
-                        <td class="select-td">
-                            <span editable-text="s.shiphomeName" e-name="shiphomeName" e-form="rowform">
-                                {{p.platform}}
-                            </span>
+
+                        <td>
+                            <span editable-text="s.name" e-name="shiphomeName" e-form="rowform">
+                                {{s.name}}
+                            </span>                             
                         </td> 
                         <td>
-                            <form editable-form name="rowform" ng-show="rowform.$visible" class="form-buttons form-inline"  shown="inserted == stage" onaftersave="persist($index,rowform)">
+                            <form editable-form name="rowform" ng-show="rowform.$visible" class="form-buttons form-inline"  shown="inserted == s" onaftersave="persist($index,rowform)">
                                 <button type="submit" id="saveButton"  name="saveButton" e-name="saveButton" ng-disabled="rowform.$waiting" class="btn btn-primary editable-table-button btn-xs" >
                                     Save
                                 </button>

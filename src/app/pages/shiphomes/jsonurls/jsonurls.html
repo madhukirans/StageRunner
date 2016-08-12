@@ -11,7 +11,7 @@
             <div class="col-sm-2">
                 <select id="inputid3" ng-model="selectedRelease" class="form-control selectpicker" data-live-search="true" ng-change="selectStage()">    
                     <option value="">---Please select---</option>
-                    <option ng-repeat="release in releases" ng-value="release.releaseName">{{release.releaseName}}</option>
+                    <option ng-repeat="release in releases" ng-value="release.id">{{release.name}}</option>
                 </select>
             </div> 
         </div>
@@ -29,7 +29,7 @@
             <div class="col-sm-2">
                 <select id="inputid5" ng-model="selectedProduct" class="form-control selectpicker" data-live-search="true" ng-change="displayShiphomes()" >  
                     <option value="">---Please select---</option>
-                    <option ng-repeat="product in products" ng-value="platform.productName">{{product.productName}}</option>
+                    <option ng-repeat="product in products" ng-value="platform.id">{{product.name}}</option>
                 </select>
             </div>
         </div>

@@ -13,50 +13,49 @@
         //var layoutColors = baConfig.colors;
         $scope.regress = [];
         var pieChartDataProvider = [];
-        var productSet = [];
+        var componentSet = [];
         $scope.pieChart = {};
         $scope.barChart = {};
 
         var barChartDataProvider = [];
 
         $scope.stages = [];
-        $http.get("web/stages").success(function (data) {
+        $http.get("web/stage").success(function (data) {
             $scope.stages = data;
             console.log($scope.stages);
         });
 
 
         $scope.updateChart = function () {
-            var url = "web/runregress";
+            var url = "web/regressdetails";
 
             if ($scope.selectedStage)
                 url = url + "/stage/" + $scope.selectedStage;
 
             $scope.regress = [];
             pieChartDataProvider = [];
-            productSet = [];
+            componentSet = [];
             barChartDataProvider = [];
-
 
 
             $http.get(url).success(function (data) {
                 $scope.regress = data;
                 for (var x in $scope.regress) {
-                    if (productSet[$scope.regress[x].product.productName])
-                        productSet[$scope.regress[x].product.productName] = productSet[$scope.regress[x].product.productName] + 1;
+                    if (componentSet[$scope.regress[x].component.name])
+                        componentSet[$scope.regress[x].component.name] = componentSet[$scope.regress[x].component.name] + 1;
                     else
                     {
-                        productSet[$scope.regress[x].product.productName] = 1;
-                        $scope.stageName = "Stage :[" + $scope.regress[x].stageId.stageName + "] Release:[" +
-                                $scope.regress[x].stageId.releaseEntity.releaseName + "] \n Click on slice to get the testunits.";
+                        componentSet[$scope.regress[x].component.name] = 1;
+                        $scope.stageName = "Stage :[" + $scope.regress[x].stage.stageName + "] Release:[" +
+                                $scope.regress[x].stage.release.name + "] \n Click on slice to get the testunits.";
                     }
                 }
 
                 // var i = 0;
-                for (var x in productSet) {
+                for (var x in componentSet) {
                     var data = {
-                        product: x,
-                        value: productSet[x]
+                        component: x,
+                        value: componentSet[x]
                     };
                     pieChartDataProvider.push(data);
                 }
@@ -79,7 +78,7 @@
             "type": "pie",
             "theme": "blur",
             "valueField": "value",
-            "titleField": "product",
+            "titleField": "component",
             "outlineAlpha": 0.4,
             "depth3D": 15,
             "balloonText": "[[title]]<br><span style='font-size:14px'><b>[[value]]</b> ([[percents]]%)</span>",
@@ -102,18 +101,18 @@
 
         $scope.pieChart.clickSlice = function (event) {
             console.log(event.title);
-            var productName = event.title;
+            var componentName = event.title;
             barChartDataProvider = [];
             for (var x in $scope.regress) {
-                //console.log($scope.regress[x].product.productName);
-                if ($scope.regress[x].product.productName === productName) {
+                console.log("M:" + $scope.regress[x].component.name);
+                if ($scope.regress[x].component.name === componentName) {
                     // console.log($scope.regress[x])
                     //  console.log($scope.regress[x].sucCount + ":" + $scope.regress[x].difCount);
                     var data = {
-                        testunit: $scope.regress[x].testunitId.testUnitName,
+                        testunit: $scope.regress[x].testunit.testunitName,
                         testsucs: $scope.regress[x].sucCount ? $scope.regress[x].sucCount : 0,
                         testdiffs: $scope.regress[x].difCount ? $scope.regress[x].difCount : 0,
-                        bellonSuc: "TestUnit:[" + $scope.regress[x].testunitId.testUnitName + "] Sucs:" + ($scope.regress[x].sucCount ? $scope.regress[x].sucCount : 0),
+                        bellonSuc: "TestUnit:[" + $scope.regress[x].testunit.testUnitName + "] Sucs:" + ($scope.regress[x].sucCount ? $scope.regress[x].sucCount : 0),
                         bellonDif: "Diffs:" + ($scope.regress[x].difCount ? $scope.regress[x].difCount : 0),
                         color: ('#' + Math.floor(Math.random() * 16777215).toString(16))
                     }; 

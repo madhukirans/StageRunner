@@ -7,14 +7,19 @@
             <table class="table"> 
                 <tr>
                     <td style="text-align: left">
-                        <select ng-model="selectedRelease" class="form-control selectpicker" ng-change="getProducts()">    
+                        <select ng-model="selectedRelease" class="form-control selectpicker">    
                             <option value="">Select Release</option>
-                            <option ng-repeat="r in releases" ng-value="r.releaseName">{{r.releaseName}}</option>
+                            <option ng-repeat="r in releases" ng-value="r.id">{{r.name}}</option>
                         </select>
 
-                        <select ng-model="selectedProduct" class="form-control selectpicker" ng-change="loadTable()">    
-                            <option value="">SelectProduct</option>
-                            <option ng-repeat="r in products" ng-value="r.productName">{{r.productName}}</option>
+                        <select ng-model="selectedProduct" class="form-control selectpicker" ng-change="loadComponents()">    
+                            <option value="">Select Product</option>
+                            <option ng-repeat="r in products" ng-value="r.id">{{r.name}}</option>
+                        </select>
+                        
+                        <select ng-model="selectedComponent" class="form-control selectpicker" ng-change="loadTable()">    
+                            <option value="">Select Component</option>
+                            <option ng-repeat="c in components" ng-value="c.id">{{c.name}}</option>
                         </select>
                         <button  for="table1" class="btn btn-primary" ng-click="addTestUnit()">Add New TestUnit</button>
                     </td>
@@ -43,14 +48,14 @@
                             {{$index}}
                         </td>
                         <td>
-                            <span editable-select="testunit.platform.name" e-name="name" e-form="rowform" e-selectpicker
-                                  e-ng-options="s.name as s.name for s in platforms">
+                            <span editable-select="testunit.platform.id" e-name="name" e-form="rowform" e-selectpicker
+                                  e-ng-options="s.id as s.name for s in platforms">
                                 {{getPlatforms(testunit.platform)}}
                             </span>
                         </td>
                         <td>                        
-                            <span editable-text="testunit.testUnitName" id="testUnitNames" name="testUnitNames" e-name="testUnitNames" e-form="rowform" e-required>
-                                {{testunit.testUnitName}}
+                            <span editable-text="testunit.testunitName" id="testunitName" name="testunitName" e-name="testunitName" e-form="rowform" e-required>
+                                {{testunit.testunitName}}
                             </span>
                         </td>
                         <td>
@@ -93,7 +98,7 @@
                 </tbody>              
             </table>
         </div>
-        <uib-accordion>            
+<!--        <uib-accordion>            
             <uib-accordion-group heading="Note" panel-class="panel-info bootstrap-panel accordion-panel">
                 Note <i class="ion-information-circled"></i>
                 <p><b>"ScriptToRunTests"</b> can be DTE jobReqAgent command or Linux bash commands. 
@@ -106,6 +111,6 @@
                 </p>
                 <br> 
             </uib-accordion-group>            
-        </uib-accordion>       
+        </uib-accordion>       -->
     </div>
 </div>

@@ -8,14 +8,14 @@
                 <td style="text-align: left">
                     <div class="row form-inline">
                         <select id="inputEmail3" ng-model="selectedRelease" class="form-control selectpicker" data-live-search="true" ng-change="getStages()">    
-                            <option value="">---Select Release---</option>
-                            <option ng-repeat="r in releases" ng-value="r.releaseName">{{r.releaseName}}</option>
+                            <option value="">Select Release</option>
+                            <option ng-repeat="r in releases" ng-value="r.id">{{r.name}}</option>
                         </select>
                         <select id="inputEmail4" ng-model="selectedStage" class="form-control selectpicker" data-live-search="true" ng-change="loadTable()" >  
-                            <option value="">---Select Stage---</option>
+                            <option value="">Select Stage</option>
                             <option ng-repeat="stage in stages" ng-value="stage.id">{{stage.stageName}}</option>
                         </select>                        
-                        <button class="btn btn-primary" ng-click="addShiphome()">Add New Shiphome</button>
+                        <button class="btn btn-primary" ng-click="addRow()">Add ShiphomeName</button>
                     </div>
                 </td>
                 <td style="text-align: right">        
@@ -43,14 +43,14 @@
                         {{$index}}
                     </td>
                     <td>
-                        <span editable-select="shiphome.product.productName" e-name="productName" e-form="rowform" e-selectpicker
-                              e-ng-options="s.productName as s.productName for s in products">
+                        <span editable-select="shiphome.product.id" e-name="productName" e-form="rowform" e-selectpicker
+                              e-ng-options="s.id as s.name for s in products">
                             {{selectProduct(shiphome.product)}}
                         </span>
                     </td>
                     <td>
-                        <span editable-select="shiphome.platform.name" e-name="name" e-form="rowform" e-selectpicker
-                              e-ng-options="s.name as s.name for s in platforms">
+                        <span editable-select="shiphome.platform.id" e-name="name" e-form="rowform" e-selectpicker
+                              e-ng-options="s.id as s.name for s in platforms">
                             {{selectPlatform(shiphome.platform)}}
                         </span>
                     </td>
@@ -60,7 +60,7 @@
                         </span>
                     </td>
                     <td>
-                        <span editable-text="shiphome.shiphomeloc" e-name="shiphomeloc" e-form="rowform" e-required>
+                        <span editable-text="shiphome.shiphomeloc" e-size="80" e-name="shiphomeloc" e-form="rowform" e-required>
                             {{shiphome.shiphomeloc}}
                         </span>
                     </td>

@@ -1,18 +1,15 @@
 package com.oracle.stagerun.tool;
 
-import com.oracle.stagerun.entities.RegressDetails;
-import com.oracle.stagerun.entities.RegressStatus;
-import java.io.File;
-import java.io.FilenameFilter;
+import com.oracle.stagerun.entity.RegressDetails;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Scanner;
 import java.util.concurrent.Callable;
+import javax.ejb.EJB;
 import javax.persistence.EntityManager;
 
 //import org.testlogic.toolkit.gtlf.converters.testng.Main;
+
 public class SapphireUploader implements Callable<Boolean> {
 
     private String resultDir;
@@ -30,17 +27,18 @@ public class SapphireUploader implements Callable<Boolean> {
     private RegressDetails regressDetails;
     EntityManager em;
 
+    
     public SapphireUploader(RegressDetails regressDetails) {
         this.em = em;
         this.regressDetails = regressDetails;
         this.resultDir = regressDetails.getWorkLoc();
-        this.stageId = regressDetails.getStageId().getStageName();
-        this.testUnit = regressDetails.getTestunitId().getTestUnitName();
-        this.release = regressDetails.getStageId().getReleaseEntity().getReleaseName();
-        product = regressDetails.getTestunitId().getProductName().getProductName();
-        platform = regressDetails.getTestunitId().getPlatform().getName();
+        this.stageId = regressDetails.getStage().getStageName();
+        this.testUnit = regressDetails.getTestunit().getTestunitName();
+        this.release = regressDetails.getStage().getRelease().getName();
+        product = regressDetails.getTestunit().getProduct().getName();
+        platform = regressDetails.getTestunit().getPlatform().getName();
         //toptestFile = "otd.tsc";
-        email = regressDetails.getTestunitId().getEmails();
+        email = regressDetails.getTestunit().getEmails();
 
         //runKey = platform + "_" + product + "_" + testUnit + "_" + job.getFarmId();
         runId = platform + "_" + product + release + "_stage" + stageId + "_" + testUnit + "_" + regressDetails.getFarmrunId();

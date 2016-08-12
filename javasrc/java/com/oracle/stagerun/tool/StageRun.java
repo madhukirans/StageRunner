@@ -25,8 +25,8 @@ All rights reserved.*/
  * @author mseelam
  * @since release specific (what release of product did this appear in)
  */
-import com.oracle.stagerun.entities.RegressDetails;
-import com.oracle.stagerun.entities.RegressStatus;
+import com.oracle.stagerun.entity.RegressDetails;
+import com.oracle.stagerun.entity.RegressStatus;
 import java.io.File;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -47,26 +47,53 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
 
-//import weblogic.qa.frame.util.ant.SapphireLogFileUploaderTask;
 public class StageRun {
 
     public static boolean upload = false;
     public static Logger logger;
     private static Logger LOGGER;
-
+    
+    //@PersistenceContext (unitName = "StageRunnerPU")
     private static EntityManager em;
 
     public StageRun() {
 
     }
+    
+    private static final int interval = 10;
 
-    static {
-        init();
+     public static void main(String args[]) {
+     init();
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("StageRunnerPU");
         em = emf.createEntityManager();
+        
     }
 
-    private static void init() {
+    private static void runForEver() {
+        LocalDateTime startTime = LocalDateTime.now();
+        StageRun sr = new StageRun();
+
+        while (true) {
+            sr.runFarmJobAnalyzer();
+            LocalDateTime endTime = LocalDateTime.now();
+            Duration timeElapsed = Duration.between(startTime, endTime);
+            print("TimeElapsed:" + timeElapsed.toMillis());
+
+            if (timeElapsed.toMinutes() < interval) {
+                try {
+                    print("Sleeping for:" + ((interval * 60 * 1000) - timeElapsed.toMillis()));
+                    Thread.sleep((interval * 60 * 1000) - timeElapsed.toMillis());
+                } catch (Exception e) {
+
+                }
+            }
+
+            startTime = LocalDateTime.now();
+        }
+    }
+    
+    public static void init() {        
+        
         LOGGER = Logger.getLogger("stageruner.log");
         try {
             FileHandler fileHandler = new FileHandler("stagerun.log");
@@ -79,8 +106,10 @@ public class StageRun {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        
+        
     }
-
+    
     private static final String rootFolder = "/tmp/sr/work";
 
     public static String getRootFolder() {
@@ -88,8 +117,9 @@ public class StageRun {
     }
 
     public static String getStageDirectory(RegressDetails rDetails) {
-        String loc = rootFolder + "/" + rDetails.getStageId().getReleaseEntity().getReleaseName()
-                + "/" + rDetails.getStageId().getStageName() + "/" + rDetails.getProduct().getProductName() + "/" + rDetails.getTestunitId().getTestUnitName();
+        String loc = rootFolder + "/" + rDetails.getStage().getRelease().getName()
+                + "/" + rDetails.getStage().getStageName() + "/" + rDetails.getProduct().getName() + "/"
+                + rDetails.getComponent().getName() + "/" + rDetails.getTestunit().getTestunitName();
         File f = new File(loc);
         if (!f.exists()) {
             f.mkdirs();
@@ -108,7 +138,7 @@ public class StageRun {
     private void runFarmJobAnalyzer() {
         List<RegressDetails> regressList = getRunningRegressList();
 
-        StageRun.print("List: " + regressList);
+        print("List: " + regressList);
         ExecutorService executor = Executors.newFixedThreadPool(10);
 
         List<Future<Boolean>> futureList = new ArrayList<>();
@@ -129,53 +159,28 @@ public class StageRun {
             try {
                 //print the return value of Future, notice the output delay in console
                 // because Future.get() waits for task to get completed
-                StageRun.print("Thread ended" + fut.get());
+                print("Thread ended" + fut.get());
             } catch (InterruptedException | ExecutionException e) {
-                StageRun.print("" + e);
+                print("" + e);
             }
         }
         //shut down the executor service now
         executor.shutdown();
     }
-
-    private static final int interval = 10;
-
-    public static void main(String args[]) {
-        LocalDateTime startTime = LocalDateTime.now();
-        StageRun sr = new StageRun();
-
-        while (true) {
-            sr.runFarmJobAnalyzer();
-            LocalDateTime endTime = LocalDateTime.now();
-            Duration timeElapsed = Duration.between(startTime, endTime);
-            StageRun.print("TimeElapsed:" + timeElapsed.toMillis());
-
-            if (timeElapsed.toMinutes() < interval) {
-                try {
-                    StageRun.print("Sleeping for:" + ((interval * 60 * 1000) - timeElapsed.toMillis()));
-                    Thread.sleep((interval * 60 * 1000) - timeElapsed.toMillis());
-                } catch (Exception e) {
-
-                }
-            }
-
-            startTime = LocalDateTime.now();
-        }
-    }
-
+    
     public static void print(String message, RegressDetails rdetails) {
-        String str = "[" + rdetails.getStageId().getStageName() + " " + rdetails.getProduct().getProductName()
-                + " " + rdetails.getTestunitId().getTestUnitName() + " " + rdetails.getFarmrunId() + "]";
+        String str = "[" + rdetails.getStage().getStageName() + " " + rdetails.getProduct().getName()
+                + " " + rdetails.getTestunit().getTestunitName() + " " + rdetails.getFarmrunId() + "]";
         print(str + message);
     }
 
-    public synchronized static void merge(RegressDetails rdetails) {
+    public static synchronized void merge(RegressDetails rdetails) {
         try {
             em.getTransaction().begin();
             em.merge(rdetails);
             em.flush();
             em.getTransaction().commit();
-           
+
         } catch (Exception e) {
             System.out.println("Exception :" + e);
         }

@@ -13,6 +13,7 @@
         'BlurAdmin.pages.shiphomes.jsonurls',
         'BlurAdmin.pages.admin',
         'BlurAdmin.pages.admin.addreleases',
+        'BlurAdmin.pages.admin.addProductsComponents',
         'BlurAdmin.pages.admin.addStages',
         'BlurAdmin.pages.admin.addTestUnits',
         'BlurAdmin.pages.help',        
@@ -20,37 +21,37 @@
     ]).config(routeConfig);
     
     app.directive('colResizeable', colResizeable);
-    app.directive('selectpicker', selectpicker);
+//    app.directive('selectpicker', selectpicker);
     
-    
-    /** @ngInject */
-    function selectpicker() {
-        return {
-            restrict: 'A',
-            require: '?ngOptions',
-            priority: 1500, // make priority bigger than ngOptions and ngRepeat
-            link: {
-                pre: function (scope, elem, attrs) {
-                    elem.append('<option data-hidden="true" disabled value="">' + (attrs.title || 'Select something') + '</option>')
-                },
-                post: function (scope, elem, attrs) {
-                    function refresh() {
-                        elem.selectpicker('refresh');
-                    }
-
-                    if (attrs.ngModel) {
-                        scope.$watch(attrs.ngModel, refresh);
-                    }
-
-                    if (attrs.ngDisabled) {
-                        scope.$watch(attrs.ngDisabled, refresh);
-                    }
-
-                    elem.selectpicker({dropupAuto: false, hideDisabled: true});
-                }
-            }
-        };
-    }
+//    
+//    /** @ngInject */
+//    function selectpicker() {
+//        return {
+//            restrict: 'A',
+//            require: '?ngOptions',
+//            priority: 1500, // make priority bigger than ngOptions and ngRepeat
+//            link: {
+//                pre: function (scope, elem, attrs) {
+//                    elem.append('<option data-hidden="true" disabled value="">' + (attrs.title || 'Select something') + '</option>')
+//                },
+//                post: function (scope, elem, attrs) {
+//                    function refresh() {
+//                        elem.selectpicker('refresh');
+//                    }
+//
+//                    if (attrs.ngModel) {
+//                        scope.$watch(attrs.ngModel, refresh);
+//                    }
+//
+//                    if (attrs.ngDisabled) {
+//                        scope.$watch(attrs.ngDisabled, refresh);
+//                    }
+//
+//                    elem.selectpicker({dropupAuto: false, hideDisabled: true});
+//                }
+//            }
+//        };
+//    }
 
     
     function colResizeable() {
@@ -74,21 +75,21 @@
     
     app.factory('UtilFactory', function ($http) {
         return { 
-            findSquare: function (num) {
-                return num * num;
+            
+            getAllReleasesFactory: function () {
+                return $http.get('web/releases');
             },
-            //this.products = [];
-            getProducts_1: function () {
-                return $http.get('web/products').then(function (response) {
-                    console.log("coming from servicejs", response.data);
-                    return response.data;
-                });
+            
+            getAllProductsFactory: function () {
+                return $http.get('web/product');
             },
-            getTestUnitsByProduct: function (selectedProduct) {
-                return $http.get("web/testunits/product/" + selectedProduct).then(function (response) {
-                    console.log("coming from servicejs", response.data);
-                    return response.data;
-                });
+            
+            getAllComponentsFactory: function () {
+                return $http.get('web/component');
+            },
+            
+            getTestUnitsByProductFactory: function (selectedProduct) {
+                return $http.get("web/testunit/product/" + selectedProduct);
             }
         };
     });

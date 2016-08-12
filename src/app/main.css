@@ -2199,6 +2199,7 @@ textarea.form-control {
     height: 96px; }
 
 .form-inline .form-group input {
+    autocomplete: on;
     width: 100%; }
 
 .form-inline .form-group label {

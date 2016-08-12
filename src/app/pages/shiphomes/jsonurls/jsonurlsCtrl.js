@@ -22,7 +22,7 @@
 
         $scope.stages = [];
         $scope.selectStage = function () {
-            $http.get("web/stages/release/" + $scope.selectedRelease).success(function (data) {
+            $http.get("web/stage/release/" + $scope.selectedRelease).success(function (data) {
                 $scope.stages = data;
             });
         };

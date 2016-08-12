@@ -20,7 +20,7 @@
 
         $scope.stages = [];
         $scope.loadTable = function () {
-            $http.get("web/stages/release/" + $scope.selectedRelease).success(function (data) {
+            $http.get("web/stage/release/" + $scope.selectedRelease).success(function (data) {
                 $scope.stages = data;
             });
         };
@@ -31,7 +31,7 @@
             $scope.inserted = {
                 "stageName": "",
                 "comments": "",
-                "releaseEntity": {"releaseName": $scope.selectedRelease}
+                "release": {"id": $scope.selectedRelease}
             };
             $scope.stages.push($scope.inserted);
         };
@@ -39,12 +39,10 @@
         
 
         $scope.persistStage = function (index, rowform) {
-            $scope.tempStages = $scope.stages[index];
-
             //$scope.stages[index].releaseEntity = $scope.selectedRelease;
             //var d = $q.defer();
-            if ($scope.tempStages.id >= 0) {
-                $http.put("web/stages/" + $scope.stages[index].id, $scope.stages[index])
+            if ($scope.stages[index].id >= 0) {
+                $http.put("web/stage/" + $scope.stages[index].id, $scope.stages[index])
                         .success(function (data, status, headers, config) {
                             myUtilService.showSuccessMsg("Success: Record edited successfully");
                         }).error(function (data, status, header, config) {
@@ -53,10 +51,10 @@
                     return $q.reject('Server error!');
                 });
             } else {
-                $http.post("web/stages", $scope.stages[index]).success(function (data, status, headers, config)
+                $http.post("web/stage", $scope.stages[index]).success(function (data, status, headers, config)
                 {
                     //console.log("madhu:" + "data:" + data + " Status:" + status + " headers:" + headers + " config:" + config);
-                    if (status === 200) {
+                    if (status === 204) {
                         myUtilService.showSuccessMsg("Success: Record added successfully");
                     } else {
                         rowform.$setError(rowform.saveButton, "Error occurred while saving record: staus : " + status);
@@ -74,9 +72,12 @@
         };
 
         $scope.removeStage = function (index) {
-            $http.delete("web/stages/" + $scope.stages[index].id)
+            $http.delete("web/stage/" + $scope.stages[index].id)
                     .success(function (data, status, headers, config) {
                         myUtilService.showWarningMsg("Record Deleted.");
+                        console.log("record deleted");
+                    }).error(function (data, status, headers, config) {
+                        myUtilService.showErrorMsg("Deleted record failed.");
                         console.log("record deleted");
                     });
             $scope.stages.splice(index, 1);

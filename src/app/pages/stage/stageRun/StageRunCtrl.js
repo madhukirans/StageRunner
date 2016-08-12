@@ -13,15 +13,17 @@
         //$scope.selectedProduct = "";
         //$scope.selectedTestUnit = "";
 
-
+        $scope.components = [];
+        $scope.testunits = [];
         $scope.releases = [];
+
         $http.get("web/releases").success(function (data) {
             $scope.releases = data;
         });
 
         $scope.getStages = function () {
             $scope.stages = [];
-            $http.get("web/stages/release/" + $scope.selectedRelease).success(function (data) {
+            $http.get("web/stage/release/" + $scope.selectedRelease).success(function (data) {
                 $scope.stages = data;
             });
         };
@@ -31,25 +33,50 @@
             $http.get("web/shiphomes/stage/" + $scope.selectedStage + "/products").success(function (data) {
                 $scope.products = data;
                 console.log(data);
+                $scope.loadTable();
             });
-
-            $scope.loadTable();
         };
 
-        $scope.getTestUnits = function () {
-            $http.get("web/testunits/release/" + $scope.selectedRelease + "/product/" + $scope.selectedProduct).success(function (data) {
-                $scope.testunits = data;
-            });
+        $scope.getComponents = function () {
+            if ($scope.selectedProduct) {
+                $http.get("web/component/product/" + $scope.selectedProduct).success(function (data) {
+                    $scope.components = data;
+                    $scope.loadTable();
+                });
+            }
+        }
 
-            $scope.loadTable();
+        $scope.getTestUnits = function () {
+
+            if (!$scope.selectedProduct) {
+                return;
+            }
+
+            var url = "web/testunit/release/" + $scope.selectedRelease + "/product/" + $scope.selectedProduct;
+
+            if ($scope.selectedComponent)
+                url = url + "/component/" + $scope.selectedComponent;
+
+            $http.get("web/testunit/release/" + $scope.selectedRelease + "/product/" + $scope.selectedProduct).success(function (data) {
+                $scope.testunits = data;
+                $scope.loadTable();
+            });
         };
 
         $scope.loadTable = function () {
+            console.log("Product :" + $scope.selectedProduct);
+            console.log("Component :" + $scope.selectedComponent);
+            console.log("Testunit :" + $scope.selectedTestUnit);
+
             $scope.regressdetails = [];
             var URL = 'web/regressdetails/stage/' + $scope.selectedStage;
 
             if ($scope.selectedProduct) {
                 URL = URL + "/product/" + $scope.selectedProduct;
+            }
+            
+            if ($scope.selectedComponent) {
+                URL = URL + "/component/" + $scope.selectedComponent;
             }
 
             if ($scope.selectedTestUnit) {
@@ -90,25 +117,35 @@
                 testunit: $scope.regressdetails[index].testunitId
             };
 
-            var URL = 'web/runregress';
+            var URL = 'web/regressdetails';
             toastr.info($scope.options.title, $scope.options.msg, $scope.options);
-            $http.post(URL, postdata).success(function (data, status, headers, config) {                
+            $http.post(URL, postdata).success(function (data, status, headers, config) {
                 $scope.loadTable();
                 toastr.clear();
-            }).error(function (err){
+            }).error(function (err) {
                 toastr.clear();
             });
         }
 
         $scope.runStage = function () {
-            var URL = 'web/runregress';///stage/' + $scope.selectedStage;
+            var URL = 'web/regressdetails';///stage/' + $scope.selectedStage;
 
             var tempStage = $filter('filter')($scope.stages, {id: $scope.selectedStage});
 
+            if (!$scope.selectedRelease || !$scope.selectedStage) {
+                myUtilService.showErrorMsg("Select Release and Stage");
+            }
+
             var tempProduct = {};
+            var tempComponent = {};
             var tempTestunit = {};
+
             if ($scope.selectedProduct) {
-                tempProduct = $filter('filter')($scope.products, {productName: $scope.selectedProduct});
+                tempProduct = $filter('filter')($scope.products, {id: $scope.selectedProduct});
+            }
+
+            if ($scope.selectedComponent) {
+                tempComponent = $filter('filter')($scope.components, {id: $scope.selectedComponent});
             }
 
             if ($scope.selectedTestUnit) {
@@ -118,19 +155,21 @@
             var postdata = {
                 stage: tempStage,
                 product: tempProduct,
+                component: tempComponent,
                 testunit: tempTestunit
             };
 
             console.log(tempProduct);
+            console.log(tempComponent);
             console.log(tempStage);
             console.log(tempTestunit);
-            
+
             toastr.info($scope.options.title, $scope.options.msg, $scope.options);
 
             $http.post(URL, postdata).success(function (data, status, headers, config) {
                 $scope.loadTable();
                 toastr.clear();
-            }).error(function (err){
+            }).error(function (err) {
                 toastr.clear();
             });
 
