@@ -39,7 +39,7 @@ public class StageFacadeREST extends AbstractFacade<Stage> {
 
     @POST
     @Override
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
     public void create(Stage entity) {
         entity.setDatecreated(Calendar.getInstance().getTime());
         super.create(entity);
@@ -47,7 +47,7 @@ public class StageFacadeREST extends AbstractFacade<Stage> {
 
     @PUT
     @Path("{id}")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
     public void edit(@PathParam("id") Integer id, Stage entity) {
         super.edit(entity);
     }
@@ -60,7 +60,7 @@ public class StageFacadeREST extends AbstractFacade<Stage> {
     
     @GET 
     @Path("release/{release}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
     public List<Stage> findByRelease(@PathParam("release") Integer release) {
         TypedQuery<Stage> query = em.createNamedQuery("Stage.findByRelease", Stage.class);
         query.setParameter("srelease", release);
@@ -69,7 +69,7 @@ public class StageFacadeREST extends AbstractFacade<Stage> {
     
     @GET
     @Path("{id}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
     public Stage find(@PathParam("id") Integer id) {
         return super.find(id);
     }
@@ -89,7 +89,7 @@ public class StageFacadeREST extends AbstractFacade<Stage> {
 
     @GET
     @Path("{from}/{to}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
     public List<Stage> findRange(@PathParam("from") Integer from, @PathParam("to") Integer to) {
         return super.findRange(new int[]{from, to});
     }

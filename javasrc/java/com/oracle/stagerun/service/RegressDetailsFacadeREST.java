@@ -5,6 +5,7 @@
  */
 package com.oracle.stagerun.service;
 
+import com.oracle.stagerun.beans.StageRunWeb;
 import com.oracle.stagerun.entity.Component;
 import com.oracle.stagerun.entity.Platform;
 import com.oracle.stagerun.entity.Product;
@@ -19,9 +20,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -30,7 +33,9 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.SecurityContext;
 
 /**
  *
@@ -42,6 +47,9 @@ public class RegressDetailsFacadeREST extends AbstractFacade<RegressDetails> {
 
     @PersistenceContext(unitName = "StageRunnerPU")
     private EntityManager em;
+    
+    @Inject
+    StageRunWeb sr;
 
     public RegressDetailsFacadeREST() {
         super(RegressDetails.class);
@@ -49,11 +57,14 @@ public class RegressDetailsFacadeREST extends AbstractFacade<RegressDetails> {
 
     @POST
     @Consumes({MediaType.APPLICATION_JSON})
-    public void runRegress1(PostRegressHelper post) {
-        System.out.println("getStage:1" + post.getStage());
-        System.out.println("getProduct:1" + post.getProduct());
-        System.out.println("getComponent:1" + post.getComponent());
-        System.out.println("getTestunit:1" + post.getTestunit());
+    public void runRegress1(PostRegressHelper post , @Context HttpServletRequest requestContext,@Context SecurityContext context) {        
+        String yourIP = requestContext.getRemoteAddr();
+        sr.print("In Post- IP Address:" + yourIP + " StagerId: " + post.getStage());
+        
+        sr.print("getStage:" + post.getStage());
+        sr.print("getProduct:" + post.getProduct());
+        sr.print("getComponent:" + post.getComponent());
+        sr.print("getTestunit:" + post.getTestunit());
 
         Stage stage = post.getStage();
         Releases release = stage.getRelease();
@@ -82,7 +93,7 @@ public class RegressDetailsFacadeREST extends AbstractFacade<RegressDetails> {
             allShiphomeList = allShiphomeQery.getResultList();
         }
 
-        System.out.println("shiphomeList:" + shiphomeList);
+        sr.print("shiphomeList:" + shiphomeList);
 
         List<RegressDetails> prepareRegressList = new ArrayList<>();
 
@@ -123,14 +134,14 @@ public class RegressDetailsFacadeREST extends AbstractFacade<RegressDetails> {
             };
             //}
         };
-        System.out.println("Regress List: " + prepareRegressList);
+        sr.print("Regress List: " + prepareRegressList);
 
         RunJobs jobs = new RunJobs(release, stage, prepareRegressList, shiphomeList, allShiphomeList, em);
     }
 
     @PUT
     @Path("{id}")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
     public void edit(@PathParam("id") Integer id, RegressDetails entity) {
         super.edit(entity);
     }
@@ -141,10 +152,14 @@ public class RegressDetailsFacadeREST extends AbstractFacade<RegressDetails> {
         super.remove(super.find(id));
     }
 
+
     @GET
     @Path("stage/{stageId}")
     @Produces({MediaType.APPLICATION_JSON})
-    public List<RegressDetails> getDetailsByStageId(@PathParam("stageId") Integer stageId) {
+    public List<RegressDetails> getDetailsByStageId(@PathParam("stageId") Integer stageId, @Context HttpServletRequest requestContext,@Context SecurityContext context) {        
+        String yourIP = requestContext.getRemoteAddr();
+        sr.print("IP Address:" + yourIP + " StagerId: " + stageId);
+        
         TypedQuery<RegressDetails> query = em.createNamedQuery("RegressDetails.findByStage", RegressDetails.class);
         query.setParameter("stage", stageId);
         return query.getResultList();
@@ -209,21 +224,21 @@ public class RegressDetailsFacadeREST extends AbstractFacade<RegressDetails> {
 //    }
     @GET
     @Path("{id}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
     public RegressDetails find(@PathParam("id") Integer id) {
         return super.find(id);
     }
 
     @GET
     @Override
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
     public List<RegressDetails> findAll() {
         return super.findAll();
     }
 
     @GET
     @Path("{from}/{to}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
     public List<RegressDetails> findRange(@PathParam("from") Integer from, @PathParam("to") Integer to) {
         return super.findRange(new int[]{from, to});
     }

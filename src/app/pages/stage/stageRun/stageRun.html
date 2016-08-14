@@ -27,7 +27,7 @@
                 <td style="text-align: left">
                     <button  class="btn btn-primary" ng-click="runStage()">TriggerRegress</button>
                 </td>
-                <td style="text-align: right">        
+                <td style="text-align: right">                            
                     <button for="table1" progress-button="loadTable()" pb-direction="horizontal" class="btn btn-primary"><i class="ion-refresh"></i></button>
                 </td>
             </tr>  
@@ -66,12 +66,12 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="r in regressdetails" class="editable-row">
+                    <tr ng-repeat="r in regressdetails" class="editable-row {{ r.status === 'failed' ? 'danger' : (r.status === 'completed'? 'primary':'')}}">
                         <td class="table-id">
                             {{$index}}
                         </td>                    
                         <td>                   
-                            {{r.testunitId.testUnitName}}                        
+                            {{r.testunit.testunitName}}                        
                         </td>
                         <td>                   
                             {{r.status}}                        

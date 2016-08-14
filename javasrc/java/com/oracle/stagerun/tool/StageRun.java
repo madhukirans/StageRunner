@@ -26,55 +26,43 @@ All rights reserved.*/
  * @since release specific (what release of product did this appear in)
  */
 import com.oracle.stagerun.entity.RegressDetails;
-import com.oracle.stagerun.entity.RegressStatus;
-import java.io.File;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.logging.FileHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import javax.persistence.TypedQuery;
 
-public class StageRun {
+public class StageRun extends AbstractStgeRun {
 
     public static boolean upload = false;
-    public static Logger logger;
-    private static Logger LOGGER;
+    private EntityManager em;
+    private static StageRun sr = null;
 
-    //@PersistenceContext (unitName = "StageRunnerPU")
-    private static EntityManager em;
+    private StageRun() {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("StageRunnerPU");
+        em = emf.createEntityManager();
+        init();
+    }
 
-    public StageRun() {
-
+    public static StageRun getInstance() {
+        if (sr == null) {
+            sr = new StageRun();
+        }
+        return sr;
     }
 
     private static final int interval = 10;
 
     public static void main(String args[]) {
-        init();
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("StageRunnerPU");
-        em = emf.createEntityManager();
-        runForEver();
+
+        StageRun sr = StageRun.getInstance();
+        sr.runForEver();
     }
 
-    private static void runForEver() {
+    private void runForEver() {
         LocalDateTime startTime = LocalDateTime.now();
-        StageRun sr = new StageRun();
-
         while (true) {
-            sr.runFarmJobAnalyzer();
+            runFarmJobAnalyzer(em);
             LocalDateTime endTime = LocalDateTime.now();
             Duration timeElapsed = Duration.between(startTime, endTime);
             print("TimeElapsed:" + timeElapsed.toMillis());
@@ -92,87 +80,7 @@ public class StageRun {
         }
     }
 
-    public static void init() {
-        LOGGER = Logger.getLogger("stageruner.log");
-        try {
-            FileHandler fileHandler = new FileHandler("stagerun.log");
-            SimpleFormatter simpleFormatter = new SimpleFormatter();
-
-            LOGGER.addHandler(fileHandler);
-            fileHandler.setFormatter(simpleFormatter);
-            fileHandler.setLevel(Level.ALL);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    private static final String rootFolder = "/tmp/sr/work";
-
-    public static String getRootFolder() {
-        return rootFolder;
-    }
-
-    public static String getStageDirectory(RegressDetails rDetails) {
-        String loc = rootFolder + "/" + rDetails.getStage().getRelease().getName()
-                + "/" + rDetails.getStage().getStageName() + "/" + rDetails.getProduct().getName() + "/"
-                + rDetails.getComponent().getName() + "/" + rDetails.getTestunit().getTestunitName();
-        File f = new File(loc);
-        if (!f.exists()) {
-            f.mkdirs();
-        }
-
-        return loc;
-    }
-
-    private List<RegressDetails> getRunningRegressList() {
-        TypedQuery query = em.createNamedQuery("RegressDetails.findByStatus", RegressDetails.class);
-        query.setParameter("notstartedstatus", RegressStatus.notstarted);
-        query.setParameter("runningstatus", RegressStatus.running);
-        return query.getResultList();
-    }
-
-    private void runFarmJobAnalyzer() {
-        List<RegressDetails> regressList = getRunningRegressList();
-
-        print("List: " + regressList);
-        ExecutorService executor = Executors.newFixedThreadPool(10);
-
-        List<Future<Boolean>> futureList = new ArrayList<>();
-
-        List<Callable<Boolean>> farmJobList = new ArrayList<>();
-
-        regressList.forEach(regress -> {
-            farmJobList.add(new FarmJobAnalyzer(regress));
-        });
-
-        try {
-            futureList = executor.invokeAll(farmJobList);
-        } catch (InterruptedException e) {
-
-        }
-
-        for (Future<Boolean> fut : futureList) {
-            try {
-                //print the return value of Future, notice the output delay in console
-                // because Future.get() waits for task to get completed
-                print("Thread ended" + fut.get());
-            } catch (InterruptedException | ExecutionException e) {
-                print("" + e);
-            }
-        }
-        //shut down the executor service now
-        executor.shutdown();
-    }
-
-    public static void print(String message, RegressDetails rdetails) {
-        String str = "[" + rdetails.getStage().getStageName() + " " + rdetails.getProduct().getName()
-                + " " + rdetails.getTestunit().getTestunitName() + " " + rdetails.getFarmrunId() + "]";
-        print(str + message);
-    }
-
-    public static synchronized void merge(RegressDetails rdetails) {
+    public synchronized void merge(RegressDetails rdetails) {
         try {
             em.getTransaction().begin();
             em.merge(rdetails);
@@ -183,15 +91,5 @@ public class StageRun {
             System.out.println("Exception :" + e);
         }
         print("Record saved", rdetails);
-    }
-
-    public static void print(String message) {
-        String time = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-
-        if (StageRun.LOGGER != null) {
-            StageRun.LOGGER.fine(message);
-        }
-
-        System.out.println(time + " " + message);
     }
 }

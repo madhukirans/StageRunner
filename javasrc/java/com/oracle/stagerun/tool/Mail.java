@@ -20,8 +20,10 @@ public class Mail
    StringBuffer strBuffer;
    private RegressDetails regressDetail;
    
+   private StageRun sr;
    
    public Mail () {
+       sr= StageRun.getInstance();               
    }
    
   // private int numberOfJobs;
@@ -127,7 +129,7 @@ public class Mail
 
          // Send message
          Transport.send(message);
-         StageRun.print("Sent message successfully....",regressDetail);
+         sr.print("Sent message successfully....",regressDetail);
       }
       catch (Exception mex)
       {

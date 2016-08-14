@@ -38,6 +38,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Testunit.findAll", query = "SELECT t FROM Testunit t"),    
     @NamedQuery(name = "Testunit.findByReleaseProduct",
             query = "SELECT t FROM Testunit t WHERE t.release.id=:release AND t.product.id=:product"),
+    
     @NamedQuery(name = "Testunit.findByReleaseProductPlatform", 
             query = "SELECT t FROM Testunit t WHERE t.release.id=:release AND t.product.id=:product AND t.platform.id=:platform"),
     @NamedQuery(name = "Testunit.findByReleaseProductComponent",

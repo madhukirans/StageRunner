@@ -40,14 +40,14 @@ public class StageUpperstackShiphomesFacadeREST extends AbstractFacade<StageUppe
 
     @POST
     @Override
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
     public void create(StageUpperstackShiphomes entity) {
         super.create(entity);
     }
 
     @PUT
     @Path("{id}")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
     public void edit(@PathParam("id") Integer id, StageUpperstackShiphomes entity) {
         super.edit(entity);
     }
@@ -60,14 +60,14 @@ public class StageUpperstackShiphomesFacadeREST extends AbstractFacade<StageUppe
 
     @GET
     @Path("{id}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
     public StageUpperstackShiphomes find(@PathParam("id") Integer id) {
         return super.find(id);
     }
     
     @GET 
     @Path("stage/{stageid}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
     public List<StageUpperstackShiphomes> findByStage(@PathParam("stageid") Integer stageid) {
         TypedQuery<StageUpperstackShiphomes> query = em.createNamedQuery("StageUpperstackShiphomes.findByStage", StageUpperstackShiphomes.class);
         query.setParameter("stage", stageid);
@@ -76,7 +76,7 @@ public class StageUpperstackShiphomesFacadeREST extends AbstractFacade<StageUppe
     
     @GET
     @Path("stage/{stageId}/products")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
     public List<Product> findProductsByStage(@PathParam("stageId") Integer stageId) {
         TypedQuery query = em.createNamedQuery("StageUpperstackShiphomes.findProductsStage", Product.class);        
         query.setParameter("stage", stageId);   
@@ -86,7 +86,7 @@ public class StageUpperstackShiphomesFacadeREST extends AbstractFacade<StageUppe
     
     @GET
     @Path("stage/{stageId}/product/{product}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
     public List<StageUpperstackShiphomes> findByStageProduct(@PathParam("stageId") Integer stageId, @PathParam("product") Integer product) {
         TypedQuery query = em.createNamedQuery("StageUpperstackShiphomes.findByStageProduct", StageUpperstackShiphomes.class);        
         query.setParameter("stage", stageId);  
@@ -96,14 +96,14 @@ public class StageUpperstackShiphomesFacadeREST extends AbstractFacade<StageUppe
 
     @GET
     @Override
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
     public List<StageUpperstackShiphomes> findAll() {
         return super.findAll();
     }
 
     @GET
     @Path("{from}/{to}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
     public List<StageUpperstackShiphomes> findRange(@PathParam("from") Integer from, @PathParam("to") Integer to) {
         return super.findRange(new int[]{from, to});
     }

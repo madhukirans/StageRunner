@@ -1,10 +1,10 @@
 package com.oracle.stagerun.tool;
 
-
-
 import com.oracle.stagerun.entity.RegressDetails;
 import com.oracle.stagerun.entity.RegressStatus;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FilenameFilter;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -20,38 +20,47 @@ public class FarmJobAnalyzer implements Callable<Boolean> {
     private String rootWorkLoc;
     private boolean completed = false;
     // private int farmJobId;
-    
+
     private RegressDetails regressDetail;
+    StageRun sr;
     
     public FarmJobAnalyzer(RegressDetails regressDetail) {
-        StageRun.print("In FarmJobAnalyzer.", regressDetail);
-        this.regressDetail = regressDetail;    
+        sr = StageRun.getInstance();
+        sr.print("In FarmJobAnalyzer.", regressDetail);
+        this.regressDetail = regressDetail;
     }
 
-//    public List<String> getWorkLoc() {
-//        List<String> dirs = new ArrayList<String>();
-//        File f = new File(rootWorkLoc);
-//        File files[] = f.listFiles();
-//        for (File file : files) {
-//            if (file.isDirectory() && !file.getPath().endsWith("build")) {
-//                dirs.add(file.getAbsolutePath());
-//            }
-//        }
-//        return dirs;
-//    }
+    public String getWorkLoc(String workLoc) {
+        List<String> dirs = new ArrayList<String>();
+        File f = new File(workLoc);
+        File files[] = f.listFiles();
+        for (File file : files) {
+            if (file.isDirectory() && !file.getPath().endsWith("build")) {
+                dirs.add(file.getAbsolutePath());
+            }
+        }
+
+        if (dirs.size() > 0) {
+            return dirs.get(0);
+        } else {
+            return "";
+        }
+    }
+
     public Boolean call() {
         try {
-            if (regressDetail.getFarmrunId() == null)
+            if (regressDetail.getFarmrunId() == null) {
                 return false;
-            
+            }
+
             List<String> listArg = new ArrayList<String>();
             listArg.add("farm");
             listArg.add("showjobs");
             listArg.add("-d");
             listArg.add("-j");
             listArg.add(regressDetail.getFarmrunId().toString());
-            
-            StageRun.print("command:" + listArg, regressDetail);
+
+            sr.print("command:" + listArg, regressDetail);
             ProcessBuilder processBuilder = new ProcessBuilder(listArg);
             processBuilder.redirectErrorStream(true);
             Process process = processBuilder.start();
@@ -92,19 +101,20 @@ public class FarmJobAnalyzer implements Callable<Boolean> {
                 String currLine = null;
                 int i = 0;
                 while ((currLine = in.readLine()) != null) {
-                    StageRun.print("Farm Job Line:" + currLine, regressDetail);
+                    sr.print("Farm Job Line:" + currLine, regressDetail);
                     i++;
 
                     if (i == 3 && currLine.contains("finished")) {
-                        
+
                         regressDetail.setStatus(RegressStatus.completed);
                         while ((currLine = in.readLine()) != null) {
                             if (currLine.contains("Results location")) {
                                 rootWorkLoc = currLine.split(":")[1].trim();
-                                regressDetail.setWorkLoc(rootWorkLoc);
+                                regressDetail.setWorkLoc(getWorkLoc(rootWorkLoc));
                                 regressDetail.setEndtime(Calendar.getInstance().getTime());
-                                StageRun.merge(regressDetail);
-                                
+                                getSucDiffCount();
+                                sr.merge(regressDetail);
+
                                 ExecutorService executor = Executors.newCachedThreadPool();
                                 Future<Boolean> fut = executor.submit(new SapphireUploader(regressDetail));
                                 return fut.get(10, TimeUnit.MINUTES);
@@ -118,8 +128,8 @@ public class FarmJobAnalyzer implements Callable<Boolean> {
                         } else if (currLine.contains("aborted")) {
                             regressDetail.setStatus(RegressStatus.aborted);
                         }
-                        
-                        StageRun.merge(regressDetail);
+
+                        sr.merge(regressDetail);
                         return false;
                     }
                 }
@@ -132,10 +142,38 @@ public class FarmJobAnalyzer implements Callable<Boolean> {
             }*/
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            sr.print("Exception in farm job analyzer.");
         }
 
         return false;
+    }
+
+    public void getSucDiffCount() {
+        File f = new File(regressDetail.getWorkLoc());
+
+        FilenameFilter sucFilter = new FilenameFilter() {
+            public boolean accept(File dir, String name) {
+                return name.toLowerCase().endsWith(".suc");
+            }
+        };
+
+        FilenameFilter difFilter = new FilenameFilter() {
+            public boolean accept(File dir, String name) {
+                return name.toLowerCase().endsWith(".dif");
+            }
+        };
+
+        File[] sucFiles = f.listFiles(sucFilter);
+        File[] difFiles = f.listFiles(difFilter);
+        int sucFileCount = sucFiles.length;
+        int difFileCount = difFiles.length;
+
+        sr.print("sucfile count:" + sucFileCount, regressDetail);
+        sr.print("diffile count:" + difFileCount, regressDetail);
+
+        regressDetail.setSucCount(sucFileCount);
+        regressDetail.setDifCount(difFileCount);
+
     }
 
 }

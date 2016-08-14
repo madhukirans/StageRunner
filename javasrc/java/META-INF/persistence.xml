@@ -3,15 +3,15 @@
   <persistence-unit name="StageRunnerPU" transaction-type="RESOURCE_LOCAL">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <class>com.oracle.stagerun.entity.Component</class>
-        <class>com.oracle.stagerun.entity.Platform</class>
-        <class>com.oracle.stagerun.entity.Product</class>
-        <class>com.oracle.stagerun.entity.RegressDetails</class>
-        <class>com.oracle.stagerun.entity.Releases</class>
-        <class>com.oracle.stagerun.entity.ShiphomeNames</class>
-        <class>com.oracle.stagerun.entity.Stage</class>
-        <class>com.oracle.stagerun.entity.StageUpperstackShiphomes</class>
-        <class>com.oracle.stagerun.entity.Testunit</class>
-        <class>com.oracle.stagerun.entity.Users</class>
+    <class>com.oracle.stagerun.entity.Platform</class>
+    <class>com.oracle.stagerun.entity.Product</class>
+    <class>com.oracle.stagerun.entity.RegressDetails</class>
+    <class>com.oracle.stagerun.entity.Releases</class>
+    <class>com.oracle.stagerun.entity.ShiphomeNames</class>
+    <class>com.oracle.stagerun.entity.Stage</class>
+    <class>com.oracle.stagerun.entity.StageUpperstackShiphomes</class>
+    <class>com.oracle.stagerun.entity.Testunit</class>
+    <class>com.oracle.stagerun.entity.Users</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/results?zeroDateTimeBehavior=convertToNull"/>
       <property name="javax.persistence.jdbc.user" value="root"/>
@@ -20,5 +20,3 @@
     </properties>
   </persistence-unit>
 </persistence>
-
-

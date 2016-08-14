@@ -1,5 +1,6 @@
 package com.oracle.stagerun.tool;
 
+import com.oracle.stagerun.beans.StageRunWeb;
 import com.oracle.stagerun.entity.RegressDetails;
 import com.oracle.stagerun.entity.RegressStatus;
 import com.oracle.stagerun.entity.Releases;
@@ -18,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
@@ -27,7 +29,10 @@ public class RunJobs {
     private Releases release;
     private Stage stage;
     private EntityManager em;
-
+    
+    @Inject
+    private StageRunWeb sr;
+    
     public RunJobs(Releases release, Stage stage, List<RegressDetails> jobsList, List<StageUpperstackShiphomes> shiphomeList,
             List<StageUpperstackShiphomes> allShiphomeList, EntityManager em) {
         this.em = em;
@@ -39,7 +44,7 @@ public class RunJobs {
         setShiphomeEnvironmentVariables(allShiphomeList);
 
         //delete root folder @TODO. Remove this in production mode.
-        new File(StageRun.getRootFolder()).delete();
+        new File(sr.getRootFolder()).delete();
 
         for (RegressDetails regress : jobsList) {
             String farmJobCommand = regress.getTestunit().getJobreqAgentCommand();
@@ -47,7 +52,7 @@ public class RunJobs {
             String releaseName = regress.getStage().getRelease().getName();
             String testUnitName = regress.getTestunit().getTestunitName();
 
-            String regressDir = StageRun.getStageDirectory(regress);
+            String regressDir = sr.getStageDirectory(regress);
             if (regress.getTestunit().getIsDte() == TestUnitRunTypeEnum.DTE) {
                 String jobFileName = regressDir + "/" + LocalDateTime.now().toString().replace(":", ".") + ".sh";
                 File jobFile = new File(jobFileName);
@@ -110,29 +115,14 @@ public class RunJobs {
         });
     }
 
-    public void print(String message, RegressDetails rdetails) {
-        String str = "[" + rdetails.getStage().getStageName() + " " + rdetails.getProduct().getName()
-                + " " + rdetails.getTestunit().getTestunitName() + " " + rdetails.getFarmrunId() + "]";
-        print(str + message);
-    }
-
-    public void print(String message) {
-        String time = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-
-//        if (StageRun.LOGGER != null) {
-//            StageRun.LOGGER.fine(message);
-//        }
-        System.out.println(time + " " + message);
-    }
-
     private void runFarmCommand(RegressDetails regress) {
         try {
-            print("Farm Submit Command:" + regress.getFileToRun().getCanonicalPath(), regress);
+            sr.print("Farm Submit Command:" + regress.getFileToRun().getCanonicalPath(), regress);
             shiphomesEnv.put("PLATFORM", regress.getTestunit().getPlatform().getName());
             shiphomesEnv.put("PRODUCT", regress.getProduct().getName());
             shiphomesEnv.put("COMPONENT", regress.getComponent().getName());
 
-            print("shiphomesEnv:" + shiphomesEnv, regress);
+            sr.print("shiphomesEnv:" + shiphomesEnv, regress);
             ProcessBuilder processBuilder = new ProcessBuilder("bash", regress.getFileToRun().getCanonicalPath());
             Map<String, String> env = processBuilder.environment();
             env.putAll(shiphomesEnv);
@@ -142,14 +132,14 @@ public class RunJobs {
             process.waitFor(10, TimeUnit.MINUTES);
 
             int exitStatus = process.exitValue();
-            print("Fram job submit status:" + exitStatus, regress);
+            sr.print("Fram job submit status:" + exitStatus, regress);
             if (exitStatus == 0) {
                 BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
                 BufferedReader err = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 
                 String errString;
                 while ((errString = err.readLine()) != null) {
-                    print("Command Error:" + errString + "\n", regress);
+                    sr.print("Command Error:" + errString + "\n", regress);
                     regress.setStatus(RegressStatus.failed);
                     em.merge(regress);
                 }
@@ -157,7 +147,7 @@ public class RunJobs {
                 String currLine = null;
                 int farmId = 0;
                 while ((currLine = in.readLine()) != null) {
-                    print("Output: " + currLine + "\n", regress);
+                    sr.print("Output: " + currLine + "\n", regress);
                     if (currLine.contains("farm showjobs -d -j")) {
                         String str = currLine.substring(currLine.indexOf("(") + 1, currLine.indexOf(")")).trim();
                         str = str.substring(str.lastIndexOf(" ")).trim();
@@ -176,13 +166,13 @@ public class RunJobs {
                     regress.setStatus(RegressStatus.failed);
                 }
 
-                print("Farm id: ", regress);
+                sr.print("Farm id: ", regress);
             } else {
                 BufferedReader err = new BufferedReader(new InputStreamReader(process.getErrorStream()));
                 String errString;
-                print("Error: Command failed ", regress);
+                sr.print("Error: Command failed ", regress);
                 while ((errString = err.readLine()) != null) {
-                    print("Error:" + errString, regress);
+                    sr.print("Error:" + errString, regress);
                 }
                 regress.setStatus(RegressStatus.failed);
                 em.merge(regress);

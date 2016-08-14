@@ -5,6 +5,7 @@
  */
 package com.oracle.stagerun.entity;
 
+import com.oracle.stagerun.tool.StageRun;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
@@ -60,10 +61,9 @@ public class Releases implements Serializable {
     
     @OneToMany(mappedBy = "release")
     private List<ShiphomeNames> shiphomeNamesList;
-    
-    
 
     public Releases() {
+        
     }
 
     public Releases(Integer id) {

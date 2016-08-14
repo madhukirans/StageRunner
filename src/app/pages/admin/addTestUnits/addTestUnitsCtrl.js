@@ -77,8 +77,8 @@
 
         $scope.getPlatforms = function (platform) {
             var selected = [];
-            if (platform.name) {
-                selected = $filter('filter')($scope.platforms, {name: platform.name});
+            if (platform.id) {
+                selected = $filter('filter')($scope.platforms, {id: platform.id});
             }
             return selected.length ? selected[0].name : 'Not set';
         };

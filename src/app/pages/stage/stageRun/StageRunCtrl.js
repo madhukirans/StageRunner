@@ -57,7 +57,7 @@
             if ($scope.selectedComponent)
                 url = url + "/component/" + $scope.selectedComponent;
 
-            $http.get("web/testunit/release/" + $scope.selectedRelease + "/product/" + $scope.selectedProduct).success(function (data) {
+            $http.get(url).success(function (data) {
                 $scope.testunits = data;
                 $scope.loadTable();
             });

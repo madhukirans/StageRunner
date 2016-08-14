@@ -60,6 +60,7 @@
             link: function (scope, elem) {
                 setTimeout(function () {
                     elem.colResizable({
+                        resizeMode:'overflow',
                         liveDrag: true,                        
                         gripInnerHtml: "<div class='grip'></div>",
                         draggingClass: "dragging",

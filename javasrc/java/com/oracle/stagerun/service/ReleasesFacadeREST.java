@@ -5,9 +5,12 @@
  */
 package com.oracle.stagerun.service;
 
+import com.oracle.stagerun.beans.StageRunWeb;
 import com.oracle.stagerun.entity.Releases;
+import com.oracle.stagerun.tool.StageRun;
 import java.util.List;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.ws.rs.Consumes;
@@ -27,7 +30,7 @@ import javax.ws.rs.core.MediaType;
 @Stateless
 @Path("releases")
 public class ReleasesFacadeREST extends AbstractFacade<Releases> {
-
+    
     @PersistenceContext(unitName = "StageRunnerPU")
     private EntityManager em;
 
@@ -37,14 +40,14 @@ public class ReleasesFacadeREST extends AbstractFacade<Releases> {
 
     @POST
     @Override
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
     public void create(Releases entity) {
         super.create(entity);
     }
 
     @PUT
     @Path("{id}")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
     public void edit(@PathParam("id") Integer id, Releases entity) {
         super.edit(entity);
     }
@@ -57,21 +60,21 @@ public class ReleasesFacadeREST extends AbstractFacade<Releases> {
 
     @GET
     @Path("{id}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
     public Releases find(@PathParam("id") Integer id) {
         return super.find(id);
     }
 
     @GET
     @Override
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public List<Releases> findAll() {
+    @Produces({MediaType.APPLICATION_JSON})
+    public List<Releases> findAll() {                
         return super.findAll();
     }
 
     @GET
     @Path("{from}/{to}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
     public List<Releases> findRange(@PathParam("from") Integer from, @PathParam("to") Integer to) {
         return super.findRange(new int[]{from, to});
     }

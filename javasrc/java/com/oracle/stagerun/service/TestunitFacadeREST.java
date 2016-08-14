@@ -40,14 +40,14 @@ public class TestunitFacadeREST extends AbstractFacade<Testunit> {
 
     @POST
     @Override
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
     public void create(Testunit entity) {
         super.create(entity);
     }
 
     @PUT
     @Path("{id}")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
     public void edit(@PathParam("id") Integer id, Testunit entity) {
         super.edit(entity);
     }
@@ -60,14 +60,14 @@ public class TestunitFacadeREST extends AbstractFacade<Testunit> {
 
     @GET
     @Path("{id}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
     public Testunit find(@PathParam("id") Integer id) {
         return super.find(id);
     }
 
     @GET
     @Override
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
     public List<Testunit> findAll() {
         return super.findAll();
     }
@@ -77,7 +77,7 @@ public class TestunitFacadeREST extends AbstractFacade<Testunit> {
     @Produces({MediaType.APPLICATION_JSON})
     public List<Testunit> findByProductAndRelease(@PathParam("release") Integer release, 
             @PathParam("product") Integer product) {
-        TypedQuery<Testunit> query = em.createNamedQuery("Testunit.findByReleaseProducts", Testunit.class);
+        TypedQuery<Testunit> query = em.createNamedQuery("Testunit.findByReleaseProduct", Testunit.class);
 
         query.setParameter("release", release);
         query.setParameter("product", product);        
@@ -144,7 +144,7 @@ public class TestunitFacadeREST extends AbstractFacade<Testunit> {
 
     @GET
     @Path("{from}/{to}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
     public List<Testunit> findRange(@PathParam("from") Integer from, @PathParam("to") Integer to) {
         return super.findRange(new int[]{from, to});
     }
