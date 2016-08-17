@@ -79,8 +79,8 @@ public class ShiphomeNamesFacadeREST extends AbstractFacade<ShiphomeNames> {
     @Produces({MediaType.APPLICATION_JSON})
     public List<ShiphomeNames> findByRelease(@PathParam ("releaseid") Integer releaseId, @PathParam ("productid") Integer productId) {
         TypedQuery query = em.createNamedQuery("ShiphomeNames.findByReleaseAndProduct", ShiphomeNames.class);
-        query.setParameter("releaseid", releaseId);
-        query.setParameter("productid", productId);
+        query.setParameter("release", releaseId);
+        query.setParameter("product", productId);
         return query.getResultList();
     }
 

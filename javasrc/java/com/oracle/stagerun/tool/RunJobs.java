@@ -8,6 +8,7 @@ import com.oracle.stagerun.entity.ShiphomeNames;
 import com.oracle.stagerun.entity.Stage;
 import com.oracle.stagerun.entity.StageUpperstackShiphomes;
 import com.oracle.stagerun.entity.TestUnitRunTypeEnum;
+import com.oracle.stagerun.service.excetion.ShiphomeNamesNotFoundException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
@@ -19,25 +20,40 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
+@Stateless
 public class RunJobs {
 
     Map<String, String> shiphomesEnv = new HashMap<>();
     private Releases release;
     private Stage stage;
-    private EntityManager em;
     
+    @PersistenceContext(unitName = "StageRunnerPU")
+    private EntityManager em;
+
     @Inject
     private StageRunWeb sr;
-    
-    public RunJobs(Releases release, Stage stage, List<RegressDetails> jobsList, List<StageUpperstackShiphomes> shiphomeList,
-            List<StageUpperstackShiphomes> allShiphomeList, EntityManager em) {
-        this.em = em;
+        
+    public RunJobs() {
+
+    }
+
+    public void execute(Releases release, Stage stage, List<RegressDetails> jobsList)//, List<StageUpperstackShiphomes> shiphomeList,
+    //        List<StageUpperstackShiphomes> allShiphomeList)
+            throws ShiphomeNamesNotFoundException
+    {        
         this.release = release;
         this.stage = stage;
+        
+        TypedQuery<StageUpperstackShiphomes> allShiphomeQery = em.createNamedQuery("StageUpperstackShiphomes.findByStage", StageUpperstackShiphomes.class);
+        allShiphomeQery.setParameter("stage", stage.getId());
+        List<StageUpperstackShiphomes> allShiphomeList = allShiphomeQery.getResultList();
 
         shiphomesEnv.put("RELEASE", release.getName());
         shiphomesEnv.put("STAGE", stage.getStageName());
@@ -97,22 +113,36 @@ public class RunJobs {
         };
     }
 
-    private void setShiphomeEnvironmentVariables(List<StageUpperstackShiphomes> allShiphomeList) {
+    private void setShiphomeEnvironmentVariables(List<StageUpperstackShiphomes> allShiphomeList) throws ShiphomeNamesNotFoundException{
         //Set SHIPHOME environemnt varibales
-        allShiphomeList.stream().forEach((shiphome) -> {
+        for (StageUpperstackShiphomes shiphome : allShiphomeList) {
 
-            TypedQuery<ShiphomeNames> query = em.createNamedQuery("ShiphomeNames.findByReleaseAndProduct", ShiphomeNames.class);
+            TypedQuery<ShiphomeNames> query = em.createNamedQuery("ShiphomeNames.findByReleaseAndProductPlatform", ShiphomeNames.class);
             query.setParameter("release", release.getId());
             query.setParameter("product", shiphome.getProduct().getId());
+            query.setParameter("platform", shiphome.getPlatform().getId());
 
             List<ShiphomeNames> shiphomeNames = query.getResultList();
-            shiphomeNames.forEach((shiphomeName) -> {
+            sr.print("shiphomeNames:" + release.getId() + shiphomeNames + shiphome.getProduct().getId() + shiphome.getPlatform().getId());
+            
+            if (shiphomeNames == null || shiphomeNames.size() == 0){
+                //throw new ShiphomeNamesNotFoundException("" + query.toString());
+                continue;
+            }
+           
+            for (ShiphomeNames shiphomeName : shiphomeNames) {
                 String shipohmeLoc = shiphome.getPlatform().getName().replace(".", "_") + "_" + shiphome.getProduct().getName()
                         + "_" + shiphomeName.getComponent().getName() + "_SHIPHOME";
-                shiphomesEnv.put(shipohmeLoc.toUpperCase(),
-                        shiphome.getShiphomeloc() + "/" + shiphomeName.getName());
-            });
-        });
+                String shiphomeLoc = shiphome.getShiphomeloc() + "/" + shiphomeName.getName();
+                
+                if (shiphome.getPlatform().getName().startsWith("WINDOWS")) {
+                    shiphomeLoc = shiphomeLoc.replaceAll("\\\\", "/");
+                }
+                shiphomesEnv.put(shipohmeLoc.toUpperCase(), shiphomeLoc);
+            };
+        };
+        
+        sr.print("shiphomesEnv:" + shiphomesEnv);
     }
 
     private void runFarmCommand(RegressDetails regress) {
@@ -121,8 +151,7 @@ public class RunJobs {
             shiphomesEnv.put("PLATFORM", regress.getTestunit().getPlatform().getName());
             shiphomesEnv.put("PRODUCT", regress.getProduct().getName());
             shiphomesEnv.put("COMPONENT", regress.getComponent().getName());
-
-            sr.print("shiphomesEnv:" + shiphomesEnv, regress);
+            
             ProcessBuilder processBuilder = new ProcessBuilder("bash", regress.getFileToRun().getCanonicalPath());
             Map<String, String> env = processBuilder.environment();
             env.putAll(shiphomesEnv);

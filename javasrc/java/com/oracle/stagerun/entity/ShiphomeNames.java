@@ -29,7 +29,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "ShiphomeNames.findAll", query = "SELECT s FROM ShiphomeNames s"),
-    @NamedQuery(name = "ShiphomeNames.findByReleaseAndProduct", query = "SELECT s FROM ShiphomeNames s WHERE s.release.id = :release AND s.product.id = :product")
+    @NamedQuery(name = "ShiphomeNames.findByReleaseAndProduct",
+            query = "SELECT s FROM ShiphomeNames s WHERE s.release.id = :release AND s.product.id = :product"),
+    @NamedQuery(name = "ShiphomeNames.findByReleaseAndProductPlatform",
+            query = "SELECT s FROM ShiphomeNames s WHERE s.release.id = :release AND s.product.id = :product AND s.platform.id =:platform")
 })
 public class ShiphomeNames implements Serializable {
 
@@ -143,7 +146,7 @@ public class ShiphomeNames implements Serializable {
 
     @Override
     public String toString() {
-        return "ShiphomeNames[ id=" + id + name + " ]";
+        return "ShiphomeNames[ id=" + id + "," + name + " ]";
     }
-    
+
 }

@@ -33,9 +33,9 @@
             </tr>  
         </table>      
 
-        <div class="farm-group">
+        <div class="farm-group" ng-if="dataLoading">
             <table col-resizeable class="table table-bordered table-hover" >
-                <colgroup>
+<!--                <colgroup>
                     <col width="1%" />
                     <col width="10%" />
                     <col width="5%" />
@@ -48,7 +48,7 @@
                     <col width="5%" />
                     <col width="15%" />
                     <col width="5%" />
-                </colgroup>
+                </colgroup>-->
                 <thead> 
                     <tr class="sortable header-row black-muted-bg">
                         <th class="table-id">#</th>
@@ -66,7 +66,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="r in regressdetails" class="editable-row {{ r.status === 'failed' ? 'danger' : (r.status === 'completed'? 'primary':'')}}">
+                    <tr  ng-repeat="r in regressdetails" class="editable-row {{ r.status === 'failed' ? 'danger' : (r.status === 'completed'? 'primary':'')}}">
                         <td class="table-id">
                             {{$index}}
                         </td>                    
@@ -79,13 +79,13 @@
                         <td>                   
                             {{r.farmrunId}}                        
                         </td>
-                        <td>                   
+                        <td nowrap>                   
                             {{r.starttime}}                        
                         </td>
-                        <td>                   
+                        <td nowrap>                   
                             {{r.endtime}}                        
                         </td>
-                        <td>                   
+                        <td nowrap>                   
                             {{r.workLoc}}                        
                         </td>
                         <td>                   
@@ -94,10 +94,10 @@
                         <td>                   
                             {{r.difCount}}                        
                         </td>
-                        <td>                   
+                        <td >                   
                             {{r.sapphireUploadStatus}}                        
                         </td>
-                        <td>                   
+                        <td nowrap>                   
                             {{r.gtlfFileLoc}}                        
                         </td>      
                         <td>                   

@@ -78,12 +78,6 @@ public class StageFacadeREST extends AbstractFacade<Stage> {
     @Override
     @Produces({ MediaType.APPLICATION_JSON})
     public List<Stage> findAll() {
-        System.out.println("Madhu:" );
-        //TypedQuery<Stage> query = em.createNamedQuery("Stage.findAll", Stage.class);
-        //query.setParameter("srelease", release);
-        //System.out.println("Madhu:" + query.getResultList());
-        //return query.getResultList();
-        
         return super.findAll();
     }
 

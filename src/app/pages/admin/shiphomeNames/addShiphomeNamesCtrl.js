@@ -28,7 +28,8 @@
         $http.get("web/releases").success(function (data) {
             $scope.releases = data;
         });
-
+               
+        
         $scope.shiphomeNames = [];
         $scope.loadTable = function () {
             
@@ -77,7 +78,7 @@
         $scope.selectComponent = function (component) {
             var selected = [];
             if (component.id) {
-                selected = $filter('filter')($scope.components, {name: component.name});
+                selected = $filter('filter')($scope.components, {id: component.id});
             }
             return selected.length ? selected[0].name : 'Not set';
         };
@@ -85,7 +86,7 @@
         $scope.selectPlatform = function (platform) {
             var selected = [];
             if (platform.id) {
-                selected = $filter('filter')($scope.platforms, {name: platform.name});
+                selected = $filter('filter')($scope.platforms, {id: platform.id});
             }
             return selected.length ? selected[0].name : 'Not set';
         };

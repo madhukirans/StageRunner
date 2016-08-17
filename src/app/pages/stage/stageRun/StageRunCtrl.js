@@ -64,6 +64,7 @@
         };
 
         $scope.loadTable = function () {
+            $scope.dataLoading  = true;
             console.log("Product :" + $scope.selectedProduct);
             console.log("Component :" + $scope.selectedComponent);
             console.log("Testunit :" + $scope.selectedTestUnit);
@@ -84,15 +85,15 @@
             }
 
             $http.get(URL).success(function (data) {
-                $scope.regressdetails = data;
+                $scope.regressdetails = data;                
             });
         };
 
         $scope.options = {
-            autoDismiss: true,
+            autoDismiss: false,
             positionClass: 'toast-top-full-width',
             type: 'info',
-            timeOut: '50000',
+            timeOut: '500000',
             extendedTimeOut: '2000',
             allowHtml: true,
             closeButton: false,
@@ -116,12 +117,13 @@
                 product: $scope.regressdetails[index].product,
                 testunit: $scope.regressdetails[index].testunitId
             };
-
+            $scope.dataLoading  = false;
             var URL = 'web/regressdetails';
             toastr.info($scope.options.title, $scope.options.msg, $scope.options);
             $http.post(URL, postdata).success(function (data, status, headers, config) {
                 $scope.loadTable();
-                toastr.clear();
+                toastr.clear();                
+                $scope.dataLoading  = true;
             }).error(function (err) {
                 toastr.clear();
             });

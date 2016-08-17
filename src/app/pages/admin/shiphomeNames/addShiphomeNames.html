@@ -7,7 +7,7 @@
                 <tr>
                     <td style="text-align: left">
                         <div class="col-sm-3">
-                            <select ng-model="selectedRelease" class="form-control selectpicker" ng-change="loadTable()">    
+                            <select ng-model="selectedRelease" class="form-control selectpicker" ng-change="loadProductsAndReleases()">    
                                 <option value="">Select Release</option>
                                 <option ng-repeat="r in releases" ng-value="r.id">{{r.name}}</option>
                             </select>

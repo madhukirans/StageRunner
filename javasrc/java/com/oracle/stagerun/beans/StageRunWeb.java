@@ -7,24 +7,48 @@ package com.oracle.stagerun.beans;
 
 import com.oracle.stagerun.entity.RegressDetails;
 import com.oracle.stagerun.tool.AbstractStgeRun;
-import com.oracle.stagerun.tool.StageRun;
+import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.logging.FileHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
-import javax.annotation.PostConstruct;
+import java.util.Calendar;
+import java.util.Date;
+import javax.ejb.Schedule;
 import javax.ejb.Singleton;
-import javax.ejb.Startup;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 /**
  *
  * @author mseelam
  */
 @Singleton
-@Startup
+//@Startup
 public class StageRunWeb extends AbstractStgeRun {
+
+    @PersistenceContext(unitName = "StageRunnerPU")
+    EntityManager em;
+
+    private static final int interval = 10;
+
+    @Override
+    public void init() {
+        System.out.println("StageRunWeb:In Init AbstractStgeRun");
+        super.init();
+    }
+
+    //@Schedule(minute = "*/10", hour = "*")
+    public void automaticTimeout() {
+        System.out.println("Automatic timeout occured" +  LocalDateTime.now());
+        runFarmJobAnalyzer(em);
+    }
     
-    
+    @Override
+    public void merge(RegressDetails rdetails) {
+        print("In StageRunWeb merge");
+        try {
+            em.merge(rdetails);
+        } catch (Exception e) {
+            System.out.println("Exception :" + e);
+        }
+        print("Record saved", rdetails);
+    }
 }

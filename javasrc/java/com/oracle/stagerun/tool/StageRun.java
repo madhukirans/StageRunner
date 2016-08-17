@@ -39,7 +39,7 @@ public class StageRun extends AbstractStgeRun {
     private static StageRun sr = null;
 
     private StageRun() {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("StageRunnerPU");
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("StageRunnerPUMain");
         em = emf.createEntityManager();
         init();
     }
@@ -79,8 +79,10 @@ public class StageRun extends AbstractStgeRun {
             startTime = LocalDateTime.now();
         }
     }
-
+    
+    @Override
     public synchronized void merge(RegressDetails rdetails) {
+        print("In StageRun merge");
         try {
             em.getTransaction().begin();
             em.merge(rdetails);
