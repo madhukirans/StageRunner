@@ -968,7 +968,7 @@ input.search-input {
 .table-bordered > thead > tr > td,
 .table-bordered > tbody > tr > td,
 .table-bordered > tfoot > tr > td {
-    border: 1px solid gainsboro; }
+    border: 2px solid gainsboro; }
 
 .table-striped > tbody > tr:nth-of-type(odd) {
     background-color: rgba(0, 0, 0, 0.1); }

@@ -999,7 +999,7 @@ exists or setup the property manually. For example like this:
         <jar compress="${jar.compress}" jarfile="${dist.war}">
             <fileset dir="${build.web.dir}" excludes="WEB-INF/classes/.netbeans_*,${dist.archive.excludes}"/>
         </jar>
-         <jar destfile="${basedir}/dist/${ant.project.name}.jar">
+        <jar destfile="${basedir}/dist/${ant.project.name}.jar">
             <fileset dir="${basedir}/build/web/WEB-INF/classes">
             </fileset>
         </jar>
@@ -1010,6 +1010,10 @@ exists or setup the property manually. For example like this:
         <jar compress="${jar.compress}" jarfile="${dist.war}" manifest="${build.meta.inf.dir}/MANIFEST.MF">
             <fileset dir="${build.web.dir}" excludes="WEB-INF/classes/.netbeans_*,${dist.archive.excludes}"/>
         </jar>
+        <jar destfile="${basedir}/dist/${ant.project.name}.jar" manifest="${basedir}/build/web/WEB-INF/classes/MANIFEST.MF">
+            <fileset dir="${basedir}/build/web/WEB-INF/classes">
+            </fileset>
+        </jar>
     </target>
     <target depends="init,compile,compile-jsps,-pre-dist" if="do.tmp.war.package.without.custom.manifest" name="-do-tmp-dist-without-manifest">
         <dirname file="${dist.war}" property="dist.jar.dir"/>
@@ -1017,12 +1021,20 @@ exists or setup the property manually. For example like this:
         <jar compress="${jar.compress}" jarfile="${dist.war}">
             <fileset dir="${build.web.dir}" excludes="WEB-INF/classes/.netbeans_*,${dist.archive.excludes}"/>
         </jar>
+        <jar destfile="${basedir}/dist/${ant.project.name}.jar">
+            <fileset dir="${basedir}/build/web/WEB-INF/classes">
+            </fileset>
+        </jar>
     </target>
     <target depends="init,compile,compile-jsps,-pre-dist" if="do.tmp.war.package.with.custom.manifest" name="-do-tmp-dist-with-manifest">
         <dirname file="${dist.war}" property="dist.jar.dir"/>
         <mkdir dir="${dist.jar.dir}"/>
         <jar compress="${jar.compress}" jarfile="${dist.war}" manifest="${build.meta.inf.dir}/MANIFEST.MF">
             <fileset dir="${build.web.dir}" excludes="WEB-INF/classes/.netbeans_*,${dist.archive.excludes}"/>
+        </jar>
+        <jar destfile="${basedir}/dist/${ant.project.name}.jar">
+            <fileset dir="${basedir}/build/web/WEB-INF/classes">
+            </fileset>
         </jar>
     </target>
     <target depends="init,compile,compile-jsps,-pre-dist,-do-dist-with-manifest,-do-dist-without-manifest" name="do-dist"/>
@@ -1039,7 +1051,7 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${file.reference.org.eclipse.persistence.jpa-2.5.2.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.org.eclipse.persistence.jpa.jpql-2.5.2.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <mkdir dir="${build.web.dir}/META-INF"/>
-        <manifest file="${build.web.dir}/META-INF/MANIFEST.MF" mode="update"/>
+        <manifest file="${build.web.dir}/META-INF/MANIFEST.MF" mode="update"/>        
     </target>
     <target depends="init" name="library-inclusion-in-archive" unless="dist.ear.dir">
         <copyfiles files="${file.reference.gtlf-libs.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
@@ -1062,6 +1074,10 @@ exists or setup the property manually. For example like this:
         <mkdir dir="${dist.jar.dir}"/>
         <jar compress="${jar.compress}" jarfile="${dist.ear.war}" manifest="${build.web.dir}/META-INF/MANIFEST.MF">
             <fileset dir="${build.web.dir}" excludes="WEB-INF/classes/.netbeans_*,${dist.archive.excludes}"/>
+        </jar>
+        <jar destfile="${basedir}/dist/${ant.project.name}.jar">
+            <fileset dir="${basedir}/build/web/WEB-INF/classes">
+            </fileset>
         </jar>
     </target>
     <target name="-post-dist">

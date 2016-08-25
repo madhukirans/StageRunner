@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Basic;
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -32,6 +33,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author mseelam
  */
 @Entity
+@Cacheable(false)
 @Table(name = "regress_details")
 @XmlRootElement
 @NamedQueries({

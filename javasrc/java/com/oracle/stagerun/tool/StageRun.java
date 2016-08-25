@@ -41,7 +41,7 @@ public class StageRun extends AbstractStgeRun {
     private StageRun() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("StageRunnerPUMain");
         em = emf.createEntityManager();
-        init();
+        super.init("stagerundemon.log");
     }
 
     public static StageRun getInstance() {
@@ -62,24 +62,23 @@ public class StageRun extends AbstractStgeRun {
     private void runForEver() {
         LocalDateTime startTime = LocalDateTime.now();
         while (true) {
-            runFarmJobAnalyzer(em);
-            LocalDateTime endTime = LocalDateTime.now();
-            Duration timeElapsed = Duration.between(startTime, endTime);
-            print("TimeElapsed:" + timeElapsed.toMillis());
+            try {
+                runFarmJobAnalyzer(em);
+                LocalDateTime endTime = LocalDateTime.now();
+                Duration timeElapsed = Duration.between(startTime, endTime);
+                print("TimeElapsed:" + timeElapsed.toMillis());
 
-            if (timeElapsed.toMinutes() < interval) {
-                try {
+                if (timeElapsed.toMinutes() < interval) {
                     print("Sleeping for:" + ((interval * 60 * 1000) - timeElapsed.toMillis()));
                     Thread.sleep((interval * 60 * 1000) - timeElapsed.toMillis());
-                } catch (Exception e) {
-
                 }
+                startTime = LocalDateTime.now();
+            } catch (Exception e) {
+                print("Exception runForEver:" + e.getLocalizedMessage());
             }
-
-            startTime = LocalDateTime.now();
         }
     }
-    
+
     @Override
     public synchronized void merge(RegressDetails rdetails) {
         print("In StageRun merge");
@@ -90,7 +89,7 @@ public class StageRun extends AbstractStgeRun {
             em.getTransaction().commit();
 
         } catch (Exception e) {
-            System.out.println("Exception :" + e);
+            print("Exception :" + e);
         }
         print("Record saved", rdetails);
     }

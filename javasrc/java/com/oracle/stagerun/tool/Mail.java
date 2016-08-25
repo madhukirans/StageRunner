@@ -131,9 +131,9 @@ public class Mail
          Transport.send(message);
          //sr.print("Sent message successfully....",regressDetail);
       }
-      catch (Exception mex)
+      catch (Exception e)
       {
-         mex.printStackTrace();
+         sr.print("Exception : Sending mail:" + e);
       }
    }
 
@@ -164,7 +164,7 @@ public class Mail
       }
       catch (Exception e)
       {
-         e.printStackTrace();
+         sr.print("Exception : Composing mail" + e);
       }
      // System.out.println(strBuffer.toString());
    }

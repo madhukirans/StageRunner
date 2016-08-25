@@ -7,6 +7,7 @@ package com.oracle.stagerun.entity;
 
 import java.io.Serializable;
 import javax.persistence.Basic;
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -25,16 +26,29 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author mseelam
  */
 @Entity
+@Cacheable(false)
 @Table(name = "stage_upperstack_shiphomes")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "StageUpperstackShiphomes.findAll", query = "SELECT s FROM StageUpperstackShiphomes s"),
     @NamedQuery(name = "StageUpperstackShiphomes.findByStage", query = "SELECT s FROM StageUpperstackShiphomes s WHERE s.stage.id=:stage"),
+    @NamedQuery(name = "StageUpperstackShiphomes.findByReleaseStageName", 
+                query = "SELECT s FROM StageUpperstackShiphomes s WHERE s.stage.release.name = :releaseName AND s.stage.stageName=:stageName"),
+    @NamedQuery(name = "StageUpperstackShiphomes.findByReleaseStageNameProductName", 
+                query = "SELECT s FROM StageUpperstackShiphomes s WHERE s.stage.release.name = :releaseName AND s.stage.stageName=:stageName AND s.product.name=:productName "),
+    
+    @NamedQuery(name = "StageUpperstackShiphomes.findByReleaseStageNameProductNamePlatformName", 
+                query = "SELECT s FROM StageUpperstackShiphomes s WHERE s.stage.release.name = :releaseName AND s.stage.stageName=:stageName AND s.product.name=:productName AND s.platform.name=:platformName"),
+    
     @NamedQuery(name = "StageUpperstackShiphomes.findByReleaseStage", 
             query = "SELECT s FROM StageUpperstackShiphomes s WHERE s.stage.release.id=:release AND s.stage.id = :stage"),
     
     @NamedQuery(name = "StageUpperstackShiphomes.findByStageProduct", 
-                    query = "SELECT s FROM StageUpperstackShiphomes s WHERE s.stage.id = :stage AND s.product.id = :product"),
+                    query = "SELECT s FROM StageUpperstackShiphomes s WHERE s.stage.stageName = :stageName AND s.product.name = :productName"),
+    
+    @NamedQuery(name = "StageUpperstackShiphomes.findByStageProductPlatform", 
+                    query = "SELECT s FROM StageUpperstackShiphomes s WHERE s.stage.stageName = :stageName AND s.product.name = :productName AND s.platform.name = :platformName" ),
+    
     @NamedQuery(name = "StageUpperstackShiphomes.findProductsStage", 
                     query = "SELECT DISTINCT s.product FROM StageUpperstackShiphomes s WHERE s.stage.id = :stage"),
     })

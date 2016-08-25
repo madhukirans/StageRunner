@@ -11,14 +11,20 @@ import com.oracle.stagerun.entity.TestUnitRunTypeEnum;
 import com.oracle.stagerun.service.excetion.ShiphomeNamesNotFoundException;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -33,24 +39,23 @@ public class RunJobs {
     Map<String, String> shiphomesEnv = new HashMap<>();
     private Releases release;
     private Stage stage;
-    
+
     @PersistenceContext(unitName = "StageRunnerPU")
     private EntityManager em;
 
     @Inject
     private StageRunWeb sr;
-        
+
     public RunJobs() {
 
     }
 
     public void execute(Releases release, Stage stage, List<RegressDetails> jobsList)//, List<StageUpperstackShiphomes> shiphomeList,
-    //        List<StageUpperstackShiphomes> allShiphomeList)
-            throws ShiphomeNamesNotFoundException
-    {        
+            //        List<StageUpperstackShiphomes> allShiphomeList)
+            throws ShiphomeNamesNotFoundException {
         this.release = release;
         this.stage = stage;
-        
+
         TypedQuery<StageUpperstackShiphomes> allShiphomeQery = em.createNamedQuery("StageUpperstackShiphomes.findByStage", StageUpperstackShiphomes.class);
         allShiphomeQery.setParameter("stage", stage.getId());
         List<StageUpperstackShiphomes> allShiphomeList = allShiphomeQery.getResultList();
@@ -113,7 +118,7 @@ public class RunJobs {
         };
     }
 
-    private void setShiphomeEnvironmentVariables(List<StageUpperstackShiphomes> allShiphomeList) throws ShiphomeNamesNotFoundException{
+    private void setShiphomeEnvironmentVariables(List<StageUpperstackShiphomes> allShiphomeList) throws ShiphomeNamesNotFoundException {
         //Set SHIPHOME environemnt varibales
         for (StageUpperstackShiphomes shiphome : allShiphomeList) {
 
@@ -124,25 +129,50 @@ public class RunJobs {
 
             List<ShiphomeNames> shiphomeNames = query.getResultList();
             sr.print("shiphomeNames:" + release.getId() + shiphomeNames + shiphome.getProduct().getId() + shiphome.getPlatform().getId());
-            
-            if (shiphomeNames == null || shiphomeNames.size() == 0){
+
+            if (shiphomeNames == null || shiphomeNames.size() == 0) {
                 //throw new ShiphomeNamesNotFoundException("" + query.toString());
                 continue;
             }
-           
+
             for (ShiphomeNames shiphomeName : shiphomeNames) {
                 String shipohmeLoc = shiphome.getPlatform().getName().replace(".", "_") + "_" + shiphome.getProduct().getName()
                         + "_" + shiphomeName.getComponent().getName() + "_SHIPHOME";
                 String shiphomeLoc = shiphome.getShiphomeloc() + "/" + shiphomeName.getName();
-                
+
                 if (shiphome.getPlatform().getName().startsWith("WINDOWS")) {
                     shiphomeLoc = shiphomeLoc.replaceAll("\\\\", "/");
                 }
                 shiphomesEnv.put(shipohmeLoc.toUpperCase(), shiphomeLoc);
             };
         };
-        
+
         sr.print("shiphomesEnv:" + shiphomesEnv);
+    }
+
+    private void wiriteEnvFile(Map map, RegressDetails regress) {
+        String regressDir = sr.getStageDirectory(regress);
+
+        SortedProperties properties = new SortedProperties();
+        properties.putAll(map);
+        try {
+            FileOutputStream out = new FileOutputStream(regressDir + "/env.prop");
+            properties.store(out, null);
+        } catch (Exception e) {
+            sr.print("Exception : wiriteEnvFile: " + e, regress);
+        }
+    }
+
+    class SortedProperties extends Properties {
+        public Enumeration keys() {
+            Enumeration<Object> keysEnum = super.keys();
+            Vector keyList = new Vector();
+            while (keysEnum.hasMoreElements()) {
+                keyList.add((String) keysEnum.nextElement());
+            }
+            Collections.sort(keyList);
+            return keyList.elements();
+        }
     }
 
     private void runFarmCommand(RegressDetails regress) {
@@ -151,11 +181,12 @@ public class RunJobs {
             shiphomesEnv.put("PLATFORM", regress.getTestunit().getPlatform().getName());
             shiphomesEnv.put("PRODUCT", regress.getProduct().getName());
             shiphomesEnv.put("COMPONENT", regress.getComponent().getName());
-            
+
             ProcessBuilder processBuilder = new ProcessBuilder("bash", regress.getFileToRun().getCanonicalPath());
             Map<String, String> env = processBuilder.environment();
             env.putAll(shiphomesEnv);
             env.put("PLATFORM", regress.getTestunit().getPlatform().getName());
+            wiriteEnvFile(env, regress);
 
             Process process = processBuilder.start();
             process.waitFor(10, TimeUnit.MINUTES);
@@ -186,7 +217,7 @@ public class RunJobs {
                             regress.setStatus(RegressStatus.running);
                             em.merge(regress);
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            sr.print("Exception : runFarmCommand: Reading command output: " + e, regress);
                         }
                     }
                 }
@@ -208,7 +239,7 @@ public class RunJobs {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            sr.print("Exception : runFarmCommand:" + e, regress);
         }
     }
 }

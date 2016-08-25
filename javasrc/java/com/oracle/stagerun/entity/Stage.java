@@ -10,6 +10,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -34,12 +35,15 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author mseelam
  */
 @Entity
+@Cacheable(false)
 @Table(name = "stage")//, uniqueConstraints = {@UniqueConstraint(columnNames = {"stage_name", "release"})})
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Stage.findAll", query = "SELECT s FROM Stage s"),
     @NamedQuery(name = "Stage.getRecent", query = "SELECT s FROM Stage s WHERE s.datecreated = (select max(t.datecreated) from Stage t)"),    
-    @NamedQuery(name = "Stage.findByRelease", query = "SELECT s FROM Stage s WHERE s.release.id = :srelease"),
+    @NamedQuery(name = "Stage.findByRelease", query = "SELECT s FROM Stage s WHERE s.release.id = :release"),
+    @NamedQuery(name = "Stage.findByReleaseName", query = "SELECT s FROM Stage s WHERE s.release.name = :releaseName"),
+    @NamedQuery(name = "Stage.findByReleaseNameStageName", query = "SELECT s FROM Stage s WHERE s.release.name = :releaseName AND s.stageName=:stageName"),
 })
 public class Stage implements Serializable {
 

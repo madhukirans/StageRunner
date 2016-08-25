@@ -8,6 +8,7 @@ package com.oracle.stagerun.entity;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -29,6 +30,7 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author mseelam
  */
 @Entity
+@Cacheable(false)
 @Table(name = "component")
 @XmlRootElement
 @NamedQueries({

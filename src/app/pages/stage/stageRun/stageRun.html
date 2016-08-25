@@ -52,32 +52,46 @@
                 <thead> 
                     <tr class="sortable header-row black-muted-bg">
                         <th class="table-id">#</th>
+                        <th>ReRun</th>
                         <th>TestUnitName</th>
                         <th>Status</th>
-                        <th>FarmrunId</th>
-                        <th>StartTime</th>
-                        <th>EndTime</th>
-                        <th>WorkLoc</th>
-                        <th>SucCount</th>
-                        <th>DifCount</th>
                         <th>UploadStatus</th>
-                        <th>GtlfLoc</th>
-                        <th>ReRun</th>
+                        <th>FarmrunId</th>
+                        <th>SucCount</th>
+                        <th>DifCount</th>                        
+                        <th>StartTime</th>
+                        <th>EndTime</th>                                                
+                        <th>WorkLoc</th>
+                        <th>GtlfLoc</th>                        
                     </tr>
                 </thead>
                 <tbody>
                     <tr  ng-repeat="r in regressdetails" class="editable-row {{ r.status === 'failed' ? 'danger' : (r.status === 'completed'? 'primary':'')}}">
                         <td class="table-id">
                             {{$index}}
-                        </td>                    
+                        </td>      
+                        <td>                   
+                            <button type="submit" class="btn btn-primary editable-table-button btn-xs" ng-click="reRunTests($index)" >
+                                ReRun
+                            </button>                      
+                        </td>
                         <td>                   
                             {{r.testunit.testunitName}}                        
                         </td>
                         <td>                   
                             {{r.status}}                        
                         </td>
+                        <td >                   
+                            {{r.sapphireUploadStatus}}                        
+                        </td>
                         <td>                   
                             {{r.farmrunId}}                        
+                        </td>                                             
+                        <td>                   
+                            {{r.sucCount}}                        
+                        </td>
+                        <td>                   
+                            {{r.difCount}}                        
                         </td>
                         <td nowrap>                   
                             {{r.starttime}}                        
@@ -88,23 +102,9 @@
                         <td nowrap>                   
                             {{r.workLoc}}                        
                         </td>
-                        <td>                   
-                            {{r.sucCount}}                        
-                        </td>
-                        <td>                   
-                            {{r.difCount}}                        
-                        </td>
-                        <td >                   
-                            {{r.sapphireUploadStatus}}                        
-                        </td>
                         <td nowrap>                   
                             {{r.gtlfFileLoc}}                        
-                        </td>      
-                        <td>                   
-                            <button type="submit" class="btn btn-primary editable-table-button btn-xs" ng-click="reRunTests($index)" >
-                                ReRun
-                            </button>                      
-                        </td> 
+                        </td>                               
                     </tr>
                 </tbody>              
             </table>

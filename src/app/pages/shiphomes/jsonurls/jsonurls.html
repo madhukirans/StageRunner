@@ -11,7 +11,7 @@
             <div class="col-sm-2">
                 <select id="inputid3" ng-model="selectedRelease" class="form-control selectpicker" data-live-search="true" ng-change="selectStage()">    
                     <option value="">---Please select---</option>
-                    <option ng-repeat="release in releases" ng-value="release.id">{{release.name}}</option>
+                    <option ng-repeat="release in releases" ng-value="release.name">{{release.name}}</option>
                 </select>
             </div> 
         </div>
@@ -20,7 +20,7 @@
             <div class="col-sm-2">
                 <select id="inputid4" ng-model="selectedStage" class="form-control selectpicker" data-live-search="true" ng-change="selectProducts()" >  
                     <option value="">---Please select---</option>
-                    <option ng-repeat="stage in stages" ng-value="stage.id">{{stage.stageName}}</option>
+                    <option ng-repeat="stage in stages" ng-value="stage.name">{{stage.stageName}}</option>
                 </select>
             </div>
         </div>
@@ -29,7 +29,7 @@
             <div class="col-sm-2">
                 <select id="inputid5" ng-model="selectedProduct" class="form-control selectpicker" data-live-search="true" ng-change="displayShiphomes()" >  
                     <option value="">---Please select---</option>
-                    <option ng-repeat="product in products" ng-value="platform.id">{{product.name}}</option>
+                    <option ng-repeat="product in products" ng-value="platform.name">{{product.name}}</option>
                 </select>
             </div>
         </div>
@@ -38,7 +38,7 @@
             <div class="col-sm-2">
                 <select id="inputid6" ng-model="selectedPlatform" class="form-control selectpicker" data-live-search="true" ng-change="displayShiphomes()" >  
                     <option value="">---Please select---</option>
-                    <option ng-repeat="platform in platforms" ng-value="platform.id">{{platform.name}}</option>
+                    <option ng-repeat="platform in platforms" ng-value="platform.name">{{platform.name}}</option>
                 </select>
             </div>
         </div>
@@ -53,7 +53,7 @@
         </div>
 
         <div  class="panel-body form-group has-success">
-            <div class="panel-heading clearfix"><h3 class="panel-title">JSonData Size: {{tempShiphomes.length}}</h3>  <br>          
+            <div class="panel-heading clearfix"><h3 class="panel-title">JSonData Size: {{shiphomes.length}}</h3>  <br>          
                 <pre class="col-sm-10">{{tempShiphomes | json:4}}</pre>
             </div>
         </div>

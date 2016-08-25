@@ -13,6 +13,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -21,7 +22,9 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.SecurityContext;
 
 /**
  *
@@ -66,9 +69,11 @@ public class ReleasesFacadeREST extends AbstractFacade<Releases> {
     }
 
     @GET
-    @Override
+   // @Override
     @Produces({MediaType.APPLICATION_JSON})
-    public List<Releases> findAll() {                
+    public List<Releases> findAll(@Context HttpServletRequest requestContext, @Context SecurityContext context) {
+        String yourIP = requestContext.getRemoteAddr();
+        System.out.println("IP Address In all releases:" + yourIP );              
         return super.findAll();
     }
 

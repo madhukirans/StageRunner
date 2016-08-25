@@ -110,20 +110,22 @@
 
 
         $scope.reRunTests = function (index) {
-            console.log("Madhu" + $scope.regressdetails[index].stageId.id);
+            console.log("Madhu" + $scope.regressdetails[index].stage.id);
 
             var postdata = {
-                stage: $scope.regressdetails[index].stageId,
+                stage: $scope.regressdetails[index].stage,
                 product: $scope.regressdetails[index].product,
-                testunit: $scope.regressdetails[index].testunitId
-            };
+                component: $scope.regressdetails[index].component,
+                testunit: $scope.regressdetails[index].testunit
+            };            
+            
             $scope.dataLoading  = false;
             var URL = 'web/regressdetails';
             toastr.info($scope.options.title, $scope.options.msg, $scope.options);
+
             $http.post(URL, postdata).success(function (data, status, headers, config) {
                 $scope.loadTable();
-                toastr.clear();                
-                $scope.dataLoading  = true;
+                toastr.clear();
             }).error(function (err) {
                 toastr.clear();
             });

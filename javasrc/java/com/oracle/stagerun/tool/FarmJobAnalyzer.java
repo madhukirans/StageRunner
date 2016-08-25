@@ -141,7 +141,7 @@ public class FarmJobAnalyzer implements Callable<Boolean> {
             }*/
             }
         } catch (Exception e) {
-            sr.print("Exception in farm job analyzer.");
+            sr.print("Exception in farm job analyzer." + e.getMessage());
         }
 
         return false;

@@ -9,6 +9,7 @@ import com.oracle.stagerun.tool.StageRun;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -29,10 +30,12 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author mseelam
  */
 @Entity
+@Cacheable(false)
 @Table(name = "releases")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Releases.findAll", query = "SELECT r FROM Releases r")   
+    @NamedQuery(name = "Releases.findAll", query = "SELECT r FROM Releases r") ,
+    @NamedQuery(name = "Releases.findByName", query = "SELECT r FROM Releases r WHERE r.name=:name") 
     
     })
 public class Releases implements Serializable {

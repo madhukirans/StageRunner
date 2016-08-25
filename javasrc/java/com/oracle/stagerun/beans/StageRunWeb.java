@@ -11,8 +11,10 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
+import javax.annotation.PostConstruct;
 import javax.ejb.Schedule;
 import javax.ejb.Singleton;
+import javax.ejb.Startup;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -21,7 +23,7 @@ import javax.persistence.PersistenceContext;
  * @author mseelam
  */
 @Singleton
-//@Startup
+@Startup
 public class StageRunWeb extends AbstractStgeRun {
 
     @PersistenceContext(unitName = "StageRunnerPU")
@@ -29,10 +31,11 @@ public class StageRunWeb extends AbstractStgeRun {
 
     private static final int interval = 10;
 
-    @Override
+    //@Override
+    @PostConstruct
     public void init() {
         System.out.println("StageRunWeb:In Init AbstractStgeRun");
-        super.init();
+        super.init("stagerunweb.log");
     }
 
     //@Schedule(minute = "*/10", hour = "*")

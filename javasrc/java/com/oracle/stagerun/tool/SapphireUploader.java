@@ -100,11 +100,11 @@ public class SapphireUploader implements Callable<Boolean> {
         list.add(gtlfFileName);
         list.add("-verbose");
         sr.print("Generating gtlf. Gtlf command:" + list.toString(), regressDetails);
-        //try {
-        //org.testlogic.toolkit.gtlf.converters.file.Main.main(list.toArray(new String[list.size()]));
-        //} catch (Exception e) {
-        //    StageRun.print("Exception : " + e, regressDetails);
-        //}
+        try {
+        org.testlogic.toolkit.gtlf.converters.file.Main.main(list.toArray(new String[list.size()]));
+        } catch (Exception e) {
+            sr.print("Exception : " + e, regressDetails);
+        }
         sr.print("Completed generating gtlf for: ", regressDetails);
     }
 
@@ -113,11 +113,11 @@ public class SapphireUploader implements Callable<Boolean> {
         try {
             System.setProperty("testmgr.validate", "false");
             System.setProperty("notify", email);
-            //weblogic.coconutx.WLCustomGTLFUploader.uploadGTLF(sr.getStageDirectory(regressDetails) + "/" + gtlfFileName);
+            weblogic.coconutx.WLCustomGTLFUploader.uploadGTLF(sr.getStageDirectory(regressDetails) + "/" + gtlfFileName);
             sr.print("Upload Successful.", regressDetails);
             sendMail();
         } catch (Exception e) {
-            e.printStackTrace();
+            sr.print("Exception in upload gtlf: " + e, regressDetails);
         }
     }
 

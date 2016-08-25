@@ -58,12 +58,21 @@ public class StageFacadeREST extends AbstractFacade<Stage> {
         super.remove(super.find(id));
     }
     
+//    @GET 
+//    @Path("release/{release}")
+//    @Produces({MediaType.APPLICATION_JSON})
+//    public List<Stage> findByRelease(@PathParam("release") Integer release) {
+//        TypedQuery<Stage> query = em.createNamedQuery("Stage.findByRelease", Stage.class);
+//        query.setParameter("srelease", release);
+//        return query.getResultList();
+//    }
+    
     @GET 
     @Path("release/{release}")
     @Produces({MediaType.APPLICATION_JSON})
-    public List<Stage> findByRelease(@PathParam("release") Integer release) {
+    public List<Stage> findByReleaseName(@PathParam("release") Integer release) {
         TypedQuery<Stage> query = em.createNamedQuery("Stage.findByRelease", Stage.class);
-        query.setParameter("srelease", release);
+        query.setParameter("release", release);
         return query.getResultList();
     }
     

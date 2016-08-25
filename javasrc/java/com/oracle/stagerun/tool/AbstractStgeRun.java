@@ -38,8 +38,9 @@ abstract public class AbstractStgeRun {
     private static final String rootFolder = "/tmp/sr/work";
 
     abstract public void merge(RegressDetails rdetails);
-
+    //StageRun sr;
     public AbstractStgeRun() {
+        //sr= StageRun.getInstance();
     }
 
     public void print() {
@@ -50,8 +51,8 @@ abstract public class AbstractStgeRun {
         return LOGGER;
     }
 
-    @PostConstruct
-    public void init() {
+    
+    public void init(String filename) {
         System.out.println("In Init AbstractStgeRun");
         LOGGER = Logger.getLogger("stageruner_log");
         Handler consoleHandler = null;
@@ -59,7 +60,7 @@ abstract public class AbstractStgeRun {
         try {
             //Creating consoleHandler and fileHandler
             consoleHandler = new ConsoleHandler();
-            fileHandler = new FileHandler("stagerun.log");
+            fileHandler = new FileHandler("/tmp/sr/" + filename);
 
             //Assigning handlers to LOGGER object
             LOGGER.addHandler(consoleHandler);
@@ -140,7 +141,7 @@ abstract public class AbstractStgeRun {
         try {
             futureList = executor.invokeAll(farmJobList);
         } catch (InterruptedException e) {
-
+            print("Exception : runFarmJobAnalyzer:" + e);
         }
 
         for (Future<Boolean> fut : futureList) {
@@ -149,7 +150,7 @@ abstract public class AbstractStgeRun {
                 // because Future.get() waits for task to get completed
                 print("Thread ended" + fut.get());
             } catch (InterruptedException | ExecutionException e) {
-                print("" + e);
+                print("Exception in Future thread. runFarmJobAnalyzer:" + e);
             }
         }
         //shut down the executor service now

@@ -6,6 +6,7 @@
 package com.oracle.stagerun.service;
 
 import com.oracle.stagerun.entity.Product;
+import com.oracle.stagerun.entity.Releases;
 import com.oracle.stagerun.entity.Stage;
 import com.oracle.stagerun.entity.StageUpperstackShiphomes;
 import java.util.List;
@@ -65,32 +66,114 @@ public class StageUpperstackShiphomesFacadeREST extends AbstractFacade<StageUppe
         return super.find(id);
     }
     
+//    @GET 
+//    @Path("stage/{stageid}")
+//    @Produces({MediaType.APPLICATION_JSON})
+//    public List<StageUpperstackShiphomes> findByStage(@PathParam("stageid") Integer stageid) {
+//        TypedQuery<StageUpperstackShiphomes> query = em.createNamedQuery("StageUpperstackShiphomes.findByStage", StageUpperstackShiphomes.class);
+//        query.setParameter("stage", stageid);
+//        return query.getResultList();
+//    }
+    
+    @GET 
+    @Path("release/{releaseName}/stage/{stageName}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public List<StageUpperstackShiphomes> findByReleaseStageName(@PathParam("releaseName") String releaseName,
+            @PathParam("stageName") String stageName) {
+        TypedQuery<StageUpperstackShiphomes> query = em.createNamedQuery("StageUpperstackShiphomes.findByReleaseStageName", StageUpperstackShiphomes.class);        
+        query.setParameter("releaseName", releaseName);
+        query.setParameter("stageName", stageName);
+        return query.getResultList();
+    }
+    
+    @GET 
+    @Path("release/{releaseName}/stage/{stageName}/product/{productName}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public List<StageUpperstackShiphomes> findByReleaseStageNameProduct(@PathParam("releaseName") String releaseName,
+            @PathParam("stageName") String stageName,
+            @PathParam("productName") String productName) {
+        TypedQuery<StageUpperstackShiphomes> query = em.createNamedQuery("StageUpperstackShiphomes.findByReleaseStageNameProductName", StageUpperstackShiphomes.class);        
+        query.setParameter("releaseName", releaseName);
+        query.setParameter("stageName", stageName);
+        query.setParameter("productName", productName);
+        return query.getResultList();
+    }
+    
+    @GET 
+    @Path("release/{releaseName}/stage/{stageName}/product/{productName}/platform/{platformName}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public List<StageUpperstackShiphomes> findByReleaseStageNameProduct(@PathParam("releaseName") String releaseName,
+            @PathParam("stageName") String stageName,
+            @PathParam("productName") String productName,
+            @PathParam("platformName") String platformName            ) {
+        TypedQuery<StageUpperstackShiphomes> query = em.createNamedQuery("StageUpperstackShiphomes.findByReleaseStageNameProductNamePlatformName",
+                StageUpperstackShiphomes.class);        
+        query.setParameter("releaseName", releaseName);
+        query.setParameter("stageName", stageName);
+        query.setParameter("productName", productName);
+        query.setParameter("platformName", platformName);
+        return query.getResultList();
+    }
+    
     @GET 
     @Path("stage/{stageid}")
     @Produces({MediaType.APPLICATION_JSON})
-    public List<StageUpperstackShiphomes> findByStage(@PathParam("stageid") Integer stageid) {
+    public List<StageUpperstackShiphomes> findByStageId(@PathParam("stageid") Integer stage) {
         TypedQuery<StageUpperstackShiphomes> query = em.createNamedQuery("StageUpperstackShiphomes.findByStage", StageUpperstackShiphomes.class);
-        query.setParameter("stage", stageid);
+        query.setParameter("stage", stage);
         return query.getResultList();
     }
+    
+//    @GET 
+//    @Path("stage/{stageName}")
+//    @Produces({MediaType.APPLICATION_JSON})
+//    public List<StageUpperstackShiphomes> findByStageName(@PathParam("stageid") String stageName) {
+//        TypedQuery<StageUpperstackShiphomes> query = em.createNamedQuery("StageUpperstackShiphomes.findByStageName", StageUpperstackShiphomes.class);
+//        query.setParameter("stagename", stageName);
+//        return query.getResultList();
+//    }
     
     @GET
     @Path("stage/{stageId}/products")
     @Produces({MediaType.APPLICATION_JSON})
     public List<Product> findProductsByStage(@PathParam("stageId") Integer stageId) {
         TypedQuery query = em.createNamedQuery("StageUpperstackShiphomes.findProductsStage", Product.class);        
-        query.setParameter("stage", stageId);   
-        System.out.println("Madhu");
+        query.setParameter("stage", stageId);        
+        return query.getResultList();
+    }
+    
+//    @GET
+//    @Path("stage/{stageId}/products")
+//    @Produces({MediaType.APPLICATION_JSON})
+//    public List<Product> findProductsByStage(@PathParam("stageId") Integer stageId) {
+//        TypedQuery query = em.createNamedQuery("StageUpperstackShiphomes.findProductsStage", Product.class);        
+//        query.setParameter("stage", stageId);   
+//        System.out.println("Madhu");
+//        return query.getResultList();
+//    }
+    
+    @GET
+    @Path("stage/{stageName}/product/{productName}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public List<StageUpperstackShiphomes> findByStageProduct(@PathParam("stageName") String stageName, 
+            @PathParam("productName") String productName) {
+        TypedQuery query = em.createNamedQuery("StageUpperstackShiphomes.findByStageProduct", StageUpperstackShiphomes.class);        
+        query.setParameter("stageName", stageName);  
+        query.setParameter("productName", productName);          
         return query.getResultList();
     }
     
     @GET
-    @Path("stage/{stageId}/product/{product}")
+    @Path("stage/{stageName}/product/{productName}/platform/{platformName}")
     @Produces({MediaType.APPLICATION_JSON})
-    public List<StageUpperstackShiphomes> findByStageProduct(@PathParam("stageId") Integer stageId, @PathParam("product") Integer product) {
-        TypedQuery query = em.createNamedQuery("StageUpperstackShiphomes.findByStageProduct", StageUpperstackShiphomes.class);        
-        query.setParameter("stage", stageId);  
-        query.setParameter("product", product);          
+    public List<StageUpperstackShiphomes> findByStageProduct
+        (@PathParam("stageName") String stageName, 
+                @PathParam("productName") String productName,
+                @PathParam("platformName") String platformName) {
+        TypedQuery query = em.createNamedQuery("StageUpperstackShiphomes.findByStageProductPlatform", StageUpperstackShiphomes.class);        
+        query.setParameter("stageName", stageName);  
+        query.setParameter("productName", productName);          
+        query.setParameter("platformName", platformName);          
         return query.getResultList();
     }
 

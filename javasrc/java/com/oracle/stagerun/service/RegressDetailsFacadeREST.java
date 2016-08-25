@@ -200,10 +200,7 @@ public class RegressDetailsFacadeREST extends AbstractFacade<RegressDetails> {
     @GET
     @Path("stage/{stageId}")
     @Produces({MediaType.APPLICATION_JSON})
-    public List<RegressDetails> getDetailsByStageId(@PathParam("stageId") Integer stageId, @Context HttpServletRequest requestContext, @Context SecurityContext context) {
-        String yourIP = requestContext.getRemoteAddr();
-        sr.print("IP Address:" + yourIP + " StagerId: " + stageId);
-
+    public List<RegressDetails> getDetailsByStageId(@PathParam("stageId") Integer stageId) { 
         TypedQuery<RegressDetails> query = em.createNamedQuery("RegressDetails.findByStage", RegressDetails.class);
         query.setParameter("stage", stageId);
         return query.getResultList();
@@ -272,13 +269,39 @@ public class RegressDetailsFacadeREST extends AbstractFacade<RegressDetails> {
     public RegressDetails find(@PathParam("id") Integer id) {
         return super.find(id);
     }
-
+    
     @GET
     @Override
     @Produces({MediaType.APPLICATION_JSON})
-    public List<RegressDetails> findAll() {
+    public List<RegressDetails> findAll() {    
         return super.findAll();
     }
+    
+    @GET
+    @Path("recent")
+    @Produces({MediaType.APPLICATION_JSON})
+    public List<RegressDetails> findRecent(@Context HttpServletRequest requestContext, @Context SecurityContext context) {
+        String yourIP = requestContext.getRemoteAddr();
+        System.out.println("IP Address:" + yourIP);
+        sr.print("IP Address:" + yourIP);
+        TypedQuery<Stage> query = em.createNamedQuery("Stage.getRecent", Stage.class);
+        List<Stage> recentStage = query.getResultList();        
+        if (recentStage != null && recentStage.size() >= 1) {
+            return getDetailsByStageId(recentStage.get(0).getId());
+        }
+        return super.findAll();
+    }
+    
+    @GET
+    @Path("stage/{stageid}")
+    @Consumes({MediaType.APPLICATION_JSON})
+    public List<RegressDetails> getREsultsByStage(@PathParam("stageid") Integer stageid) {
+        TypedQuery<RegressDetails> query1 = em.createNamedQuery("RegressDetails.findByStage", RegressDetails.class);
+        query1.setParameter("stage", stageid);
+        List<RegressDetails> regressList = query1.getResultList();        
+        return regressList;
+    }
+
 
     @GET
     @Path("{from}/{to}")

@@ -22,6 +22,7 @@
         $scope.stages = [];
         $http.get("web/stage").success(function (data) {
             $scope.stages = data;
+            //$scope.selectedStage = $scope.stages[$scope.stages.lenght].id;
             console.log($scope.stages);
         });
 
@@ -31,6 +32,8 @@
 
             if ($scope.selectedStage)
                 url = url + "/stage/" + $scope.selectedStage;
+            else
+                url = url + "/recent";
 
             $scope.regress = [];
             pieChartDataProvider = [];
