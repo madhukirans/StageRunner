@@ -24,7 +24,13 @@
             {
                 name: "BASH"
             }];
-
+        $scope.isGtlfGenerateds = [{
+                name: "true"
+            },
+            {
+                name: "false"
+            }];
+        
         $http.get("web/releases").success(function (data) {
             $scope.releases = data;
         });
@@ -71,6 +77,14 @@
             var selected = [];
             if (isDte) {
                 selected = $filter('filter')($scope.isDtes, {name: isDte});
+            }
+            return selected.length ? selected[0].name : 'Not set';
+        };
+        
+        $scope.getisGtlfGenerated = function (isGtlfGenerated) {
+            var selected = [];
+            if (isGtlfGenerated) {
+                selected = $filter('filter')($scope.isGtlfGenerateds, {name: isGtlfGenerated});
             }
             return selected.length ? selected[0].name : 'Not set';
         };

@@ -1,6 +1,8 @@
 package com.oracle.stagerun.tool;
 
 import com.oracle.stagerun.entity.RegressDetails;
+import java.io.File;
+import java.io.FilenameFilter;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -73,6 +75,29 @@ public class SapphireUploader implements Callable<Boolean> {
     }
 
     public void generateGTLF() {
+        if (regressDetails.getTestunit().getIsGtlfGenerated().equals("true")) {
+            FilenameFilter f1 = (f, name) -> name.endsWith("gtlf.xml");
+            File f = new File(resultDir);
+            String paths[] = f.list(f1);
+            if (paths != null && paths[0] != null) {
+                gtlfFileName = paths[0];
+                sr.print("GTLF Files:" + paths, regressDetails);
+
+                try {
+                    sr.print("Copying gtlf from " + resultDir + "/" + gtlfFileName + " to "
+                            + sr.getStageDirectory(regressDetails), regressDetails);
+                    Files.copy(FileSystems.getDefault().getPath(resultDir + "/" + gtlfFileName),
+                            FileSystems.getDefault().getPath(sr.getStageDirectory(regressDetails)));
+                } catch (Exception e) {
+                    sr.print("Copying gtlf exception " + e.getMessage(), regressDetails);
+                }
+            } else {
+                gtlfFileName = null;
+            }
+
+            return;
+        }
+
         ArrayList<String> list = new ArrayList<String>();
         list.add("-Dgtlf.toptestfile=" + toptestFile);
         list.add("-Dgtlf.string=4");
@@ -101,7 +126,7 @@ public class SapphireUploader implements Callable<Boolean> {
         list.add("-verbose");
         sr.print("Generating gtlf. Gtlf command:" + list.toString(), regressDetails);
         try {
-        org.testlogic.toolkit.gtlf.converters.file.Main.main(list.toArray(new String[list.size()]));
+            org.testlogic.toolkit.gtlf.converters.file.Main.main(list.toArray(new String[list.size()]));
         } catch (Exception e) {
             sr.print("Exception : " + e, regressDetails);
         }

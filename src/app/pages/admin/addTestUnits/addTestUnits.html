@@ -36,6 +36,7 @@
                         <th>Platform</th>
                         <th>TestUnits Name</th>
                         <th>DTE/BASH?</th>
+                        <th>IsGtlfGeneratedByTest?</th>
                         <th>ScriptToRunTests</th>
                         <th>Emails</th>
                         <th>Description</th>
@@ -64,7 +65,12 @@
                                 {{getIsDteSelected(testunit.isDte)}}
                             </span>
                         </td>
-
+                        <td>
+                            <span editable-select="testunit.isGtlfGenerated" e-name="isGtlfGenerated" e-form="rowform" e-selectpicker
+                                  e-ng-options="s.name as s.name for s in isGtlfGenerateds">
+                                {{getisGtlfGenerated(testunit.isGtlfGenerated)}}
+                            </span>
+                        </td>
                         <td>
                             <span  editable-textarea="testunit.jobreqAgentCommand" e-name="jobreqAgentCommand" e-form="rowform">
                                 <textarea placeholder="Default Input" readonly="true" class="form-control">{{testunit.jobreqAgentCommand}}</textarea>

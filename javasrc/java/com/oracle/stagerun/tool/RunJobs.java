@@ -65,7 +65,7 @@ public class RunJobs {
         setShiphomeEnvironmentVariables(allShiphomeList);
 
         //delete root folder @TODO. Remove this in production mode.
-        new File(sr.getRootFolder()).delete();
+       // new File(sr.getRootFolder()).delete();
 
         for (RegressDetails regress : jobsList) {
             String farmJobCommand = regress.getTestunit().getJobreqAgentCommand();

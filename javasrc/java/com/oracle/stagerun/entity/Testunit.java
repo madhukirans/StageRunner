@@ -85,6 +85,10 @@ public class Testunit implements Serializable {
     @Size(max = 40)
     @Column(name = "description", length = 40)
     private String description;
+    
+    @Size(max = 5)
+    @Column(name = "isGtlfGenerated", length = 40)
+    private String isGtlfGenerated;
 
     @JoinColumn(name = "component", referencedColumnName = "id")
     @ManyToOne
@@ -169,6 +173,14 @@ public class Testunit implements Serializable {
         this.description = description;
     }
 
+    public String getIsGtlfGenerated() {
+        return isGtlfGenerated;
+    }
+
+    public void setIsGtlfGenerated(String isGtlfGenerated) {
+        this.isGtlfGenerated = isGtlfGenerated;
+    }   
+    
     public Component getComponent() {
         return component;
     }

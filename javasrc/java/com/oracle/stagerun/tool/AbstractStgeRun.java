@@ -35,7 +35,7 @@ import javax.persistence.TypedQuery;
 abstract public class AbstractStgeRun {
 
     private Logger LOGGER;
-    private static final String rootFolder = "/tmp/sr/work";
+    private static final String rootFolder = "/scratch/sr/work";
 
     abstract public void merge(RegressDetails rdetails);
     //StageRun sr;
@@ -60,7 +60,7 @@ abstract public class AbstractStgeRun {
         try {
             //Creating consoleHandler and fileHandler
             consoleHandler = new ConsoleHandler();
-            fileHandler = new FileHandler("/tmp/sr/" + filename);
+            fileHandler = new FileHandler(rootFolder + "/" + filename);
 
             //Assigning handlers to LOGGER object
             LOGGER.addHandler(consoleHandler);
