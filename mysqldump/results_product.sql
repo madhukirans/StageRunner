@@ -1,3 +1,5 @@
+CREATE DATABASE  IF NOT EXISTS `results` /*!40100 DEFAULT CHARACTER SET utf8 */;
+USE `results`;
 -- MySQL dump 10.13  Distrib 5.7.12, for linux-glibc2.5 (x86_64)
 --
 -- Host: localhost    Database: results
@@ -29,7 +31,7 @@ CREATE TABLE `product` (
   PRIMARY KEY (`id`),
   KEY `product_user_fk` (`users`),
   CONSTRAINT `product_user_fk` FOREIGN KEY (`users`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COMMENT='This table handles FMW product';
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COMMENT='This table handles FMW product';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -38,7 +40,7 @@ CREATE TABLE `product` (
 
 LOCK TABLES `product` WRITE;
 /*!40000 ALTER TABLE `product` DISABLE KEYS */;
-INSERT INTO `product` VALUES (1,'ascore',NULL),(2,'idm',NULL),(3,'askernel',NULL),(4,'bi',NULL);
+INSERT INTO `product` VALUES (1,'ascore',NULL),(2,'idm',NULL),(3,'askernel',NULL),(4,'bi',NULL),(5,'WebTier',NULL),(6,'ascore',NULL);
 /*!40000 ALTER TABLE `product` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -51,4 +53,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-08-12  6:03:48
+-- Dump completed on 2016-11-09 11:09:02

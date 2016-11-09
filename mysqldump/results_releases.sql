@@ -1,3 +1,5 @@
+CREATE DATABASE  IF NOT EXISTS `results` /*!40100 DEFAULT CHARACTER SET utf8 */;
+USE `results`;
 -- MySQL dump 10.13  Distrib 5.7.12, for linux-glibc2.5 (x86_64)
 --
 -- Host: localhost    Database: results
@@ -29,7 +31,7 @@ CREATE TABLE `releases` (
   PRIMARY KEY (`releaseid`),
   KEY `results_user_fk` (`users`),
   CONSTRAINT `results_user_fk` FOREIGN KEY (`users`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8 COMMENT='	';
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='	';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -38,7 +40,7 @@ CREATE TABLE `releases` (
 
 LOCK TABLES `releases` WRITE;
 /*!40000 ALTER TABLE `releases` DISABLE KEYS */;
-INSERT INTO `releases` VALUES (1,'12.2.1.2.0',NULL);
+INSERT INTO `releases` VALUES (1,'12.2.1.2.0',NULL),(2,'12.2.1.3.0',NULL);
 /*!40000 ALTER TABLE `releases` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -51,4 +53,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-08-12  6:03:48
+-- Dump completed on 2016-11-09 11:09:02

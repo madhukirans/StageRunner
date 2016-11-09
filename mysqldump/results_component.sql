@@ -1,3 +1,5 @@
+CREATE DATABASE  IF NOT EXISTS `results` /*!40100 DEFAULT CHARACTER SET utf8 */;
+USE `results`;
 -- MySQL dump 10.13  Distrib 5.7.12, for linux-glibc2.5 (x86_64)
 --
 -- Host: localhost    Database: results
@@ -32,7 +34,7 @@ CREATE TABLE `component` (
   KEY `component_user_fk` (`users`),
   CONSTRAINT `component_user_fk` FOREIGN KEY (`users`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_component_1` FOREIGN KEY (`product`) REFERENCES `product` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -41,7 +43,7 @@ CREATE TABLE `component` (
 
 LOCK TABLES `component` WRITE;
 /*!40000 ALTER TABLE `component` DISABLE KEYS */;
-INSERT INTO `component` VALUES (4,NULL,'otd',1),(5,NULL,'ohs',1),(6,NULL,'wls',3),(7,NULL,'jrf',3),(8,NULL,'Jdeveloper',3);
+INSERT INTO `component` VALUES (4,NULL,'otd',1),(5,NULL,'ohs',1),(6,NULL,'wls',3),(7,NULL,'jrf',3),(8,NULL,'Jdeveloper',3),(9,NULL,'NLS',1),(10,NULL,'wls_quick',3),(11,NULL,'wls_supplemental',3);
 /*!40000 ALTER TABLE `component` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -54,4 +56,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-08-12  6:03:48
+-- Dump completed on 2016-11-09 11:09:02
