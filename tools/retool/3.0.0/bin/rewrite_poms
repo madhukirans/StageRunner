@@ -1,0 +1,268 @@
+#!/bin/sh
+
+SCRIPT_NAME=`basename $0`;
+
+################################################
+# command line processing
+
+VERSION=""
+ROOT_DIRS=""
+
+for arg in $*
+do
+   IS_VERSION=`echo "${arg}" | sed -e "s/^-version=.*/-version/"`
+   if [ "${arg}" == "-restore" ]
+   then
+      VERSION="${arg}"
+   elif [ "${IS_VERSION}" == "-version" ]
+   then
+      VERSION=`echo "${arg}" | sed  -e "s/^-version=//"` 
+   else
+      if [ -z "${ROOT_DIRS}" ]
+      then
+          ROOT_DIRS="${arg}"
+      else
+          ROOT_DIRS="${ROOT_DIRS} ${arg}"
+      fi
+   fi
+done
+
+# check whether we are in ADE and set LABEL if we are
+if [ -z "${ADE_VIEW_ROOT}" ]
+then
+   LABEL=""
+else
+   LABEL=$( ade catcs | grep "VIEW_LABEL" | awk '{print $3}' )
+fi
+
+
+################################################
+
+explain () {
+   echo "Usage: ${SCRIPT_NAME} [-restore | -version=<release_version>] <root_dir1> ... <root-dirN>"
+   echo "will rewrite POMs, replacing SNAPSHOT versions with a release version."
+   echo "  <root_dir>                  - root directory under which replacements will be made. Can also be a pom file"
+   echo "  -version=<release_version>  - optional release version.  Default: use label timestamp (sans .S)"
+   echo "  -restore                    - restores the original content to pom.xml files"
+   if [ "${1}" != "" ]
+   then
+      echo "SEVERE: ${1}"
+      exit 1;
+   fi
+}
+
+################################################
+
+determine_release_version () {
+    RELEASE_VERSION="${1}"
+    if [ "${RELEASE_VERSION}" == "-restore" ]
+    then
+       echo "INFO: request to restore POMs"
+    elif [ "${RELEASE_VERSION}" == "" ]
+    then
+       if [ -z "${LABEL}" ]
+       then
+          RELEASE_VERSION=`date +%Y%m%d.%H%M`
+          echo "INFO: release version: ${RELEASE_VERSION} - since not in ADE label using system timestamp"
+       else 
+          RELEASE_VERSION=`echo "${LABEL}" | sed -e "s/.*_//" | sed -e 's/[.]S$//'`
+          IS_SNAPSHOT=`echo "${LABEL}" | sed -e 's/.*[.]S$/.S/'`
+          if [ "${IS_SNAPSHOT}" == ".S" ]
+          then
+            echo "INFO: release version: ${RELEASE_VERSION} - ade snapshot timestamp without .S"
+          else
+            echo "INFO: release version: ${RELEASE_VERSION} - ade label timestamp"
+          fi
+       fi
+    else
+       echo "INFO: release version ${RELEASE_VERSION} was supplied"
+    fi
+    # RELEASE_QUALIFIER="${RELEASE_VERSION}"
+
+}
+
+################################################
+
+get_files () { 
+   if [ ! -z "${LABEL}" ]
+   then
+      if [ -d "${ROOT_DIR}" ]
+      then
+         THE_ROOT_DIR="${ROOT_DIR}"
+      else
+         THE_ROOT_DIR=`dirname "${ROOT_DIR}"`
+      fi
+      ade expand -recurse "${THE_ROOT_DIR}"
+   fi
+   echo -n "INFO: looking for pom.xml files under ${1} - "
+   if [ -d "${1}" ]
+   then
+       # echo find ${1} -name pom.xml -print | grep -v '/.ade_path'
+       FILES=`find ${1} -name pom.xml -print | grep -v "/[.]ade_path/"`
+       COUNT=`echo "${FILES}" | wc -l`
+   elif [ -f "${1}" ]
+   then
+      FILES="${1}"
+      COUNT="1"
+   else
+      FILES=""
+      COUNT="0"
+   fi
+   if [  \( "${FILES}" == "" \) -o \( "${COUNT}" == "0" \) ]
+   then
+      echo "found none"
+   else
+      echo "found ${COUNT}"
+   fi
+}
+
+# ------------------------------------------------------
+
+edit_poms()
+{
+    get_files "${ROOT_DIR}"
+    if [ -z "${LABEL}" ]
+    then
+       echo "INFO: you are not in ADE. Changed pom files will be saved under .ade_path/pom.xml"
+    fi
+    echo "INFO: performing update to release versions..."
+    for file in ${FILES}
+    do
+        cat "${file}" | \
+        # use pattern 0-0-0-SNAPSHOT to fully replace with release version, else add as build qualifier
+        sed -e "s/>0-0-0-SNAPSHOT</>${RELEASE_VERSION}</g" \
+            -e "s/\(>[0-9][0-9]*[.][0-9][0-9]*[.][0-9][.0-9]*-\)SNAPSHOT</\1${RELEASE_VERSION}</g" > "${file}.new"
+            #  -e "s/SNAPSHOT/${RELEASE_QUALIFIER}/g"  > "${file}.new"
+        DELTA=`diff "${file}" "${file}.new"`
+        STATUS="$?"
+        DELTA=`echo "${DELTA}" | grep "^[<>]"`
+        if [ "${STATUS}" != "0" ]
+        then 
+           if [ -z "${LABEL}" ]
+           then
+              # we are not in ADE 
+              # - nevermind, just hide the file in the "ADE location"!
+              DIRNAME=`dirname "${file}"`
+              BASENAME=`basename "${file}"`
+              if [ ! -d "${DIRNAME}/.ade_path" ]
+              then
+                 mkdir "${DIRNAME}/.ade_path"
+              fi
+              if [ ! -f "${DIRNAME}/.ade_path/${BASENAME}" ]
+              then
+                  # do _not_ clobber an already existing original file!
+                  mv "${file}" "${DIRNAME}/.ade_path/${BASENAME}"
+              else
+                  rm -f "${file}"
+              fi
+           else
+              # we are in ADE and know that we can restore the file later on
+              rm -f "${file}"
+           fi
+           mv "${file}.new" "${file}"
+           echo "INFO: updated ${file}:"
+           echo "${DELTA}"
+        else
+           echo "INFO: unchanged: ${file}"
+        fi
+    done
+}
+
+
+
+################################################
+
+get_ade_files () {
+   if [ -z "${LABEL}" ]
+   then
+      echo "INFO: you are not in ADE. Will restore previously saved poms from .ade_path directories."
+      echo -n "INFO: looking for saved pom.xml files under ${1}: "
+   else
+      echo -n "INFO: looking for ade pom.xml files under ${1}: "
+   fi 
+
+   POM_DIR=`dirname "${1}"`
+   POM_BASE=`basename "${1}"`
+   if [ -d "${1}" ]
+   then
+       FILES=`find ${1} -name pom.xml -follow -print | grep '/[.]ade_path/[^/]*$'`
+       COUNT=`echo "${FILES}" | wc -l`
+   elif [ -f "${POM_DIR}/.ade_path/${POM_BASE}" ]
+   then
+       FILES="${POM_DIR}/.ade_path/${POM_BASE}"
+       COUNT="1"
+   else
+       FILES=""
+       COUNT="0"
+   fi
+   if [ \( "${FILES}" == "" \) -o  \( "${COUNT}" == "0" \) ]
+   then
+      echo "found none"
+   else
+      echo "found ${COUNT}"
+   fi
+}
+
+# ------------------------------------------------
+
+restore()
+{
+    get_ade_files "${ROOT_DIR}"
+    for file in ${FILES}
+    do
+       BASENAME=`basename "${file}"`
+       DIRNAME=`dirname "${file}"`
+       VIEWDIR=`dirname "${DIRNAME}"`
+       viewfile="${VIEWDIR}/${BASENAME}"
+       if [ -z "${LABEL}" ]
+       then
+          # when not in ADE we should only restore a file if it was saved
+          echo "INFO: restoring ${viewfile}"
+          if [ -f "${VIEWDIR}/.ade_path/${BASENAME}" ]
+          then
+             if [ -f "${viewfile}" ]
+             then
+                rm -f "${viewfile}"
+             fi
+             (cd ${VIEWDIR}; mv "./.ade_path/${BASENAME}" .; rmdir "./.ade_path")
+          fi
+       else
+          # ADE we just restore all of the POMs
+          echo "INFO: restoring ${viewfile}"
+          if [ -f "${viewfile}" ]
+          then
+             rm -f "${viewfile}"
+          fi
+          (cd ${VIEWDIR}; ln -s ".ade_path/${BASENAME}" "${BASENAME}")
+       fi
+    done
+}
+
+
+################################################
+
+# and main execution
+
+
+if [ "${ROOT_DIRS}" == "" ]
+then
+   explain "must supply a root directory or root POM"
+fi
+
+determine_release_version "${VERSION}"
+
+for ROOT_DIR in ${ROOT_DIRS}
+do
+   if [ \( ! -d "${ROOT_DIR}" \) -a \( ! -f "${ROOT_DIR}" \) ]
+   then
+       explain "root element ${ROOT_DIR} not found"
+   fi
+
+   echo "INFO: processing element ${ROOT_DIR}"
+   if [ "${RELEASE_VERSION}" == "-restore" ]
+   then
+      restore
+   else
+      edit_poms
+  fi
+done

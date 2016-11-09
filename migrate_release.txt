@@ -1,0 +1,8 @@
+insert into results.shiphome_names (releaseid, platform, component,product,name) 
+select releaseid + 1, platform, component,product,name from results.shiphome_names where releaseid=1;
+
+insert into results.testunit (releaseid, platform, product, component, testunit_name, isDte, JobreqAgentCommand, emails, description) 
+select releaseid +1, platform, product, component, testunit_name, isDte, JobreqAgentCommand, emails, description
+from results.testunit where releaseid=1; 
+
+

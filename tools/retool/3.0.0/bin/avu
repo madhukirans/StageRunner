@@ -1,0 +1,161 @@
+#!/usr/bin/env bash
+
+#
+# ADE View Upload Tool Wrapper
+#
+
+#  ENVIRONMENT SETTINGS SUPPORTED BY THE TOOL:
+#
+#    $AVU_NGINST_VERSION  - an explicit version of the NGINST bootpom to use
+#    $AVU_VERSION         - an explicit version of the AVU tool to use
+#
+#    $BOOTSTRAP_HOME      - when provided, this location will be used
+#                           to cache the tools. When not provided the
+#                           tools are cached at $ADE_VIEW_ROOT/bootstrap/
+#                           and outside of view at: /scratch/$USER/bootstrap
+#
+#    $DEBUG               - set to log to show messages about environment setup
+
+
+MIN_JAVA_VERSION="1.6.0"
+JDK_BIN_DIRECTORY="/usr/local/packages/jdk7/bin"
+VIEW_UPLOAD_CLASS="oracle.util.adeviewupload.ToolMain"
+
+###
+### JAVA Setup
+###
+
+JAVA_VERSION=$( java -version 2>&1 | grep "java  *version " | awk '{print $3}' | sed -e 's/"//g' )
+
+if [ \( -z "${JAVA_VERSION}" \) -o \( "${JAVA_VERSION}" \< "${MIN_JAVA_VERSION}" \) ]
+then
+   if [ ! -z "${DEBUG}" ]
+   then
+       if [ -z "${JAVA_VERSION}" ]
+       then
+           echo "INFO: no Java found in environment"
+       else 
+           echo "INFO: found Java version ${JAVA_VERSION} but require ${MIN_JAVA_VERSION}"
+       fi
+       echo "INFO: setting up JAVA from ${JDK_BIN_DIRECTORY}"
+   fi
+   JAVA_HOME="${JDK_BIN_DIRECTORY}"
+   PATH="${JAVA_HOME}:${PATH}"
+else
+   if [ ! -z "${DEBUG}" ]
+   then
+       echo "INFO: using JAVA ${JAVA_VERSION} from environment"
+   fi
+fi
+
+###
+### BOOTSTRAP_HOME setup
+###
+
+if [ -z "${BOOTSTRAP_HOME}" ]
+then
+   if [ -z "${ADE_VIEW_ROOT}" ]
+   then
+       BOOTSTRAP_HOME="/scratch/${USER}/bootstrap"
+   else
+       BOOTSTRAP_HOME="${ADE_VIEW_ROOT}/bootstrap"
+   fi
+fi
+BOOTSTRAP_HOME="${BOOTSTRAP_HOME}/avu_re"
+if [ ! -d "${BOOTSTRAP_HOME}" ]
+then
+   mkdir -p "${BOOTSTRAP_HOME}"
+   mkdir -p "${BOOTSTRAP_HOME}"
+fi
+
+
+###
+### AVU tool setup
+###
+
+#RE_URL="http://artifactory-slc.oraclecorp.com/artifactory/fmw-virtual/com/oracle/liberte/utils/re/1.0.0-SNAPSHOT/re-1.0.0-SNAPSHOT.jar"
+RE_URL="http://artifactory-slc-prod1.oraclecorp.com/artifactory/fmw-virtual/com/oracle/liberte/utils/re/1.0.0-SNAPSHOT/re-1.0.0-SNAPSHOT.jar"
+RE_FILE="${BOOTSTRAP_HOME}/re-1.0.0-SNAPSHOT.jar"
+RE_CMD="oracle.util.adeviewupload.ReleaseEngineering"
+
+AVU_GA="com.oracle.liberte.utils:adeviewuploadtool"
+AVU_FILE="${BOOTSTRAP_HOME}/avu.jar"
+
+
+VIEW_UPLOAD_TOOL="${BOOTSTRAP_HOME}/avu.jar"
+if [ ! -z "${AVU_VERSION}" ]
+then
+   CURR_VERSION=`cat "${BOOTSTRAP_HOME}/avu_version.txt"`
+   if [ "${AVU_VERSION}" != "${CURR_VERSION}" ]
+   then
+      rm "${BOOTSTRAP_HOME}/avu.jar"
+      rm "${BOOTSTRAP_HOME}/avu_version.txt"
+   fi
+fi
+if [ ! -f "${VIEW_UPLOAD_TOOL}" ]
+then
+    echo -n "INFO: bootstrapping AVU and RE tools... "
+    wget -q -O "${RE_FILE}" "${RE_URL}"
+    if [ -z "${AVU_VERSION}" ]
+    then
+        AVU_VERSION=`java -cp "${RE_FILE}" "${RE_CMD}" list "${AVU_GA}" -ignorepom | tail -1 | awk '{print $1}' | sed -e "s/.*://"`
+    fi
+    echo " version ${AVU_VERSION} "
+    java -cp "${RE_FILE}" "${RE_CMD}" get "${AVU_GA}:${AVU_VERSION}:jar"  "${AVU_FILE}"
+    if [ "$?" != "0" ]
+    then
+       echo "SEVERE: error retrieving ${AVU_GA}:${AVU_VERSION}:jar - exiting."
+       rm "${RE_FILE}"
+       exit 1;
+    fi
+    rm "${RE_FILE}"
+    echo "${AVU_VERSION}" >"${BOOTSTRAP_HOME}/avu_version.txt"
+fi
+
+
+###
+### NGINST classpath setup
+###
+
+NGINST_BOOT_FILE="${BOOTSTRAP_HOME}/repo-bootstrap.jar"
+# NGINST_BOOT_URL="http://artifactory-slc.oraclecorp.com/artifactory/fmw-virtual/com/oracle/cie/repo-bootstrap/1.0.0-130814.2204/repo-bootstrap-1.0.0-130814.2204.jar"
+NGINST_BOOT_URL="http://artifactory-slc.oraclecorp.com/artifactory/fmw-virtual/com/oracle/cie/repo-bootstrap/1.0.0-130320.2201/repo-bootstrap-1.0.0-130320.2201.jar"
+# NGINST_BOOT_URL="http://slcai191.us.oracle.com/artifactory/fmw-virtual/com/oracle/cie/repo-bootstrap/1.1.0-130520.2203/repo-bootstrap-1.1.0-130520.2203.jar"
+
+NGINST_GA="com.oracle.cie:nginst-bootstrap-bom"
+if [ -f "${BOOTSTRAP_HOME}/nginst_cp.txt" ]
+then
+    NGINST_CP=`cat "${BOOTSTRAP_HOME}/nginst_cp.txt"`
+else
+    echo -n "INFO: getting NGINST repo-bootstrap... "
+    if [ -z "${AVU_NGINST_VERSION}" ]
+    then
+        AVU_NGINST_VERSION=`java -cp "${AVU_FILE}" "${RE_CMD}" list "${NGINST_GA}" | tail -1 | awk '{print $1}' | sed -e "s/.*://"`
+    fi
+    wget -q -O "${NGINST_BOOT_FILE}" "${NGINST_BOOT_URL}"
+    WGET_STATUS="$?"
+    if [ \( "${WGET_STATUS}" = "0" \) -a \( -f "${NGINST_BOOT_FILE}" \) ]
+    then
+       echo -n " bootstrapping NGINST... "
+       NGINST_CP=`java -Dbootstrap.pom.version=${AVU_NGINST_VERSION} -jar "${NGINST_BOOT_FILE}" -localRepo "${BOOTSTRAP_HOME}"`
+       if [ "$?" != "0" ]
+       then
+          echo "SEVERE: unable to bootstrap NGINST ${AVU_NGINST_VERSION} - exiting."
+          exit 1;
+       fi
+       echo "${NGINST_CP}" >"${BOOTSTRAP_HOME}/nginst_cp.txt"
+       echo "${NGINST_CP}" | sed -e "s=.*/==" -e "s/repo-dev-install-//" -e 's/.jar$//' > "${BOOTSTRAP_HOME}/nginst_version.txt"
+       echo " version `cat ${BOOTSTRAP_HOME}/nginst_version.txt`"
+    else
+       echo ""
+       echo "SEVERE: unable to download NGINST bootstrap code from: ${NGINST_BOOT_URL} - exiting."
+       exit 1
+    fi
+fi
+echo "INFO: using nginst `cat ${BOOTSTRAP_HOME}/nginst_version.txt` avu `cat ${BOOTSTRAP_HOME}/avu_version.txt`  [To refresh: 'rm -rf ${BOOTSTRAP_HOME}']"
+
+if [ ! -z "${DEBUG}" ]
+then
+   echo "INFO: invoking `which java` -classpath ${VIEW_UPLOAD_TOOL}:${NGINST_CP} ${VIEW_UPLOAD_CLASS} $*"
+fi
+java -classpath "${VIEW_UPLOAD_TOOL}:${NGINST_CP}" ${VIEW_UPLOAD_CLASS} $*
