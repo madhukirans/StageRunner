@@ -1,10 +1,13 @@
 package com.oracle.stagerun.tool;
 
 import com.oracle.stagerun.entity.RegressDetails;
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.sql.Clob;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
 import javax.persistence.EntityManager;
@@ -51,9 +54,9 @@ public class SapphireUploader implements Callable<Boolean> {
 
     public Boolean call() {
         sr.print("In sapphire upload thread", regressDetails);
-        copyCoverageDump();
+        //copyCoverageDump();
         generateGTLF();
-        uploadGTLF();
+        //uploadGTLF();
         regressDetails.setGtlfFileLoc(sr.getStageDirectory(regressDetails) + "/" + gtlfFileName);
         regressDetails.setSapphireUploadStatus("uploaded");
 
@@ -74,6 +77,20 @@ public class SapphireUploader implements Callable<Boolean> {
         }
     }
 
+    private void persistGTLFXML(String gtlfFilePath) {
+        try {
+            File f2 = new File(gtlfFilePath);
+            FileInputStream inputStream = new FileInputStream(f2);
+            byte[] fileBytes = new byte[(int) f2.length()];
+            inputStream.read(fileBytes);
+            inputStream.close();
+            sr.print("XML File: " + fileBytes.toString(), regressDetails);
+            regressDetails.setGtlfFile(fileBytes);
+        } catch (Exception e) {
+            sr.print("persistGTLFXML exception " + e.getMessage(), regressDetails);
+        }
+    }
+
     public void generateGTLF() {
         if (regressDetails.getTestunit().getIsGtlfGenerated().equals("true")) {
             FilenameFilter f1 = (f, name) -> name.endsWith("gtlf.xml");
@@ -88,6 +105,9 @@ public class SapphireUploader implements Callable<Boolean> {
                             + sr.getStageDirectory(regressDetails), regressDetails);
                     Files.copy(FileSystems.getDefault().getPath(resultDir + "/" + gtlfFileName),
                             FileSystems.getDefault().getPath(sr.getStageDirectory(regressDetails)));
+
+                    persistGTLFXML(sr.getStageDirectory(regressDetails) + "/" + gtlfFileName);
+
                 } catch (Exception e) {
                     sr.print("Copying gtlf exception " + e.getMessage(), regressDetails);
                 }
@@ -130,6 +150,9 @@ public class SapphireUploader implements Callable<Boolean> {
         } catch (Exception e) {
             sr.print("Exception : " + e, regressDetails);
         }
+        
+        persistGTLFXML(sr.getStageDirectory(regressDetails) + "/" + gtlfFileName);
+        
         sr.print("Completed generating gtlf for: ", regressDetails);
     }
 
