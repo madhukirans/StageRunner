@@ -7,6 +7,7 @@ package com.oracle.stagerun.entity;
 
 import java.io.File;
 import java.io.Serializable;
+import java.sql.Clob;
 import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Cacheable;
@@ -40,6 +41,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "RegressDetails.findAll", query = "SELECT r FROM RegressDetails r"),
     @NamedQuery(name = "RegressDetails.findByStage", query = "SELECT r FROM RegressDetails r WHERE r.stage.id = :stage"),
     @NamedQuery(name = "RegressDetails.findByStageProduct", query = "SELECT r FROM RegressDetails r WHERE r.stage.id = :stage AND r.product.id=:product"),
+    //@NamedQuery(name = "RegressDetails.findByStageId", query = "SELECT r FROM RegressDetails r WHERE r.stage.id = :stage AND r.product.id=:product"),
+    
     @NamedQuery(name = "RegressDetails.findByStageProductComponent",
             query = "SELECT r FROM RegressDetails r WHERE r.stage.id = :stage AND r.product.id=:product AND r.component.id = :component"),
     @NamedQuery(name = "RegressDetails.findByStageProductTestUnit",
@@ -83,6 +86,11 @@ public class RegressDetails implements Serializable {
     @Size(max = 16777215)
     @Column(name = "gtlf_file_loc", length = 16777215)
     private String gtlfFileLoc;
+    
+    @Lob
+    @Column(name ="gtlf_file")
+    private byte[] gtlfFile;
+       
     @JoinColumn(name = "component", referencedColumnName = "id")
     @ManyToOne
     private Component component;
@@ -186,6 +194,14 @@ public class RegressDetails implements Serializable {
 
     public void setGtlfFileLoc(String gtlfFileLoc) {
         this.gtlfFileLoc = gtlfFileLoc;
+    }
+
+    public byte[] getGtlfFile() {
+        return gtlfFile;
+    }
+
+    public void setGtlfFile(byte[] gtlfFile) {
+        this.gtlfFile = gtlfFile;
     }
 
     public Component getComponent() {

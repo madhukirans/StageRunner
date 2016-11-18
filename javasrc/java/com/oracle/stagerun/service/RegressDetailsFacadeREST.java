@@ -7,6 +7,7 @@ package com.oracle.stagerun.service;
 
 import com.oracle.stagerun.beans.StageRunWeb;
 import com.oracle.stagerun.entity.Component;
+import com.oracle.stagerun.entity.GtlfFile;
 import com.oracle.stagerun.entity.Platform;
 import com.oracle.stagerun.entity.Product;
 import com.oracle.stagerun.entity.RegressDetails;
@@ -18,7 +19,9 @@ import com.oracle.stagerun.entity.Testunit;
 import com.oracle.stagerun.service.excetion.InvalidArgumentsException;
 import com.oracle.stagerun.service.excetion.ShiphomeNamesNotFoundException;
 import com.oracle.stagerun.tool.RunJobs;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -37,6 +40,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
 /**
@@ -252,6 +256,32 @@ public class RegressDetailsFacadeREST extends AbstractFacade<RegressDetails> {
         query.setParameter("testunit", testunitId);
         return query.getResultList();
     }
+    
+    
+//    @GET
+//    @Path("gtlf/{stageid}")
+//    @Produces({MediaType.APPLICATION_XML})
+//    //@Produces(MediaType.APPLICATION_OCTET_STREAM)
+//    public GtlfFile getGtlfFileByID(@PathParam("stageid") Integer stageId,
+//            @PathParam("product") Integer productid, @PathParam("component") Integer component) throws Exception{
+//        
+//        RegressDetails details = super.find(stageId);
+//        GtlfFile file = new GtlfFile();
+//        file.setGtlfContent(new String(details.getGtlfFile(), "UTF-8"));
+//        return file;
+//    }
+    
+    
+    @GET
+    @Path("gtlf/{stageid}")    
+    @Produces(MediaType.APPLICATION_XML)
+    public Response getGtlfFileByID(@PathParam("stageid") Integer stageId,
+            @PathParam("product") Integer productid, @PathParam("component") Integer component) throws Exception{
+        
+        RegressDetails details = super.find(stageId);
+        return Response.ok(new String(details.getGtlfFile(), "UTF-8")).build();
+    }
+      
 
 //    @GET
 //    @Path("stage/{stageid}")
