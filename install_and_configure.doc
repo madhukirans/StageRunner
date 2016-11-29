@@ -25,6 +25,7 @@ modify /etc/wgetrc
 		 service mysqld start
 		 mysql_secure_installation (and follow resetting root password)
 		 yum install mysql-workbench-community
+		 yum update mysqldump
 
 #Create database called "results"
 	mysql -u root -p

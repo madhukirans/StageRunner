@@ -26,6 +26,8 @@ All rights reserved.*/
  * @since release specific (what release of product did this appear in)
  */
 import com.oracle.stagerun.entity.RegressDetails;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import javax.persistence.EntityManager;

@@ -1,10 +1,8 @@
-CREATE DATABASE  IF NOT EXISTS `results` /*!40100 DEFAULT CHARACTER SET utf8 */;
-USE `results`;
--- MySQL dump 10.13  Distrib 5.7.12, for linux-glibc2.5 (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.13, for linux-glibc2.5 (x86_64)
 --
 -- Host: localhost    Database: results
 -- ------------------------------------------------------
--- Server version	5.7.13
+-- Server version	5.7.16
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -36,7 +34,7 @@ CREATE TABLE `stage` (
   KEY `fk_stage_releaseid_idx` (`releaseid`),
   CONSTRAINT `fk_stage_releaseid` FOREIGN KEY (`releaseid`) REFERENCES `releases` (`releaseid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_stage_userid` FOREIGN KEY (`users`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -45,7 +43,7 @@ CREATE TABLE `stage` (
 
 LOCK TABLES `stage` WRITE;
 /*!40000 ALTER TABLE `stage` DISABLE KEYS */;
-INSERT INTO `stage` VALUES (5,NULL,'1','stage 1',1,'2016-08-09 10:37:40'),(6,NULL,'12','Stage12',1,'2016-08-16 00:36:26'),(7,NULL,'13','Stage13',1,'2016-08-24 04:31:03'),(8,NULL,'14','stage14',1,'2016-08-30 06:04:27'),(9,NULL,'15','stageRc1',1,'2016-09-09 11:05:02'),(10,NULL,'16','stage rc2',1,'2016-09-14 01:32:47'),(11,NULL,'17','Stagerc3',1,'2016-09-21 02:13:31'),(12,NULL,'18','Stagerc4',1,'2016-09-27 08:40:10'),(13,NULL,'19','Stage rc5',1,'2016-09-30 03:42:45'),(14,NULL,'20','Stage rc6',1,'2016-10-11 12:16:34'),(15,NULL,'1','Stage1',2,'2016-10-25 05:39:52'),(16,NULL,'2','stage 2',2,'2016-11-03 00:14:00'),(17,NULL,'3','stage 3',2,'2016-11-08 01:34:29');
+INSERT INTO `stage` VALUES (5,NULL,'1','stage 1',1,'0000-00-00 00:00:00'),(6,NULL,'12','Stage12',1,'0000-00-00 00:00:00'),(7,NULL,'13','Stage13',1,'0000-00-00 00:00:00'),(8,NULL,'14','stage14',1,'0000-00-00 00:00:00'),(9,NULL,'15','stageRc1',1,'0000-00-00 00:00:00'),(10,NULL,'16','stage rc2',1,'0000-00-00 00:00:00'),(11,NULL,'17','Stagerc3',1,'0000-00-00 00:00:00'),(12,NULL,'18','Stagerc4',1,'0000-00-00 00:00:00'),(13,NULL,'19','Stage rc5',1,'0000-00-00 00:00:00'),(14,NULL,'20','Stage rc6',1,'0000-00-00 00:00:00'),(15,NULL,'1','Stage1',2,'0000-00-00 00:00:00'),(16,NULL,'2','stage 2',2,'0000-00-00 00:00:00'),(17,NULL,'3','stage 3',2,'0000-00-00 00:00:00'),(18,NULL,'4','Stage 4',2,'0000-00-00 00:00:00'),(19,NULL,'5','Stage 5',2,'2016-11-21 22:54:14'),(20,NULL,'6','Stage 6',2,'2016-11-28 21:35:11');
 /*!40000 ALTER TABLE `stage` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -58,4 +56,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-11-09 11:09:02
+-- Dump completed on 2016-11-29  4:43:26

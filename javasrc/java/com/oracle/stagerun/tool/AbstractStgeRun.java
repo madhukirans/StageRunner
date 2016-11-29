@@ -9,6 +9,8 @@ import com.oracle.stagerun.entity.RegressDetails;
 import com.oracle.stagerun.entity.RegressStatus;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -81,11 +83,23 @@ abstract public class AbstractStgeRun {
             LOGGER.log(Level.SEVERE, "Error occur in FileHandler.", exception);
         }
     }
+    
+    public String getStacktrace(Exception e) {
+        StringWriter sw = new StringWriter();
+        e.printStackTrace(new PrintWriter(sw));
+        return sw.toString();
+    }
 
     public void print(String message, RegressDetails rdetails) {
         String str = "[" + rdetails.getStage().getStageName() + " " + rdetails.getProduct().getName()
                 + " " + rdetails.getTestunit().getTestunitName() + " " + rdetails.getFarmrunId() + "]";
         print(str + message);
+    }
+    
+    public void print(String message, Exception e, RegressDetails rdetails) {
+        String str = "[" + rdetails.getStage().getStageName() + " " + rdetails.getProduct().getName()
+                + " " + rdetails.getTestunit().getTestunitName() + " " + rdetails.getFarmrunId() + "]";
+        print(str + message + "\n" + getStacktrace(e));
     }
 
     public void print(String message) {

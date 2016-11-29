@@ -54,9 +54,9 @@ public class SapphireUploader implements Callable<Boolean> {
 
     public Boolean call() {
         sr.print("In sapphire upload thread", regressDetails);
-        //copyCoverageDump();
+        copyCoverageDump();
         generateGTLF();
-        //uploadGTLF();
+        uploadGTLF();
         regressDetails.setGtlfFileLoc(sr.getStageDirectory(regressDetails) + "/" + gtlfFileName);
         regressDetails.setSapphireUploadStatus("uploaded");
 
@@ -73,7 +73,7 @@ public class SapphireUploader implements Callable<Boolean> {
                         FileSystems.getDefault().getPath(sr.getStageDirectory(regressDetails), runId + ".coverage.dump"));
             }
         } catch (Exception e) {
-            sr.print("Copy coverage dump exception " + e.getMessage(), regressDetails);
+            sr.print("Copy coverage dump exception ", e, regressDetails);
         }
     }
 
@@ -87,7 +87,7 @@ public class SapphireUploader implements Callable<Boolean> {
             sr.print("XML File: " + fileBytes.toString(), regressDetails);
             regressDetails.setGtlfFile(fileBytes);
         } catch (Exception e) {
-            sr.print("persistGTLFXML exception " + e.getMessage(), regressDetails);
+            sr.print("persistGTLFXML exception ", e, regressDetails);
         }
     }
 
@@ -102,14 +102,15 @@ public class SapphireUploader implements Callable<Boolean> {
 
                 try {
                     sr.print("Copying gtlf from " + resultDir + "/" + gtlfFileName + " to "
-                            + sr.getStageDirectory(regressDetails), regressDetails);
+                            + sr.getStageDirectory(regressDetails) + "/" + gtlfFileName, regressDetails);
+                    
                     Files.copy(FileSystems.getDefault().getPath(resultDir + "/" + gtlfFileName),
-                            FileSystems.getDefault().getPath(sr.getStageDirectory(regressDetails)));
+                            FileSystems.getDefault().getPath(sr.getStageDirectory(regressDetails) + "/" + gtlfFileName));
 
                     persistGTLFXML(sr.getStageDirectory(regressDetails) + "/" + gtlfFileName);
 
                 } catch (Exception e) {
-                    sr.print("Copying gtlf exception " + e.getMessage(), regressDetails);
+                    sr.print("Copying gtlf exception ", e, regressDetails);
                 }
             } else {
                 gtlfFileName = null;
@@ -146,12 +147,13 @@ public class SapphireUploader implements Callable<Boolean> {
         list.add("-verbose");
         sr.print("Generating gtlf. Gtlf command:" + list.toString(), regressDetails);
         try {
-            org.testlogic.toolkit.gtlf.converters.file.Main.main(list.toArray(new String[list.size()]));
+           org.testlogic.toolkit.gtlf.converters.file.Main.main(list.toArray(new String[list.size()]));
         } catch (Exception e) {
-            sr.print("Exception : " + e, regressDetails);
+            sr.print("Exception : ", e, regressDetails);
         }
         
-        persistGTLFXML(sr.getStageDirectory(regressDetails) + "/" + gtlfFileName);
+        if (new File(sr.getStageDirectory(regressDetails) + "/" + gtlfFileName).exists())
+            persistGTLFXML(sr.getStageDirectory(regressDetails) + "/" + gtlfFileName);
         
         sr.print("Completed generating gtlf for: ", regressDetails);
     }
@@ -165,7 +167,7 @@ public class SapphireUploader implements Callable<Boolean> {
             sr.print("Upload Successful.", regressDetails);
             sendMail();
         } catch (Exception e) {
-            sr.print("Exception in upload gtlf: " + e, regressDetails);
+            sr.print("Exception in upload gtlf: ", e, regressDetails);
         }
     }
 
