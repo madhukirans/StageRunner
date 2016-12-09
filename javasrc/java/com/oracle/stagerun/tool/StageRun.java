@@ -26,8 +26,12 @@ All rights reserved.*/
  * @since release specific (what release of product did this appear in)
  */
 import com.oracle.stagerun.entity.RegressDetails;
+import com.oracle.stagerun.entity.RegressDetailsGtlfFileHelper;
+import java.io.File;
 import java.io.PrintWriter;
+import java.io.RandomAccessFile;
 import java.io.StringWriter;
+import java.nio.channels.FileLock;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import javax.persistence.EntityManager;
@@ -42,7 +46,8 @@ public class StageRun extends AbstractStgeRun {
 
     private StageRun() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("StageRunnerPUMain");
-        em = emf.createEntityManager();
+        
+        em = emf.createEntityManager();        
         super.init("stagerundemon.log");
     }
 
@@ -58,7 +63,39 @@ public class StageRun extends AbstractStgeRun {
     public static void main(String args[]) {
 
         StageRun sr = StageRun.getInstance();
-        sr.runForEver();
+        if (sr.lockInstance()) {
+            sr.runForEver();
+        }
+        else
+            System.out.println("Process already started");
+    }
+
+    private boolean lockInstance() {
+        String lockFile = rootFolder + "/sr.lck";
+        try {
+            System.out.println("Inlocking");
+            final File file = new File(lockFile);
+            final RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw");
+            final FileLock fileLock = randomAccessFile.getChannel().tryLock();
+            if (fileLock != null) {
+                Runtime.getRuntime().addShutdownHook(new Thread() {
+                    public void run() {
+                        try {
+                            fileLock.release();
+                            randomAccessFile.close();
+                            file.delete();
+                        } catch (Exception e) {
+                            System.out.println("Unable to remove lock file: " + lockFile + e.getMessage());
+                        }
+                    }
+                });
+                return true;
+            }
+        } catch (Exception e) {
+            System.out.println("Process already started: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return false;
     }
 
     private void runForEver() {
@@ -76,7 +113,7 @@ public class StageRun extends AbstractStgeRun {
                 }
                 startTime = LocalDateTime.now();
             } catch (Exception e) {
-                print("Exception runForEver:" + e.getLocalizedMessage());
+                print("Exception runForEver:" + getStacktrace(e));
             }
         }
     }
@@ -86,10 +123,24 @@ public class StageRun extends AbstractStgeRun {
         print("In StageRun merge");
         try {
             em.getTransaction().begin();
-            em.merge(rdetails);
-            em.flush();
+            em.merge(rdetails);            
             em.getTransaction().commit();
-
+            em.flush();
+        } catch (Exception e) {
+            print("Exception :" + e);
+        }
+        print("Record saved", rdetails);
+    }
+    
+    @Override
+    public synchronized void merge(RegressDetails rdetails, RegressDetailsGtlfFileHelper gtlfHelper) {
+        print("In StageRun merge");
+        try {
+            em.getTransaction().begin();
+            em.merge(rdetails);
+            em.merge(gtlfHelper);
+            em.getTransaction().commit();
+            em.flush();
         } catch (Exception e) {
             print("Exception :" + e);
         }

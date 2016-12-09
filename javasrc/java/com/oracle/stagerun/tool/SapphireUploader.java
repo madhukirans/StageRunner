@@ -1,12 +1,14 @@
 package com.oracle.stagerun.tool;
 
 import com.oracle.stagerun.entity.RegressDetails;
+import com.oracle.stagerun.entity.RegressDetailsGtlfFileHelper;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.sql.Clob;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
@@ -30,10 +32,12 @@ public class SapphireUploader implements Callable<Boolean> {
     private String component;
     private RegressDetails regressDetails;
     private AbstractStgeRun sr;
+    private RegressDetailsGtlfFileHelper gtlfHelper;
 
     public SapphireUploader(RegressDetails regressDetails, AbstractStgeRun sr) {
         this.sr = sr;
         this.regressDetails = regressDetails;
+        this.gtlfHelper = new RegressDetailsGtlfFileHelper(regressDetails.getId());
         this.resultDir = regressDetails.getWorkLoc();
         this.stageId = regressDetails.getStage().getStageName();
         this.testUnit = regressDetails.getTestunit().getTestunitName();
@@ -60,7 +64,7 @@ public class SapphireUploader implements Callable<Boolean> {
         regressDetails.setGtlfFileLoc(sr.getStageDirectory(regressDetails) + "/" + gtlfFileName);
         regressDetails.setSapphireUploadStatus("uploaded");
 
-        sr.merge(regressDetails);
+        sr.merge(regressDetails, gtlfHelper);
         return true;
     }
 
@@ -69,8 +73,8 @@ public class SapphireUploader implements Callable<Boolean> {
             if (Files.exists(FileSystems.getDefault().getPath(resultDir, "coverage.dump"))) {
                 sr.print("Copying coverage dump from " + resultDir + "/coverage.dimp" + " to "
                         + sr.getStageDirectory(regressDetails) + "/" + runId + ".coverage.dump", regressDetails);
-                Files.copy(FileSystems.getDefault().getPath(resultDir, "coverage.dump"),
-                        FileSystems.getDefault().getPath(sr.getStageDirectory(regressDetails), runId + ".coverage.dump"));
+                Files.copy(FileSystems.getDefault().getPath(resultDir + "/coverage.dump"),
+                        FileSystems.getDefault().getPath(sr.getStageDirectory(regressDetails) + "/" + runId + ".coverage.dump"), StandardCopyOption.REPLACE_EXISTING);
             }
         } catch (Exception e) {
             sr.print("Copy coverage dump exception ", e, regressDetails);
@@ -85,7 +89,7 @@ public class SapphireUploader implements Callable<Boolean> {
             inputStream.read(fileBytes);
             inputStream.close();
             sr.print("XML File: " + fileBytes.toString(), regressDetails);
-            regressDetails.setGtlfFile(fileBytes);
+            gtlfHelper.setGtlfFile(fileBytes);
         } catch (Exception e) {
             sr.print("persistGTLFXML exception ", e, regressDetails);
         }
@@ -105,7 +109,7 @@ public class SapphireUploader implements Callable<Boolean> {
                             + sr.getStageDirectory(regressDetails) + "/" + gtlfFileName, regressDetails);
                     
                     Files.copy(FileSystems.getDefault().getPath(resultDir + "/" + gtlfFileName),
-                            FileSystems.getDefault().getPath(sr.getStageDirectory(regressDetails) + "/" + gtlfFileName));
+                            FileSystems.getDefault().getPath(sr.getStageDirectory(regressDetails) + "/" + gtlfFileName), StandardCopyOption.REPLACE_EXISTING);
 
                     persistGTLFXML(sr.getStageDirectory(regressDetails) + "/" + gtlfFileName);
 

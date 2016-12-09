@@ -9,7 +9,7 @@ ant
 echo 
 echo "Deploying Application"
 echo
-mv $STAGE_RUNNER_HOME/build/web/WEB-INF/classes/META-INF/persistence1.xml $STAGE_RUNNER_HOME/build/web/WEB-INF/classes/META-INF/persistence.xml
+#mv $STAGE_RUNNER_HOME/build/web/WEB-INF/classes/META-INF/persistence1.xml $STAGE_RUNNER_HOME/build/web/WEB-INF/classes/META-INF/persistence.xml
 
 cmd="$SERVER_HOME/bin/asadmin undeploy StageRunner"
 echo $cmd

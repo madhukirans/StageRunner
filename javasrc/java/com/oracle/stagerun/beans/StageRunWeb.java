@@ -6,6 +6,7 @@
 package com.oracle.stagerun.beans;
 
 import com.oracle.stagerun.entity.RegressDetails;
+import com.oracle.stagerun.entity.RegressDetailsGtlfFileHelper;
 import com.oracle.stagerun.tool.AbstractStgeRun;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -49,6 +50,18 @@ public class StageRunWeb extends AbstractStgeRun {
         print("In StageRunWeb merge");
         try {
             em.merge(rdetails);
+        } catch (Exception e) {
+            System.out.println("Exception :" + e);
+        }
+        print("Record saved", rdetails);
+    }
+    
+    @Override
+    public void merge(RegressDetails rdetails, RegressDetailsGtlfFileHelper gtlfHelper) {
+        print("In StageRunWeb merge");
+        try {
+            em.merge(rdetails);
+            em.merge(gtlfHelper);
         } catch (Exception e) {
             System.out.println("Exception :" + e);
         }

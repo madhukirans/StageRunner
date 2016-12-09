@@ -5,10 +5,18 @@
  */
 package com.oracle.stagerun.entity;
 
+import com.oracle.stagerun.tool.AbstractStgeRun;
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.sql.Clob;
 import java.util.Date;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 import javax.persistence.Basic;
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -42,7 +50,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "RegressDetails.findByStage", query = "SELECT r FROM RegressDetails r WHERE r.stage.id = :stage"),
     @NamedQuery(name = "RegressDetails.findByStageProduct", query = "SELECT r FROM RegressDetails r WHERE r.stage.id = :stage AND r.product.id=:product"),
     //@NamedQuery(name = "RegressDetails.findByStageId", query = "SELECT r FROM RegressDetails r WHERE r.stage.id = :stage AND r.product.id=:product"),
-    
+
     @NamedQuery(name = "RegressDetails.findByStageProductComponent",
             query = "SELECT r FROM RegressDetails r WHERE r.stage.id = :stage AND r.product.id=:product AND r.component.id = :component"),
     @NamedQuery(name = "RegressDetails.findByStageProductTestUnit",
@@ -58,7 +66,7 @@ public class RegressDetails implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id", nullable = false)
-    private Integer id;
+    private Long id;
     @Column(name = "farmrun_id")
     private Integer farmrunId;
     //@Size(max = 11)
@@ -86,11 +94,10 @@ public class RegressDetails implements Serializable {
     @Size(max = 16777215)
     @Column(name = "gtlf_file_loc", length = 16777215)
     private String gtlfFileLoc;
-    
-    @Lob
-    @Column(name ="gtlf_file")
-    private byte[] gtlfFile;
-       
+
+    //@Lob
+    //@Column(name ="gtlf_file")
+    //private byte[] gtlfFile;
     @JoinColumn(name = "component", referencedColumnName = "id")
     @ManyToOne
     private Component component;
@@ -107,20 +114,69 @@ public class RegressDetails implements Serializable {
     @ManyToOne
     private Users users;
 
+    transient private Logger logger;
+
     private transient File fileToRun;
 
     public RegressDetails() {
+
     }
 
-    public RegressDetails(Integer id) {
+    public RegressDetails(Long id) {
+        this();
         this.id = id;
     }
 
-    public Integer getId() {
+    public String getLocation() {
+        String loc = AbstractStgeRun.rootFolder + "/" + getStage().getRelease().getName() + "/" + getStage().getStageName()
+                + "/" + getProduct().getName() + "/" + getComponent().getName() + "/" + getTestunit().getPlatform().getName() + "/" + getTestunit().getTestunitName();
+        File f = new File(loc);
+        if (!f.exists()) {
+            f.mkdirs();
+        }
+        return loc;
+    }
+
+    public Logger getLogger() {
+        synchronized (this) {
+            if (logger != null) {
+                return logger;
+            } else {
+                logger = Logger.getLogger("stageruner_log" + id);
+                Handler consoleHandler = null;
+                Handler fileHandler = null;
+                try {
+                    //Creating consoleHandler and fileHandler
+                    consoleHandler = new ConsoleHandler();
+                    fileHandler = new FileHandler(getLocation() + "/" + id + ".log");
+
+                    //Assigning handlers to LOGGER object
+                    logger.addHandler(consoleHandler);
+                    logger.addHandler(fileHandler);
+
+                    //Setting levels to handlers and LOGGER
+                    consoleHandler.setLevel(Level.ALL);
+                    fileHandler.setLevel(Level.ALL);
+
+                    SimpleFormatter simpleFormatter = new SimpleFormatter();
+                    fileHandler.setFormatter(simpleFormatter);
+                    logger.setLevel(Level.ALL);
+                    logger.config("Configuration done.");
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    logger.log(Level.SEVERE, "Error occur in FileHandler.", e);
+                }
+                return logger;
+            }
+        }
+    }
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -194,14 +250,6 @@ public class RegressDetails implements Serializable {
 
     public void setGtlfFileLoc(String gtlfFileLoc) {
         this.gtlfFileLoc = gtlfFileLoc;
-    }
-
-    public byte[] getGtlfFile() {
-        return gtlfFile;
-    }
-
-    public void setGtlfFile(byte[] gtlfFile) {
-        this.gtlfFile = gtlfFile;
     }
 
     public Component getComponent() {

@@ -11,6 +11,7 @@ import com.oracle.stagerun.entity.GtlfFile;
 import com.oracle.stagerun.entity.Platform;
 import com.oracle.stagerun.entity.Product;
 import com.oracle.stagerun.entity.RegressDetails;
+import com.oracle.stagerun.entity.RegressDetailsGtlfFileHelper;
 import com.oracle.stagerun.entity.RegressStatus;
 import com.oracle.stagerun.entity.Releases;
 import com.oracle.stagerun.entity.Stage;
@@ -273,12 +274,13 @@ public class RegressDetailsFacadeREST extends AbstractFacade<RegressDetails> {
     
     
     @GET
-    @Path("gtlf/{stageid}")    
+    @Path("gtlf/{id}")    
     @Produces(MediaType.APPLICATION_XML)
-    public Response getGtlfFileByID(@PathParam("stageid") Integer stageId,
-            @PathParam("product") Integer productid, @PathParam("component") Integer component) throws Exception{
+    public Response getGtlfFileByID(@PathParam("id") Integer id) throws Exception{
         
-        RegressDetails details = super.find(stageId);
+        TypedQuery<RegressDetailsGtlfFileHelper> query = em.createNamedQuery("RegressDetailsGtlfFileHelper.findById", RegressDetailsGtlfFileHelper.class);
+        query.setParameter("id", id);
+        RegressDetailsGtlfFileHelper details = query.getSingleResult();
         return Response.ok(new String(details.getGtlfFile(), "UTF-8")).build();
     }
       

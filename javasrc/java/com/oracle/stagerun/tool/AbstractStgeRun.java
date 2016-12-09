@@ -6,6 +6,7 @@
 package com.oracle.stagerun.tool;
 
 import com.oracle.stagerun.entity.RegressDetails;
+import com.oracle.stagerun.entity.RegressDetailsGtlfFileHelper;
 import com.oracle.stagerun.entity.RegressStatus;
 import java.io.File;
 import java.io.IOException;
@@ -37,9 +38,12 @@ import javax.persistence.TypedQuery;
 abstract public class AbstractStgeRun {
 
     private Logger LOGGER;
-    private static final String rootFolder = "/scratch/sr/work";
+    public static final String rootFolder = "/scratch/sr/work";
 
     abstract public void merge(RegressDetails rdetails);
+
+    abstract public void merge(RegressDetails rdetails, RegressDetailsGtlfFileHelper gtlfHelper);
+
     //StageRun sr;
     public AbstractStgeRun() {
         //sr= StageRun.getInstance();
@@ -53,7 +57,6 @@ abstract public class AbstractStgeRun {
         return LOGGER;
     }
 
-    
     public void init(String filename) {
         System.out.println("In Init AbstractStgeRun");
         LOGGER = Logger.getLogger("stageruner_log");
@@ -71,19 +74,19 @@ abstract public class AbstractStgeRun {
             //Setting levels to handlers and LOGGER
             consoleHandler.setLevel(Level.ALL);
             fileHandler.setLevel(Level.ALL);
-            
+
             SimpleFormatter simpleFormatter = new SimpleFormatter();
             fileHandler.setFormatter(simpleFormatter);
             LOGGER.setLevel(Level.ALL);
             LOGGER.config("Configuration done.");
             //Console handler removed
             //LOGGER.removeHandler(consoleHandler);
-           // LOGGER.log(Level.FINE, "Finer logged");
+            // LOGGER.log(Level.FINE, "Finer logged");
         } catch (IOException exception) {
             LOGGER.log(Level.SEVERE, "Error occur in FileHandler.", exception);
         }
     }
-    
+
     public String getStacktrace(Exception e) {
         StringWriter sw = new StringWriter();
         e.printStackTrace(new PrintWriter(sw));
@@ -91,15 +94,24 @@ abstract public class AbstractStgeRun {
     }
 
     public void print(String message, RegressDetails rdetails) {
-        String str = "[" + rdetails.getStage().getStageName() + " " + rdetails.getProduct().getName()
-                + " " + rdetails.getTestunit().getTestunitName() + " " + rdetails.getFarmrunId() + "]";
-        print(str + message);
+        log(message, rdetails, null);
     }
-    
+
     public void print(String message, Exception e, RegressDetails rdetails) {
+        log(message, rdetails, e);
+    }
+
+    private void log(String message, RegressDetails rdetails, Exception e) {
         String str = "[" + rdetails.getStage().getStageName() + " " + rdetails.getProduct().getName()
                 + " " + rdetails.getTestunit().getTestunitName() + " " + rdetails.getFarmrunId() + "]";
-        print(str + message + "\n" + getStacktrace(e));
+        if (e != null) {
+            message = str + message + "\n" + getStacktrace(e);
+        }
+
+        Logger logger = rdetails.getLogger();
+        if (logger != null) {
+            logger.log(Level.ALL, message);
+        }
     }
 
     public void print(String message) {
@@ -108,8 +120,6 @@ abstract public class AbstractStgeRun {
         if (LOGGER != null) {
             LOGGER.log(Level.ALL, message);
         }
-
-        //System.out.println(time + " " + message);
     }
 
     public String getRootFolder() {
@@ -117,14 +127,11 @@ abstract public class AbstractStgeRun {
     }
 
     public String getStageDirectory(RegressDetails rDetails) {
-        String loc = rootFolder + "/" + rDetails.getStage().getRelease().getName()
-                + "/" + rDetails.getStage().getStageName() + "/" + rDetails.getProduct().getName() + "/"
-                + rDetails.getComponent().getName() + "/" + rDetails.getTestunit().getTestunitName();
+        String loc = rDetails.getLocation();
         File f = new File(loc);
         if (!f.exists()) {
             f.mkdirs();
         }
-
         return loc;
     }
 
