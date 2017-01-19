@@ -109,8 +109,14 @@ public class SapphireUploader implements Callable<Boolean> {
                             + sr.getStageDirectory(regressDetails) + "/" + gtlfFileName, regressDetails);
                     
                     Files.copy(FileSystems.getDefault().getPath(resultDir + "/" + gtlfFileName),
-                            FileSystems.getDefault().getPath(sr.getStageDirectory(regressDetails) + "/" + gtlfFileName), StandardCopyOption.REPLACE_EXISTING);
-
+                            FileSystems.getDefault().getPath(sr.getStageDirectory(regressDetails) + "/" + gtlfFileName), 
+                            StandardCopyOption.REPLACE_EXISTING);
+                    File gtlfFile =  new File(sr.getStageDirectory(regressDetails) + "/" + gtlfFileName);
+                    
+                    gtlfFile.setExecutable(true, false);
+                    gtlfFile.setWritable(true, false);
+                    gtlfFile.setReadable(true, false);
+                    
                     persistGTLFXML(sr.getStageDirectory(regressDetails) + "/" + gtlfFileName);
 
                 } catch (Exception e) {

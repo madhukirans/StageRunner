@@ -49,7 +49,8 @@ modify /etc/wgetrc
 #Run as root
 	npm config set proxy http://www-proxy.us.oracle.com:80
 	npm config set https-proxy http://www-proxy.us.oracle.com:80
-	npm install -g bower
+	npm install --https-proxy=http://www-proxy.us.oracle.com:80 --proxy=http://www-proxy.us.oracle.com:80
+	npm install -g bower 
 
 #Run as normal user
 	npm config set proxy http://www-proxy.us.oracle.com:80
