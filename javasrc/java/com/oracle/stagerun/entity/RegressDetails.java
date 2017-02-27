@@ -5,11 +5,10 @@
  */
 package com.oracle.stagerun.entity;
 
-import com.oracle.stagerun.tool.AbstractStgeRun;
+import com.oracle.stagerun.tool.AbstractStageRun;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.sql.Clob;
 import java.util.Date;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
@@ -128,7 +127,7 @@ public class RegressDetails implements Serializable {
     }
 
     public String getLocation() {
-        String loc = AbstractStgeRun.rootFolder + "/" + getStage().getRelease().getName() + "/" + getStage().getStageName()
+        String loc = AbstractStageRun.ROOT_FOLDER + "/" + getStage().getRelease().getName() + "/" + getStage().getStageName()
                 + "/" + getProduct().getName() + "/" + getComponent().getName() + "/" + getTestunit().getPlatform().getName() + "/" + getTestunit().getTestunitName();
         File f = new File(loc);
         if (!f.exists()) {

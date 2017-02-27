@@ -178,7 +178,7 @@ public class Stage implements Serializable {
 */
     @Override
     public String toString() {
-        return "Stage[ id=" + id + "," + stageName + " ]";
+        return "Stage[ id=" + id + ", name=" + stageName + " ]";
     }
     
 }

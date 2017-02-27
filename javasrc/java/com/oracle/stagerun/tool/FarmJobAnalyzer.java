@@ -22,9 +22,9 @@ public class FarmJobAnalyzer implements Callable<Boolean> {
     // private int farmJobId;
 
     private RegressDetails regressDetail;
-    AbstractStgeRun sr;
+    AbstractStageRun sr;
     
-    public FarmJobAnalyzer(RegressDetails regressDetail, AbstractStgeRun sr) {
+    public FarmJobAnalyzer(RegressDetails regressDetail, AbstractStageRun sr) {
         this.sr = sr;
         sr.print("In FarmJobAnalyzer.", regressDetail);
         this.regressDetail = regressDetail;
@@ -113,10 +113,15 @@ public class FarmJobAnalyzer implements Callable<Boolean> {
                                 regressDetail.setEndtime(Calendar.getInstance().getTime());
                                 getSucDiffCount();
                                 sr.merge(regressDetail);
-
+                                
                                 ExecutorService executor = Executors.newCachedThreadPool();
                                 Future<Boolean> fut = executor.submit(new SapphireUploader(regressDetail, sr));
-                                return fut.get(10, TimeUnit.MINUTES);
+                                try {
+                                return fut.get();//20, TimeUnit.MINUTES);
+                                }catch (Exception e) {
+                                    sr.print("command:" + listArg, e, regressDetail);
+                                    return false;
+                                }
                                 //return true;
                             }
                         }
@@ -141,7 +146,7 @@ public class FarmJobAnalyzer implements Callable<Boolean> {
             }*/
             }
         } catch (Exception e) {
-            sr.print("Exception in farm job analyzer." + e.getMessage());
+            sr.print("Exception in farm job analyzer." , e);
         }
 
         return false;

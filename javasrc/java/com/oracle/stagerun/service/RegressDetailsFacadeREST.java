@@ -7,22 +7,17 @@ package com.oracle.stagerun.service;
 
 import com.oracle.stagerun.beans.StageRunWeb;
 import com.oracle.stagerun.entity.Component;
-import com.oracle.stagerun.entity.GtlfFile;
-import com.oracle.stagerun.entity.Platform;
 import com.oracle.stagerun.entity.Product;
 import com.oracle.stagerun.entity.RegressDetails;
 import com.oracle.stagerun.entity.RegressDetailsGtlfFileHelper;
 import com.oracle.stagerun.entity.RegressStatus;
 import com.oracle.stagerun.entity.Releases;
 import com.oracle.stagerun.entity.Stage;
-import com.oracle.stagerun.entity.StageUpperstackShiphomes;
 import com.oracle.stagerun.entity.Testunit;
 import com.oracle.stagerun.service.excetion.InvalidArgumentsException;
 import com.oracle.stagerun.service.excetion.ShiphomeNamesNotFoundException;
 import com.oracle.stagerun.tool.RunJobs;
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -59,7 +54,7 @@ public class RegressDetailsFacadeREST extends AbstractFacade<RegressDetails> {
     StageRunWeb sr;
 
     @Inject
-    RunJobs rj;
+    RunJobs runJobs;
 
     public RegressDetailsFacadeREST() {
         super(RegressDetails.class);
@@ -122,7 +117,7 @@ public class RegressDetailsFacadeREST extends AbstractFacade<RegressDetails> {
         };
         
         sr.print("Regress List: " + prepareRegressList);
-        rj.execute(release, stage, prepareRegressList);//, shiphomeList, allShiphomeList);
+        runJobs.execute(release, stage, prepareRegressList);//, shiphomeList, allShiphomeList);
 
 //        //Get shiphomes based on postdata
 //        TypedQuery<StageUpperstackShiphomes> shiphomeQery;

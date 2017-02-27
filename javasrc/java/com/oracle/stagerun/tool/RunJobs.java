@@ -44,9 +44,13 @@ public class RunJobs {
     private EntityManager em;
 
     @Inject
-    private StageRunWeb sr;
+    private AbstractStageRun sr;
 
     public RunJobs() {
+
+    }
+    
+    public RunJobs(AbstractStageRun sr ) {
 
     }
 
@@ -159,7 +163,7 @@ public class RunJobs {
             FileOutputStream out = new FileOutputStream(regressDir + "/env.prop");
             properties.store(out, null);
         } catch (Exception e) {
-            sr.print("Exception : wiriteEnvFile: " + e, regress);
+            sr.print("Exception : wiriteEnvFile: ", e, regress);
         }
     }
 
@@ -217,7 +221,7 @@ public class RunJobs {
                             regress.setStatus(RegressStatus.running);
                             em.merge(regress);
                         } catch (Exception e) {
-                            sr.print("Exception : runFarmCommand: Reading command output: " + e, regress);
+                            sr.print("Exception : runFarmCommand: Reading command output: " , e, regress);
                         }
                     }
                 }
@@ -239,7 +243,7 @@ public class RunJobs {
             }
 
         } catch (Exception e) {
-            sr.print("Exception : runFarmCommand:" + e, regress);
+            sr.print("Exception : runFarmCommand:" , e, regress);
         }
     }
 }

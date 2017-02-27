@@ -27,33 +27,31 @@ All rights reserved.*/
  */
 import com.oracle.stagerun.entity.RegressDetails;
 import com.oracle.stagerun.entity.RegressDetailsGtlfFileHelper;
+import com.oracle.stagerun.entity.RegressStatus;
 import java.io.File;
-import java.io.PrintWriter;
 import java.io.RandomAccessFile;
-import java.io.StringWriter;
 import java.nio.channels.FileLock;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.TypedQuery;
 
-public class StageRun extends AbstractStgeRun {
+public class StageRunDaemon extends AbstractStageRun {
 
     public static boolean upload = false;
-    private EntityManager em;
-    private static StageRun sr = null;
+    private static StageRunDaemon sr = null;
+    EntityManagerFactory emf = Persistence.createEntityManagerFactory("StageRunnerPUMain");
 
-    private StageRun() {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("StageRunnerPUMain");
-        
-        em = emf.createEntityManager();        
+    private StageRunDaemon() {
         super.init("stagerundemon.log");
     }
 
-    public static StageRun getInstance() {
+    public static StageRunDaemon getInstance() {
         if (sr == null) {
-            sr = new StageRun();
+            sr = new StageRunDaemon();
         }
         return sr;
     }
@@ -62,16 +60,33 @@ public class StageRun extends AbstractStgeRun {
 
     public static void main(String args[]) {
 
-        StageRun sr = StageRun.getInstance();
+        StageRunDaemon sr = StageRunDaemon.getInstance();
         if (sr.lockInstance()) {
             sr.runForEver();
-        }
-        else
+        } else {
             System.out.println("Process already started");
+        }
+        //JSonStageTraker stageTraker = new JSonStageTraker(sr);
+        //stageTraker.runJobs(stage);
+    }
+
+    public List<RegressDetails> getRunningRegressList() {        
+        EntityManager em = emf.createEntityManager();
+        try {
+            TypedQuery query = em.createNamedQuery("RegressDetails.findByStatus", RegressDetails.class);
+            query.setParameter("notstartedstatus", RegressStatus.notstarted);
+            query.setParameter("runningstatus", RegressStatus.running);
+            return query.getResultList();
+        } catch (Exception e) {
+            print("Exception :" + e);
+        } finally {
+            em.close();
+        }
+        return null;
     }
 
     private boolean lockInstance() {
-        String lockFile = rootFolder + "/sr.lck";
+        String lockFile = ROOT_FOLDER + "/sr.lck";
         try {
             System.out.println("Inlocking");
             final File file = new File(lockFile);
@@ -92,6 +107,7 @@ public class StageRun extends AbstractStgeRun {
                 return true;
             }
         } catch (Exception e) {
+            print("Exception :" + e);
             System.out.println("Process already started: " + e.getMessage());
             e.printStackTrace();
         }
@@ -102,7 +118,7 @@ public class StageRun extends AbstractStgeRun {
         LocalDateTime startTime = LocalDateTime.now();
         while (true) {
             try {
-                runFarmJobAnalyzer(em);
+                runFarmJobAnalyzer();
                 LocalDateTime endTime = LocalDateTime.now();
                 Duration timeElapsed = Duration.between(startTime, endTime);
                 print("TimeElapsed:" + timeElapsed.toMillis());
@@ -113,37 +129,49 @@ public class StageRun extends AbstractStgeRun {
                 }
                 startTime = LocalDateTime.now();
             } catch (Exception e) {
-                print("Exception runForEver:" + getStacktrace(e));
+                print("Exception runForEver:" , e);
             }
+        }
+    }
+    private String dummySync="";
+
+    @Override
+    public void merge(RegressDetails rdetails) {
+        synchronized (dummySync) {
+            print("In StageRun merge");        
+            EntityManager em = emf.createEntityManager();
+            try {
+                em.getTransaction().begin();
+                em.merge(rdetails);
+                em.getTransaction().commit();
+                //em.flush();
+            } catch (Exception e) {
+                print("Exception :" , e);
+            } finally {
+                em.close();
+            }
+            print("Record saved", rdetails);
+
         }
     }
 
     @Override
-    public synchronized void merge(RegressDetails rdetails) {
-        print("In StageRun merge");
-        try {
-            em.getTransaction().begin();
-            em.merge(rdetails);            
-            em.getTransaction().commit();
-            em.flush();
-        } catch (Exception e) {
-            print("Exception :" + e);
+    public void merge(RegressDetails rdetails, RegressDetailsGtlfFileHelper gtlfHelper) {
+        synchronized (dummySync) {
+            print("In StageRun merge");           
+            EntityManager em = emf.createEntityManager();
+            try {
+                em.getTransaction().begin();
+                em.merge(rdetails);
+                em.merge(gtlfHelper);
+                em.getTransaction().commit();
+              //  em.flush();
+            } catch (Exception e) {
+                print("Exception :" , e);
+            } finally {
+                em.close();
+            }
+            print("Record saved", rdetails);
         }
-        print("Record saved", rdetails);
-    }
-    
-    @Override
-    public synchronized void merge(RegressDetails rdetails, RegressDetailsGtlfFileHelper gtlfHelper) {
-        print("In StageRun merge");
-        try {
-            em.getTransaction().begin();
-            em.merge(rdetails);
-            em.merge(gtlfHelper);
-            em.getTransaction().commit();
-            em.flush();
-        } catch (Exception e) {
-            print("Exception :" + e);
-        }
-        print("Record saved", rdetails);
     }
 }

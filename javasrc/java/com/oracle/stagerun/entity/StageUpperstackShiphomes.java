@@ -197,7 +197,7 @@ public class StageUpperstackShiphomes implements Serializable {
 
     @Override
     public String toString() {
-        return "StageUpperstackShiphomes[ id=" + id + "," +  shiphomeloc +  " ]";
+        return "StageUpperstackShiphomes[ id=" + id + "," +  shiphomeloc +  " Platform= "+platform.getName()+" product="+product.getName() + " ]";
     }
     
 }

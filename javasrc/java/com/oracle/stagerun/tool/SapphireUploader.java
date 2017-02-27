@@ -31,10 +31,10 @@ public class SapphireUploader implements Callable<Boolean> {
     private String email;
     private String component;
     private RegressDetails regressDetails;
-    private AbstractStgeRun sr;
+    private AbstractStageRun sr;
     private RegressDetailsGtlfFileHelper gtlfHelper;
 
-    public SapphireUploader(RegressDetails regressDetails, AbstractStgeRun sr) {
+    public SapphireUploader(RegressDetails regressDetails, AbstractStageRun sr) {
         this.sr = sr;
         this.regressDetails = regressDetails;
         this.gtlfHelper = new RegressDetailsGtlfFileHelper(regressDetails.getId());

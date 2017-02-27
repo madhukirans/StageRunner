@@ -5,7 +5,7 @@
  */
 package com.oracle.stagerun.entity;
 
-import com.oracle.stagerun.tool.StageRun;
+import com.oracle.stagerun.tool.StageRunDaemon;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;

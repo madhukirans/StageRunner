@@ -7,7 +7,7 @@ package com.oracle.stagerun.service;
 
 import com.oracle.stagerun.beans.StageRunWeb;
 import com.oracle.stagerun.entity.Releases;
-import com.oracle.stagerun.tool.StageRun;
+import com.oracle.stagerun.tool.StageRunDaemon;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;

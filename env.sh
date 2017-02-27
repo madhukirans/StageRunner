@@ -9,5 +9,7 @@ export ANT_HOME=/scratch/mseelam/apache-ant-1.9.2
 export PATH=$STAGE_RUNNER_HOME/tools/retool/3.0.0/bin:$PATH
 export BOOTSTRAP_HOME=/scratch/sr/bootstrap
 
+export PATH=$JAVA_HOME/bin:$PATH
+
 echo "Enter ade okinit password"
 ade okinit

@@ -7,17 +7,16 @@ package com.oracle.stagerun.beans;
 
 import com.oracle.stagerun.entity.RegressDetails;
 import com.oracle.stagerun.entity.RegressDetailsGtlfFileHelper;
-import com.oracle.stagerun.tool.AbstractStgeRun;
-import java.time.Duration;
+import com.oracle.stagerun.entity.RegressStatus;
+import com.oracle.stagerun.tool.AbstractStageRun;
 import java.time.LocalDateTime;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.List;
 import javax.annotation.PostConstruct;
-import javax.ejb.Schedule;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
 /**
  *
@@ -25,7 +24,7 @@ import javax.persistence.PersistenceContext;
  */
 @Singleton
 @Startup
-public class StageRunWeb extends AbstractStgeRun {
+public class StageRunWeb extends AbstractStageRun {
 
     @PersistenceContext(unitName = "StageRunnerPU")
     EntityManager em;
@@ -41,10 +40,18 @@ public class StageRunWeb extends AbstractStgeRun {
 
     //@Schedule(minute = "*/10", hour = "*")
     public void automaticTimeout() {
-        System.out.println("Automatic timeout occured" +  LocalDateTime.now());
-        runFarmJobAnalyzer(em);
+        System.out.println("Automatic timeout occured" + LocalDateTime.now());
+        runFarmJobAnalyzer();
     }
-    
+
+    @Override
+    public List<RegressDetails> getRunningRegressList() {
+        TypedQuery query = em.createNamedQuery("RegressDetails.findByStatus", RegressDetails.class);
+        query.setParameter("notstartedstatus", RegressStatus.notstarted);
+        query.setParameter("runningstatus", RegressStatus.running);
+        return query.getResultList();
+    }
+
     @Override
     public void merge(RegressDetails rdetails) {
         print("In StageRunWeb merge");
@@ -55,7 +62,7 @@ public class StageRunWeb extends AbstractStgeRun {
         }
         print("Record saved", rdetails);
     }
-    
+
     @Override
     public void merge(RegressDetails rdetails, RegressDetailsGtlfFileHelper gtlfHelper) {
         print("In StageRunWeb merge");

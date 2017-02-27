@@ -20,10 +20,10 @@ public class Mail
    StringBuffer strBuffer;
    private RegressDetails regressDetail;
    
-   private StageRun sr;
+   private StageRunDaemon sr;
    
    public Mail () {
-       sr= StageRun.getInstance();               
+       sr= StageRunDaemon.getInstance();               
    }
    
   // private int numberOfJobs;
