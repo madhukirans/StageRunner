@@ -30,7 +30,7 @@ CREATE TABLE `platform` (
   PRIMARY KEY (`id`),
   KEY `platform_user_fk` (`users`),
   CONSTRAINT `platform_user_fk` FOREIGN KEY (`users`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -39,7 +39,7 @@ CREATE TABLE `platform` (
 
 LOCK TABLES `platform` WRITE;
 /*!40000 ALTER TABLE `platform` DISABLE KEYS */;
-INSERT INTO `platform` VALUES (1,'LINUX.X64',NULL,'y'),(2,'WINDOWS.X64',NULL,'n'),(3,'GENERIC',NULL,'n');
+INSERT INTO `platform` VALUES (1,'LINUX.X64',NULL,'y'),(2,'WINDOWS.X64',NULL,'n');
 /*!40000 ALTER TABLE `platform` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -52,4 +52,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-11-29  4:43:25
+-- Dump completed on 2017-03-03  5:25:28
