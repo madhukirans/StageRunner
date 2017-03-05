@@ -43,6 +43,7 @@ modify /etc/wgetrc
 
 
 #Installing & configuring nodeJS & npm
+	curl --silent --location https://rpm.nodesource.com/setup_7.x | bash -
 	yum install nodejs
 	yum install npm
 
