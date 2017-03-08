@@ -20,18 +20,27 @@
 ###MysqL install:
 
 	[sudo sudo yum update]
-	sudo yum update mysql
-	sudo yum install libzip
-	wget http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm
-	sudo rpm -ivh epel-release-6-8.noarch.rpm
+	wget http://dev.mysql.com/get/mysql57-community-release-el6-7.noarch.rpm     
+	# on OL 6.x – replace el6 with the corresponding linux version
+	yum remove mysql-libs	
+	yum localinstall mysql57-community-release-el6-7.noarch.rpm
+	yum repolist enabled | grep "mysql.*-community.*"
+	yum install mysql-community-common
+	yum install mysql-community-server
+	yum install mysql-workbench-community
 
-	sudo service mysqld start
-	sudo mysql_secure_installation (and follow resetting root password)
-	sudo yum install mysql-workbench-community
-	sudo yum update mysqldump
+#### Remove all databases
+	rm -rf /var/lib/mysql
+	service mysqld stop
+	service mysqld start
+	service mysqld status
+	
+#### Get the mysql root password and reset the password. 
+	cat /var/log/mysqld.log | grep password
+	sudo mysql_secure_installation (and follow resetting the root password. You get the root password from above command)
+	#Reset the root password to Stage123# 
 
 ###Create database called "results"
-
 	mysql -u root -p
 	create database results;
 	quit;
