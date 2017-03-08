@@ -18,16 +18,16 @@ modify /etc/wgetrc
 
 
 #MysqL install:
-		 yum update
-		 yum update mysql
-		 yum install libzip
+		 sudo yum update
+		 sudo yum update mysql
+		 sudo yum install libzip
 		 wget http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm
-		 rpm -ivh epel-release-6-8.noarch.rpm
+		 sudo rpm -ivh epel-release-6-8.noarch.rpm
 
-		 service mysqld start
-		 mysql_secure_installation (and follow resetting root password)
-		 yum install mysql-workbench-community
-		 yum update mysqldump
+		 sudo service mysqld start
+		 sudo mysql_secure_installation (and follow resetting root password)
+		 sudo yum install mysql-workbench-community
+		 sudo yum update mysqldump
 
 #Create database called "results"
 	mysql -u root -p
@@ -38,20 +38,24 @@ modify /etc/wgetrc
 	cd /scratch/$USER/sr/StageRunner/mysqldump
 	cat *.sql | mysql -u root -p results
 
-#mysql logging /var/log/mysqld.log
-#mysqld --initialize
+#These commands are optional
+ 	mysql logging /var/log/mysqld.log
+ 	mysqld --initialize
 
 
 #Installing & configuring nodeJS & npm
 	curl --silent --location https://rpm.nodesource.com/setup_7.x | bash -
-	yum install nodejs
-	yum install npm
-
-#Run as root
+	sudo yum install nodejs
+	sudo yum install npm
+#Set npm proxy 
 	npm config set proxy http://www-proxy.us.oracle.com:80
 	npm config set https-proxy http://www-proxy.us.oracle.com:80
+	
+#Run the following commands
+        sudo npm install --https-proxy=http://www-proxy.us.oracle.com:80 --proxy=http://www-proxy.us.oracle.com:80 -g bower 
+	cd /scratch/$USER/sr/StageRunner	
 	npm install --https-proxy=http://www-proxy.us.oracle.com:80 --proxy=http://www-proxy.us.oracle.com:80
-	npm install -g bower 
+	
 
 #Run as normal user
 	npm config set proxy http://www-proxy.us.oracle.com:80
