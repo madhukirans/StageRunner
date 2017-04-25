@@ -59,18 +59,20 @@ public class StageRunDaemon extends AbstractStageRun {
     private static final int interval = 10;
 
     public static void main(String args[]) {
-
-        StageRunDaemon sr = StageRunDaemon.getInstance();
-        if (sr.lockInstance()) {
-            sr.runForEver();
+        if (args.length == 0) {
+            StageRunDaemon sr = StageRunDaemon.getInstance();
+            if (sr.lockInstance()) {
+                sr.runForEver();
+            } else {
+                System.out.println("Process already started");
+            }
         } else {
-            System.out.println("Process already started");
+            JSonStageTraker stageTraker = new JSonStageTraker(sr);
+            stageTraker.run();
         }
-        //JSonStageTraker stageTraker = new JSonStageTraker(sr);
-        //stageTraker.runJobs(stage);
     }
 
-    public List<RegressDetails> getRunningRegressList() {        
+    public List<RegressDetails> getRunningRegressList() {
         EntityManager em = emf.createEntityManager();
         try {
             TypedQuery query = em.createNamedQuery("RegressDetails.findByStatus", RegressDetails.class);
@@ -129,16 +131,16 @@ public class StageRunDaemon extends AbstractStageRun {
                 }
                 startTime = LocalDateTime.now();
             } catch (Exception e) {
-                print("Exception runForEver:" , e);
+                print("Exception runForEver:", e);
             }
         }
     }
-    private String dummySync="";
+    private String dummySync = "";
 
     @Override
     public void merge(RegressDetails rdetails) {
         synchronized (dummySync) {
-            print("In StageRun merge");        
+            print("In StageRun merge");
             EntityManager em = emf.createEntityManager();
             try {
                 em.getTransaction().begin();
@@ -146,7 +148,7 @@ public class StageRunDaemon extends AbstractStageRun {
                 em.getTransaction().commit();
                 //em.flush();
             } catch (Exception e) {
-                print("Exception :" , e);
+                print("Exception :", e);
             } finally {
                 em.close();
             }
@@ -158,16 +160,16 @@ public class StageRunDaemon extends AbstractStageRun {
     @Override
     public void merge(RegressDetails rdetails, RegressDetailsGtlfFileHelper gtlfHelper) {
         synchronized (dummySync) {
-            print("In StageRun merge");           
+            print("In StageRun merge");
             EntityManager em = emf.createEntityManager();
             try {
                 em.getTransaction().begin();
                 em.merge(rdetails);
                 em.merge(gtlfHelper);
                 em.getTransaction().commit();
-              //  em.flush();
+                //  em.flush();
             } catch (Exception e) {
-                print("Exception :" , e);
+                print("Exception :", e);
             } finally {
                 em.close();
             }

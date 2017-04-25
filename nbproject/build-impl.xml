@@ -1007,6 +1007,23 @@ exists or setup the property manually. For example like this:
             <fileset dir="${build.web.dir}" excludes="WEB-INF/classes/.netbeans_*,${dist.archive.excludes}"/>
         </jar>
     </target>
+    
+    <target depends="init,compile" name="build-jar">        
+        <dirname file="${dist.jar}" property="dist.jar.dir"/>        
+        <mkdir dir="${dist.jar.dir}"/>
+        <echo message="Madhu ${build.web.dir}/WEB-INF/classes" />
+        <jar compress="${jar.compress}" jarfile="${dist.jar}" basedir="${build.web.dir}/WEB-INF/classes">
+            <fileset dir="${build.web.dir}/WEB-INF/classes"/>            
+            <fileset dir="${source.root}/java">
+                <include name="META-INF/persistence.xml"/>
+            </fileset>            
+            <manifest>
+                <attribute name="Main-Class" value="com.oracle.stagerun.tool.StageRunDaemon"/>
+            </manifest>
+        </jar>
+    </target>
+    
+    
     <target depends="init,compile,compile-jsps,-pre-dist" if="do.tmp.war.package.without.custom.manifest" name="-do-tmp-dist-without-manifest">
         <dirname file="${dist.war}" property="dist.jar.dir"/>
         <mkdir dir="${dist.jar.dir}"/>
@@ -1461,8 +1478,8 @@ exists or setup the property manually. For example like this:
     <target depends="init,-pre-debug-fix,-do-debug-fix-test" if="netbeans.home" name="debug-fix-test"/>
     <!--
                 
-                CLEANUP SECTION
-            -->
+        CLEANUP SECTION
+    -->
     <target depends="init" name="deps-clean" unless="no.deps"/>
     <target depends="init" name="do-clean">
         <condition property="build.dir.to.clean" value="${build.web.dir}">

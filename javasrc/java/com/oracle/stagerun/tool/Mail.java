@@ -1,10 +1,7 @@
 package com.oracle.stagerun.tool;
 
-
-
-
-
 import com.oracle.stagerun.entity.RegressDetails;
+import java.net.InetAddress;
 import java.util.Properties;
 
 import javax.mail.Message;
@@ -14,16 +11,14 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeUtility;
 
-
 public class Mail
 {
    StringBuffer strBuffer;
-   private RegressDetails regressDetail;
-   
+   private RegressDetails regressDetail;   
    private StageRunDaemon sr;
    
    public Mail () {
-       sr= StageRunDaemon.getInstance();               
+       sr = StageRunDaemon.getInstance();               
    }
    
   // private int numberOfJobs;
@@ -148,7 +143,7 @@ public class Mail
 
          strBuffer.append("    <table>\n");
          strBuffer.append("       <CAPTION><b><i>" + caption + "</i><b></CAPTION>\n");         
-         strBuffer.append("          <tr><td>URL</td> <td><i>http://slc09iyd.us.oracle.com:8080/sr</i></td></tr>\n");
+         strBuffer.append("          <tr><td>URL</td> <td><i>http://" + InetAddress.getLocalHost().getHostName() + ":8080/sr</i></td></tr>\n");
          strBuffer.append("          <tr><td>TestUnit</td> <td>"+ regressDetail.getTestunit().getTestunitName() +"</td></tr>\n");
          strBuffer.append("          <tr><td>Stage</td> <td>"+ regressDetail.getStage().getStageName() +"</td></tr>\n");
          strBuffer.append("          <tr><td>Release</td> <td>"+ regressDetail.getStage().getRelease().getName()+"</td></tr>\n");
