@@ -50,6 +50,10 @@
 	cd /scratch/$USER/sr/StageRunner/mysqldump
 	cat *.sql | mysql -u root -p results
 
+###Setting Timezone in mysql
+	vi /etc/my.cnf
+	default_time_zone='+00:00'
+
 ###These commands are optional
  	
 	mysql logging /var/log/mysqld.log
